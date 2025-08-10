@@ -1,0 +1,112 @@
+[
+  {
+    "fields": { "in_input": 1.212 },
+    "name": "sensors",
+    "tags": {
+      "chip": "amdgpu-pci-0400",
+      "feature": "vddgfx",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "in_input": 0.793 },
+    "name": "sensors",
+    "tags": {
+      "chip": "amdgpu-pci-0400",
+      "feature": "vddnb",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "temp_input": 50 },
+    "name": "sensors",
+    "tags": {
+      "chip": "amdgpu-pci-0400",
+      "feature": "edge",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "power_average": 0.003 },
+    "name": "sensors",
+    "tags": {
+      "chip": "amdgpu-pci-0400",
+      "feature": "slowppt",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "temp_input": 65.375 },
+    "name": "sensors",
+    "tags": {
+      "chip": "k10temp-pci-00c3",
+      "feature": "tctl",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "in_input": 12.868 },
+    "name": "sensors",
+    "tags": {
+      "chip": "BAT1-acpi-0",
+      "feature": "in0",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "temp_input": 61 },
+    "name": "sensors",
+    "tags": {
+      "chip": "iwlwifi_1-virtual-0",
+      "feature": "temp1",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": {
+      "temp_alarm": 0,
+      "temp_crit": 84.85,
+      "temp_input": 48.85,
+      "temp_max": 81.85,
+      "temp_min": -273.15
+    },
+    "name": "sensors",
+    "tags": {
+      "chip": "nvme-pci-0100",
+      "feature": "composite",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": {
+      "temp_input": 48.85,
+      "temp_max": 65261.85,
+      "temp_min": -273.15
+    },
+    "name": "sensors",
+    "tags": {
+      "chip": "nvme-pci-0100",
+      "feature": "sensor_1",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  },
+  {
+    "fields": { "temp_crit": 125, "temp_input": 56 },
+    "name": "sensors",
+    "tags": {
+      "chip": "acpitz-acpi-0",
+      "feature": "temp1",
+      "host": "ros_dev_container"
+    },
+    "timestamp": 1754823022
+  }
+]

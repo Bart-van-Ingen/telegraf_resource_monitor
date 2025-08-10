@@ -1,0 +1,52 @@
+[
+  {
+    "fields": {
+      "available": 2121240576,
+      "total": 16096903168,
+      "used_percent": 83.51511027739072
+    },
+    "name": "mem",
+    "tags": { "host": "ros_dev_container" },
+    "timestamp": 1754729459
+  },
+  {
+    "fields": {
+      "available": 2216087552,
+      "total": 16096903168,
+      "used_percent": 83.40220687100054
+    },
+    "name": "mem",
+    "tags": { "host": "ros_dev_container" },
+    "timestamp": 1754729460
+  },
+  {
+    "fields": {
+      "available": 2207117312,
+      "total": 16096903168,
+      "used_percent": 83.45373479480945
+    },
+    "name": "mem",
+    "tags": { "host": "ros_dev_container" },
+    "timestamp": 1754729461
+  },
+  {
+    "fields": {
+      "available": 2200088576,
+      "total": 16096903168,
+      "used_percent": 83.50040255395292
+    },
+    "name": "mem",
+    "tags": { "host": "ros_dev_container" },
+    "timestamp": 1754729462
+  },
+  {
+    "fields": {
+      "available": 2208776192,
+      "total": 16096903168,
+      "used_percent": 83.50391408653842
+    },
+    "name": "mem",
+    "tags": { "host": "ros_dev_container" },
+    "timestamp": 1754729463
+  }
+]

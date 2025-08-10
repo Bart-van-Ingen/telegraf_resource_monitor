@@ -1,0 +1,60 @@
+[
+  {
+    "fields": {
+      "child_major_faults": 0,
+      "child_minor_faults": 0,
+      "cpu_time_iowait": 0,
+      "cpu_time_system": 0.02,
+      "cpu_time_user": 0.1,
+      "cpu_usage": 0,
+      "created_at": 1754829205820000000,
+      "disk_read_bytes": 2414194,
+      "disk_write_bytes": 0,
+      "involuntary_context_switches": 8,
+      "major_faults": 3,
+      "memory_anonymous": 13520,
+      "memory_private_clean": 272,
+      "memory_private_dirty": 13520,
+      "memory_pss": 17502,
+      "memory_referenced": 16432,
+      "memory_rss": 24424448,
+      "memory_shared_clean": 10344,
+      "memory_shared_dirty": 0,
+      "memory_size": 0,
+      "memory_swap": 0,
+      "memory_usage": 0.15173383057117462,
+      "memory_vms": 36487168,
+      "minor_faults": 4016,
+      "num_fds": 7,
+      "num_threads": 1,
+      "ppid": 1480055,
+      "read_bytes": 2414194,
+      "read_count": 890,
+      "status": "sleep",
+      "user": "dev",
+      "voluntary_context_switches": 7,
+      "write_bytes": 0,
+      "write_count": 0
+    },
+    "name": "procstat",
+    "tags": {
+      "cmdline": "/usr/bin/python3 /opt/ros/humble/bin/ros2 run ros_telegraf_monitor telgraf_monitor_node",
+      "host": "ros_dev_container",
+      "pattern": ".*ros2",
+      "pid": "1495423",
+      "process_name": "ros2"
+    },
+    "timestamp": 1754830552
+  },
+  {
+    "fields": { "pid_count": 1, "result_code": 0, "running": 1 },
+    "name": "procstat_lookup",
+    "tags": {
+      "host": "ros_dev_container",
+      "pattern": ".*ros2",
+      "pid_finder": "native",
+      "result": "success"
+    },
+    "timestamp": 1754830552
+  }
+]

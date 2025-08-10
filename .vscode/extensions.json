@@ -1,0 +1,20 @@
+{
+        "recommendations": [
+                // Python related extensions
+                "ms-python.python", // language support
+                "charliermarsh.ruff", // python linter
+                "ms-vscode.cpptools-extension-pack", // language support
+                "ms-vscode.cmake-tools", // cmake support
+                // Other extensions
+                "ranch-hand-robotics.rde-ros-2", // ROS2 support
+                "aaron-bond.better-comments", // better comments
+                "mhutchie.git-graph", // git graph
+                "mikestead.dotenv", // .env file support
+                "usernamehw.errorlens", // in file error highlighting
+                "visualstudioexptteam.vs", //IntelliCode
+                "vscode-icons-team.vscode-icons", // icons
+                "ibm.output-colorizer", // colorize output
+                "esbenp.prettier-vscode", // prettier for markdown formatting
+                "VisualStudioExptTeam.vscodeintellicode" // AI-assisted development
+        ]
+}

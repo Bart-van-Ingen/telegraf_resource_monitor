@@ -1,0 +1,30 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ROS: Attach",
+      "type": "ros",
+      "request": "attach"
+    },
+    {
+      "name": "ROS: Launch",
+      "type": "ros",
+      "request": "launch",
+      "target": "${file}",
+      "arguments": [
+        "config_file_path:=${input:config_file_path}"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "config_file_path",
+      "type": "promptString",
+      "description": "Enter the path to the config file",
+      "default": "src/adi_bringup/config/mdc/RoyalVanZanten.yaml"
+    }
+  ]
+}
