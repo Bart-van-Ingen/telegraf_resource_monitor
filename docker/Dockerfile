@@ -32,7 +32,7 @@ FROM base AS overlay
 # Create an overlay Colcon workspace
 RUN mkdir -p /ros_ws/src
 WORKDIR /ros_ws
-COPY ./ros_telegraf_monitor/ ./src/ros_telegraf_monitor/
+COPY ./telegraf_resource_monitor/ ./src/telegraf_resource_monitor/
 COPY ./custom_interfaces/ ./src/custom_interfaces/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \

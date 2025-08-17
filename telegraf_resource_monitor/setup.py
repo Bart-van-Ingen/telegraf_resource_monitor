@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 from glob import glob
 
-package_name = "ros_telegraf_monitor" 
+package_name = "telegraf_resource_monitor"
 
 setup(
     name=package_name,
@@ -23,7 +23,7 @@ setup(
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [
-            "telgraf_monitor_node = ros_telegraf_monitor.telgraf_monitor_node:main"
+            "telegraf_resource_monitor = telegraf_resource_monitor.telegraf_resource_monitor:main"
         ],
     },
 )

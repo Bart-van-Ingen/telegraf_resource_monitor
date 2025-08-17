@@ -1,4 +1,4 @@
-# Docker Compose file for ros_telegraf_monitor repo
+# Docker Compose file for telegraf_resource_monitor repo
 #
 # Usage:
 #
@@ -14,7 +14,7 @@
 services:
   # Base image containing dependencies.
   base:
-    image: ros_telegraf_monitor:base
+    image: telegraf_resource_monitor:base
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -42,7 +42,7 @@ services:
   # Overlay image containing the example source code.
   overlay:
     extends: base
-    image: ros_telegraf_monitor:overlay
+    image: telegraf_resource_monitor:overlay
     build:
       context: .
       ssh:
@@ -52,7 +52,7 @@ services:
 
   dev:
     extends: overlay
-    image: ros_telegraf_monitor:dev
+    image: telegraf_resource_monitor:dev
     hostname: ros_dev_container
     build:
       context: .

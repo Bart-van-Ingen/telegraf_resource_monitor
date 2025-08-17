@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ros_telegraf_monitor</name>
+  <name>telegraf_resource_monitor</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="bart@adinnovations.nl">bart</maintainer>

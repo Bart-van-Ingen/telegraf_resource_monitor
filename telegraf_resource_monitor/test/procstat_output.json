@@ -38,7 +38,7 @@
     },
     "name": "procstat",
     "tags": {
-      "cmdline": "/usr/bin/python3 /opt/ros/humble/bin/ros2 run ros_telegraf_monitor telgraf_monitor_node",
+      "cmdline": "/usr/bin/python3 /opt/ros/humble/bin/ros2 run telegraf_resource_monitor telegraf_resource_monitor",
       "host": "ros_dev_container",
       "pattern": ".*ros2",
       "pid": "1495423",
