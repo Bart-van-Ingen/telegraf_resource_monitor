@@ -2,8 +2,8 @@ from collections import defaultdict
 from rclpy.node import Node
 from threading import Thread
 
-from .sensor_message import SensorMessage, SensorMessageBuffer
-from .sensor_message_publisher import SensorMessagePublisher
+from telegraf_resource_monitor.sensor_message import SensorMessage, SensorMessageBuffer
+from telegraf_resource_monitor.sensor_message_publisher import SensorMessagePublisher
 
 
 class SensorMessageProcessor:

@@ -3,7 +3,7 @@ import socket
 from rclpy.impl.rcutils_logger import RcutilsLogger
 from threading import Thread
 
-from .sensor_message import SensorMessageBuffer
+from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
 
 
 class UnixSocketManager:

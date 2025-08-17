@@ -3,7 +3,6 @@ import traceback
 
 import rclpy
 
-# Re-export classes for backward compatibility
 from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
 from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
 from telegraf_resource_monitor.sensor_message_processor import SensorMessageProcessor
@@ -13,7 +12,7 @@ from rclpy._rclpy_pybind11 import RCLError
 
 def main(args=None):
     rclpy.init(args=args)
-    node = Node("system_monitoring_node")
+    node = Node("telegraf_resource_monitor_node")
     logger = node.get_logger()
 
     sensor_message_buffer = SensorMessageBuffer(logger)

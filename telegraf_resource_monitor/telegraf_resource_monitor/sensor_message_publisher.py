@@ -3,7 +3,7 @@ from custom_interfaces.msg import Resource, Field
 from rclpy._rclpy_pybind11 import RCLError
 from rclpy.qos import qos_profile_sensor_data
 
-from .sensor_message import SensorMessage
+from telegraf_resource_monitor.sensor_message import SensorMessage
 
 
 class SensorMessagePublisher:
