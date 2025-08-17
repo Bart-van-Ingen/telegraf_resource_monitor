@@ -33,6 +33,7 @@ FROM base AS overlay
 RUN mkdir -p /ros_ws/src
 WORKDIR /ros_ws
 COPY ./ros_telegraf_monitor/ ./src/ros_telegraf_monitor/
+COPY ./custom_interfaces/ ./src/custom_interfaces/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
