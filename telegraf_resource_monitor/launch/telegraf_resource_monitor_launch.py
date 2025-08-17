@@ -15,17 +15,27 @@ def generate_launch_description():
                 default_value="config file path not specified in launch file!",
                 description="Path to client specific yaml config file.",
             ),
+            DeclareLaunchArgument(
+                name="log_level",
+                # since default value is not a path, launching only this launch file will output a
+                # warning specifying this fact.
+                default_value="INFO",
+                description="log level of node.",
+            ),
             Node(
                 package="telegraf_resource_monitor",
                 executable="telegraf_resource_monitor",
                 name="telegraf_resource_monitor",
                 output={"both": {"screen", "log", "own_log"}},
                 emulate_tty=True,
-                ros_arguments=["--log-level", "telegraf_resource_monitor:=DEBUG"],
+                ros_arguments=[
+                    "--log-level",
+                    ["telegraf_resource_monitor:=", LaunchConfiguration("log_level")],
+                ],
                 parameters=[LaunchConfiguration("config_file_path")],
             ),
             TimerAction(
-                period=5.0,
+                period=1.0,
                 actions=[
                     ExecuteProcess(
                         cmd=[
