@@ -23,7 +23,7 @@ setup(
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [
-            "telegraf_resource_monitor = telegraf_resource_monitor.telegraf_resource_monitor:main"
+            "telegraf_resource_monitor = telegraf_resource_monitor.telegraf_resource_monitor_node:main"
         ],
     },
 )
