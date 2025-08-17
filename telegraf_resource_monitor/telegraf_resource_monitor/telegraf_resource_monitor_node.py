@@ -2,11 +2,12 @@ from rclpy.node import Node
 import traceback
 
 import rclpy
-from telegraf_resource_monitor.resource_monitor import (
-    SensorMessageBuffer,
-    UnixSocketManager,
-    SensorMessageProcessor,
-)
+
+# Re-export classes for backward compatibility
+from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
+from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
+from telegraf_resource_monitor.sensor_message_processor import SensorMessageProcessor
+
 from rclpy._rclpy_pybind11 import RCLError
 
 
