@@ -10,7 +10,10 @@ SHELL ["/bin/bash", "-c"]
 
 # Install basic apt packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget socat jq
+    wget socat jq python3-pip
+
+
+RUN pip install -U pytest
 
 # Install Telegraf
 RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.35.3_linux_amd64.tar.gz

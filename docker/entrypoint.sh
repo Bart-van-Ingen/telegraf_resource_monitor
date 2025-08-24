@@ -10,5 +10,8 @@ if [ -d "/ros_ws" ]; then
     echo "Sourced workspace at /ros_ws"
 fi
 
+# Ensure pytest is on PATH
+export PATH="$PATH:/home/dev/.local/bin"
+
 # Execute the command passed into this entrypoint
 exec "$@"
