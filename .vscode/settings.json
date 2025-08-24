@@ -11,43 +11,31 @@
         "source.organizeImports": "explicit"
     },
     // PYTHON SETTINGS
+    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "python.terminal.activateEnvironment": false,
     "[python]": {
-        "editor.defaultFormatter": "ms-python.autopep8",
+        "editor.defaultFormatter": "charliermarsh.ruff",
     },
-    // "autopep8.path": [
-    //     "/usr/local/bin/autopep8"
-    // ],
     "python.analysis.completeFunctionParens": true,
-    // Autocomplete from ros python packages
-    "python.analysis.extraPaths": [
-        "/opt/ros/foxy/lib/python3.8/site-packages/"
-    ],
     "python.autoComplete.extraPaths": [
-        "/opt/ros/foxy/lib/python3.8/site-packages/"
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
-    // Environment file lets vscode find python files within workspace
-    "python.envFile": "${workspaceFolder}/.env",
-    "autoDocstring.docstringFormat": "numpy",
-    // python unit testing
+    "python.analysis.extraPaths": [
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.autoFormatStrings": true,
+    "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "--color=yes",
-        "--verbose"
-    ],
-    "autopep8.args": [
-        "--aggressive",
-        "--global-config",
-        "setup.cfg"
-    ],
-    "isort.args": [
-        "--settings-file",
-        "setup.cfg"
+    "python.testing.pytestPath": "/ros_ws/pytest_wrapper.sh",
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.experiments.optOutFrom": [
+        "pythonTestAdapter"
     ],
     // CPP SETTINGS
     "C_Cpp.default.intelliSenseMode": "clang-x64",
-    "[cpp]": {
-        "editor.defaultFormatter": "ms-iot.vscode-ros"
-    },
     "search.exclude": {
         "**/*.code-search": true,
         "**/bower_components": true,
@@ -56,12 +44,9 @@
         "**/log": true,
         "**/node_modules": true
     },
-    "ros.distro": "foxy",
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
-    "python.analysis.autoFormatStrings": true,
-    "python.analysis.inlayHints.pytestParameters": true,
     // MARKDOWN SETTINGS
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -69,5 +54,8 @@
     },
     "prettier.configPath": ".config/.prettierrc",
     "prettier.ignorePath": ".config/.prettierignore",
-    "prettier.printWidth": 100
+    "prettier.printWidth": 100,
+    "python.testing.pytestArgs": [
+        "src/telegraf_resource_monitor/test"
+    ],
 }

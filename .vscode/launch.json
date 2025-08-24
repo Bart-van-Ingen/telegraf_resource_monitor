@@ -6,12 +6,12 @@
   "configurations": [
     {
       "name": "ROS: Attach",
-      "type": "ros",
+      "type": "ros2",
       "request": "attach"
     },
     {
       "name": "ROS: Launch",
-      "type": "ros",
+      "type": "ros2",
       "request": "launch",
       "target": "${file}",
       "arguments": [
@@ -24,7 +24,7 @@
       "id": "config_file_path",
       "type": "promptString",
       "description": "Enter the path to the config file",
-      "default": "src/adi_bringup/config/mdc/RoyalVanZanten.yaml"
+      "default": ""
     }
   ]
 }

@@ -6,7 +6,6 @@
         "limitSymbolsToIncludedHeaders": true
       },
       "includePath": [
-        "src/sensors/libraries/realsense_depth_camera/realsense2_camera/include/**",
         "/usr/include/**"
       ],
       "name": "ROS"
