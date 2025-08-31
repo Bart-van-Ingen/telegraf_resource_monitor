@@ -14,7 +14,7 @@
     "python.defaultInterpreterPath": "/usr/bin/python3",
     "python.terminal.activateEnvironment": false,
     "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.defaultFormatter": "charliermarsh.ruff"
     },
     "python.analysis.completeFunctionParens": true,
     "python.autoComplete.extraPaths": [

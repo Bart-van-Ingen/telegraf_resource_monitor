@@ -72,6 +72,9 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Set the ownership of the overlay workspace to the new user
 RUN chown -R dev:$dev /ros_ws
 
+# Set the ownership of the XDG_RUNTIME_DIR to the new user for vscode
+RUN chown -R dev:dev /tmp/runtime-root
+
 # Switch from root to user
 USER $USERNAME
 
