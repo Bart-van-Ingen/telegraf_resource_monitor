@@ -1,8 +1,32 @@
+<p align="center">
+   <img src="images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" />
+</p>
+
 # Telegraf Resource Monitor
 
 > ⚠️ **Warning: This package is currently under development and not ready for production use.** ⚠️
 
 A ROS 2 package that integrates [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) with ROS 2 to monitor system resources and publish them as ROS messages. This package bridges the gap between Telegraf's powerful data collection capabilities and ROS 2's distributed messaging system in an easily configurable way.
+
+## Table of Contents
+
+- [Motivation](#motivation)
+- [Telegraf as backbone](#telegraf-as-backbone)
+- [Overview](#overview)
+- [Architecture](#architecture)
+   - [Topics Published](#topics-published)
+- [Installation](#installation)
+   - [Prerequisites](#prerequisites)
+   - [Installing Telegraf](#installing-telegraf)
+   - [Installing Package](#installing-package)
+- [Usage](#usage)
+   - [Basic Launch](#basic-launch)
+   - [Launch with Custom Parameters](#launch-with-custom-parameters)
+- [Configuration](#configuration)
+- [License](#license)
+- [Maintainer](#maintainer)
+- [Acknowledgments](#acknowledgments)
+
 
 ## Motivation
 Monitoring system resources is important for maintaining the health and determining performance of robotic systems. There does not seem to be a well established solution to do this in ROS 2, with these the current ones that can be found easily online:
