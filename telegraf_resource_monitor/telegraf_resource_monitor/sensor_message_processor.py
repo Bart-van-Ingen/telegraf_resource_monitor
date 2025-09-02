@@ -1,6 +1,7 @@
 from collections import defaultdict
-from rclpy.node import Node
 from threading import Thread
+
+from rclpy.node import Node
 
 from telegraf_resource_monitor.sensor_message import SensorMessage, SensorMessageBuffer
 from telegraf_resource_monitor.sensor_message_publisher import SensorMessagePublisher
@@ -8,6 +9,7 @@ from telegraf_resource_monitor.sensor_message_publisher import SensorMessagePubl
 
 class SensorMessageProcessor:
     def __init__(self, node: Node, sensor_message_buffer: SensorMessageBuffer) -> None:
+
         self.node = node
         self.sensor_message_buffer = sensor_message_buffer
         self.logger = node.get_logger()
@@ -24,6 +26,7 @@ class SensorMessageProcessor:
         self.publisher_thread.join()
 
     def process_buffered_messages(self) -> None:
+
         while True:
             # Wait for the event to be set (indicating new messages are available)
             self.sensor_message_buffer.event.wait()
@@ -45,6 +48,7 @@ class SensorMessageProcessor:
         sensor_message_publisher.publish(message)
 
     def get_publisher(self, message: SensorMessage) -> SensorMessagePublisher:
+
         sensor_type = message.name
         sensor_tags = message.tags
 

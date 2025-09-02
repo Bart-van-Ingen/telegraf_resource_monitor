@@ -1,7 +1,8 @@
-from dataclasses import dataclass
 import json
-from threading import Event
+from dataclasses import dataclass
 from queue import Queue
+from threading import Event
+
 from rclpy.impl.rcutils_logger import RcutilsLogger
 
 

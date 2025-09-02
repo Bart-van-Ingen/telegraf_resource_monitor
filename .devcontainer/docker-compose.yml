@@ -16,6 +16,7 @@ services:
       - ./telegraf_resource_monitor:/ros_ws/src/telegraf_resource_monitor:cached
       - ./custom_interfaces:/ros_ws/src/custom_interfaces:cached
       - ./.vscode:/ros_ws/.vscode:cached
+      - ./pyproject.toml:/ros_ws/pyproject.toml:cached
 
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     # cap_add:

@@ -1,7 +1,8 @@
-from pathlib import Path
 import socket
-from rclpy.impl.rcutils_logger import RcutilsLogger
+from pathlib import Path
 from threading import Thread
+
+from rclpy.impl.rcutils_logger import RcutilsLogger
 
 from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
 
@@ -42,21 +43,29 @@ class UnixSocketManager:
                     break
 
                 decoded_message = received_data.decode("utf-8")
-                message_lines = decoded_message.split("\n")
+                message_buffer = self.parse_complete_messages(
+                    decoded_message, message_buffer
+                )
 
-                # Process all complete entries (all but the last split part)
-                if len(message_lines) > 1:
-                    # Add the first part to our current entry and process it
-                    message_buffer += message_lines[0]
-                    self.sensor_message_buffer.add_message(message_buffer)
-                    message_buffer = ""
+    def parse_complete_messages(self, decoded_message, message_buffer):
 
-                    # Process any additional complete entries
-                    for complete_line in message_lines[1:-1]:
-                        self.sensor_message_buffer.add_message(complete_line)
+        message_lines = decoded_message.split("\n")
+
+        # Process all complete entries (all but the last split part)
+        if len(message_lines) > 1:
+            # Add the first part to our current entry and process it
+            message_buffer += message_lines[0]
+            self.sensor_message_buffer.add_message(message_buffer)
+            message_buffer = ""
+
+            # Process any additional complete entries
+            for complete_line in message_lines[1:-1]:
+                self.sensor_message_buffer.add_message(complete_line)
 
                 # Keep the last part (which may be incomplete) for the next iteration
-                message_buffer += message_lines[-1]
+        message_buffer += message_lines[-1]
+
+        return message_buffer
 
     def __del__(self):
         self.server_socket.close()

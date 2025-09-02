@@ -1,0 +1,71 @@
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.lint]
+select = [
+    'E', # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+    'W', # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+    'F', # https://docs.astral.sh/ruff/rules/#pyflakes-f
+    'D', # https://docs.astral.sh/ruff/rules/#pydocstyle-d
+    'ISC', # https://docs.astral.sh/ruff/rules/#flake8-implicit-str-concat-isc
+    'I', # https://docs.astral.sh/ruff/rules/#isort-i
+    'B', # https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    'C4', # https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    'UP', # https://docs.astral.sh/ruff/rules/#pyupgrade-up,
+    'N', # https://docs.astral.sh/ruff/rules/#pep8-naming-n,
+    'A', # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
+    'PIE', # https://docs.astral.sh/ruff/rules/#flake8-pie-pie
+    'TCH', # https://docs.astral.sh/ruff/rules/#flake8-type-checking-tch
+    'PTH', # https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+    'SIM', # https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+    'PT', # https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
+    'RUF', # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+]
+ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["D"] # Ignore docstring errors
+"**/test/*" = ["D"] # Ignore docstring errors
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+runtime-evaluated-decorators = ["pydantic.validate_call"]
+
+[tool.mypy]
+plugins = [
+    "pydantic.mypy",
+]
+strict = true
+
+[[tool.mypy.overrides]]
+module = [
+    'setuptools.*',
+
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    'scripts.*',
+    'tests.*',
+]
+ignore_errors = true
+
+[tool.black]
+line-length = 99
+skip-string-normalization = true
