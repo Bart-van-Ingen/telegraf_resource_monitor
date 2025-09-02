@@ -6,7 +6,7 @@
 
 > ⚠️ **Warning: This package is currently under development and not ready for production use.** ⚠️
 
-A ROS 2 package that integrates [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) with ROS 2 to monitor system resources and publish them as ROS messages. This package bridges the gap between Telegraf's powerful data collection capabilities and ROS 2's distributed messaging system in an easily configurable way.
+A ROS 2 package that integrates [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) with ROS 2 to monitor system resources and publish them as ROS messages. This package bridges the gap between Telegraf's data collection capabilities and ROS 2's distributed messaging system in an easily configurable way.
 
 ## Table of Contents
 
@@ -40,19 +40,9 @@ This project attempts to fill that gap.
 
 ### Telegraf as backbone
 Resource monitoring is not a unique problem to robotics, and there are many existing tools that do this well. A well established tool within the cloud native and DevOps communities is Telegraf.
-Telegraf is an open-source agent for collecting and reporting metrics. It supports a variety of input plugins to gather data from different sources and output plugins to send data to various destinations. By integrating Telegraf with ROS 2, we do not have to reinvent the wheel of resource monitoring and leverage its more advanced capabilities.
+Telegraf is an open-source agent for collecting and reporting metrics. It supports a variety of input plugins to gather data from different sources and output plugins to send data to various destinations. By integrating Telegraf with ROS 2, we do not have to reinvent the wheel of resource monitoring and can leverage its more advanced capabilities, such as aggregators and processors.
 
-Telegraf also present the opportunity to build out remote monitoring capabilities of the same resources over the OTLP protocol, which is a common standard for telemetry data. This can be connect to any opentelemetry agent which can then pass it on to whatever remote monitoring environment you wish.
-
-## Overview
-
-The `telegraf_resource_monitor` package collects system metrics using Telegraf and publishes them as ROS 2 messages. It monitors various system resources including:
-
-- **CPU Usage**: Per-core and total CPU utilization
-- **Memory**: Available, total, and usage percentage
-- **Disk Space**: Free space, total capacity, and usage percentage
-- **Temperature Sensors**: Hardware temperature readings via lm-sensors
-- **Process Monitoring**: CPU and memory usage of ROS nodes
+Telegraf also present the opportunity to build out remote monitoring capabilities of the same resources over the OTLP protocol, which is a common standard for telemetry data. This can be connect to any [opentelemetry collector](https://opentelemetry.io/docs/collector/distributions/) which can then pass it on to whatever remote monitoring environment you wish.
 
 ## Architecture
 
@@ -69,15 +59,33 @@ The package consists of several key components:
 
 The package dynamically creates topics based on the metrics collected by Telegraf. Examples include:
 
-- `/telegraf/cpu/usage_active` - CPU usage percentage
-- `/telegraf/mem/available` - Available memory
-- `/telegraf/disk/used_percent` - Disk usage percentage
-- `/telegraf/sensors/temp_input` - Temperature sensor readings
-- `/telegraf/procstat/cpu_usage` - Process-specific CPU usage
+- `/cpu/cpu0` 
+- `/cpu/cpu1` 
+- `/cpu/cpu2` 
+- `/cpu/cpu3` 
+- `/cpu/cpu4` 
+- `/cpu/cpu5` 
+- `/cpu/cpu6` 
+- `/cpu/cpu7` 
+- `/cpu/cpu_total` 
+- `/disk/root` 
+- `/mem` 
+- `/procstat/telegraf_resource_monitor` 
+- `/sensors/acpitz_acpi_0/temp1` 
+- `/sensors/amdgpu_pci_0400/edge` 
+- `/sensors/amdgpu_pci_0400/slowppt` 
+- `/sensors/amdgpu_pci_0400/vddgfx` 
+- `/sensors/amdgpu_pci_0400/vddnb` 
+- `/sensors/bat1_acpi_0/in0` 
+- `/sensors/iwlwifi_1_virtual_0/temp1` 
+- `/sensors/k10temp_pci_00c3/tctl` 
+- `/sensors/nvme_pci_0100/composite` 
+- `/sensors/nvme_pci_0100/sensor_1` 
+
 
 Each topic publishes `custom_interfaces/Resource` messages containing:
 - Header with timestamp
-- Array of fields with metric names and values
+- Array of fields with metric names and values of type `custom_interfaces/Field`
 
 ## Installation
 
