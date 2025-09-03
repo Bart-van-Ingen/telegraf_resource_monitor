@@ -7,6 +7,7 @@ from rclpy.node import Node
 from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
 from telegraf_resource_monitor.sensor_message_processor import SensorMessageProcessor
 from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
+import contextlib
 
 
 def main(args=None):
@@ -16,20 +17,26 @@ def main(args=None):
 
     sensor_message_buffer = SensorMessageBuffer(logger)
 
-    UnixSocketManager(logger, sensor_message_buffer)
-    SensorMessageProcessor(node, sensor_message_buffer)
+    unix_socket_manager = UnixSocketManager(logger, sensor_message_buffer)
+    sensor_message_processor = SensorMessageProcessor(node, sensor_message_buffer)
 
     try:
         rclpy.spin(node)
-        node.destroy_node()
-        rclpy.shutdown()
 
-    except (KeyboardInterrupt, RCLError):
+    except KeyboardInterrupt:
         logger.info("system_monitor_node received valid kill signal")
 
     except Exception as error:
         logger.error(traceback.format_exc())
         raise error
+
+    finally:
+        sensor_message_processor.shutdown()
+        unix_socket_manager.shutdown()
+        node.destroy_node()
+
+    with contextlib.suppress(RCLError):
+        rclpy.shutdown()
 
 
 if __name__ == "__main__":

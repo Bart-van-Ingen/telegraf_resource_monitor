@@ -4,7 +4,7 @@
   <name>telegraf_resource_monitor</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="bart@adinnovations.nl">bart</maintainer>
+  <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
   <license>TODO: License declaration</license>
 
   <test_depend>ament_copyright</test_depend>

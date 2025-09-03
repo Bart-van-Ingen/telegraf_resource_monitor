@@ -1,4 +1,5 @@
 import socket
+import threading
 from pathlib import Path
 from threading import Thread
 
@@ -26,6 +27,19 @@ class UnixSocketManager:
         self.listener_thread = Thread(target=self.start_socket_listener)
         logger.info("starting unix socket listener thread...")
         self.listener_thread.start()
+
+    def shutdown(self) -> None:
+        self.server_socket.close()
+        self.logger.info("unix socket closed.")
+
+        # Remove existing socket file if it exists
+        if self.socket_path.exists():
+            self.socket_path.unlink()
+
+        # Only join if we're not calling from the same thread
+        current_thread = threading.current_thread()
+        if self.listener_thread.is_alive() and self.listener_thread != current_thread:
+            self.listener_thread.join(timeout=0.1)  # Wait max 1 second
 
     def start_socket_listener(self) -> None:
 
@@ -72,13 +86,3 @@ class UnixSocketManager:
         message_buffer += message_lines[-1]
 
         return message_buffer
-
-    def __del__(self) -> None:
-        self.server_socket.close()
-        self.logger.info("unix socket closed.")
-
-        # Remove existing socket file if it exists
-        if self.socket_path.exists():
-            self.socket_path.unlink()
-
-        self.listener_thread.join()

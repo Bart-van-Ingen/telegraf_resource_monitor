@@ -1,3 +1,4 @@
+import threading
 from collections import defaultdict
 from threading import Thread
 
@@ -9,34 +10,34 @@ from telegraf_resource_monitor.sensor_message_publisher import SensorMessagePubl
 
 class SensorMessageProcessor:
     def __init__(self, node: Node, sensor_message_buffer: SensorMessageBuffer) -> None:
-
         self.node = node
         self.sensor_message_buffer = sensor_message_buffer
         self.logger = node.get_logger()
-
-        # Use defaultdict to automatically create nested dicts
         self.sensor_publishers = defaultdict(dict)
 
-        # Bind and listen in a separate thread
+        # Add shutdown flag so that we can shutdown in unit testing
+        self.shutdown_event = threading.Event()
+
         self.publisher_thread = Thread(target=self.process_buffered_messages)
         self.logger.debug("starting sensor publisher thread")
         self.publisher_thread.start()
 
-    def __del__(self):
-        self.publisher_thread.join()
+    def shutdown(self):
+        self.shutdown_event.set()
+
+        # Only join if we're not calling from the same thread
+        current_thread = threading.current_thread()
+        if self.publisher_thread.is_alive() and self.publisher_thread != current_thread:
+            self.publisher_thread.join(timeout=1.0)  # Wait max 1 second
 
     def process_buffered_messages(self) -> None:
+        while not self.shutdown_event.is_set():
+            self.sensor_message_buffer.event.wait(0.1)  # timeout to check for shutdown_event
 
-        while True:
-            # Wait for the event to be set (indicating new messages are available)
-            self.sensor_message_buffer.event.wait()
-
-            # Process all available messages
             while not self.sensor_message_buffer.is_empty():
                 message: SensorMessage = self.sensor_message_buffer.get_message()
                 self.publish_sensor_message(message)
 
-            # Clear the event after processing all messages
             self.sensor_message_buffer.event.clear()
 
     def publish_sensor_message(self, message: SensorMessage) -> None:
