@@ -1,8 +1,7 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
-from launch_ros.actions import Node
-from launch.actions import TimerAction
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -34,8 +33,10 @@ def generate_launch_description():
                 ],
                 parameters=[LaunchConfiguration("config_file_path")],
             ),
+            # start telegraf after a short delay to ensure the node is up and running and has
+            # created the unix socket before telegraf starts sending data
             TimerAction(
-                period=1.0,
+                period=0.1,
                 actions=[
                     ExecuteProcess(
                         cmd=[
