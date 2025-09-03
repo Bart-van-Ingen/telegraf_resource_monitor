@@ -21,9 +21,11 @@ class SensorMessage:
 
 @dataclass
 class SensorMessageBuffer:
-    event = Event()
-    buffer = Queue()
     logger: RcutilsLogger
+
+    def __post_init__(self):
+        self.event = Event()
+        self.buffer = Queue()
 
     def add_message(self, message: str) -> None:
         self.logger.debug(f"adding message to buffer: {message}")
