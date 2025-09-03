@@ -34,6 +34,10 @@
     "python.testing.pytestEnabled": true,
     "python.envFile": "${workspaceFolder}/.env",
     "python.testing.cwd": "${workspaceFolder}",
+    "python.testing.pytestArgs": [
+        "--color=yes",
+        "--verbose"
+    ],
     // CPP SETTINGS
     "C_Cpp.default.intelliSenseMode": "clang-x64",
     "search.exclude": {
@@ -55,7 +59,4 @@
     "prettier.configPath": ".config/.prettierrc",
     "prettier.ignorePath": ".config/.prettierignore",
     "prettier.printWidth": 100,
-    "python.testing.pytestArgs": [
-        "src/telegraf_resource_monitor/test"
-    ],
 }
