@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" />
+   <img src="images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
 </p>
 
 # Telegraf Resource Monitor
