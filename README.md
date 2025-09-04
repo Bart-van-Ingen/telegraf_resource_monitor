@@ -161,10 +161,6 @@ Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) t
 
 No configuration is needed on the node side, since it will parse the available fields and use its names to generate the topics accordingly.
 
-## License
-
-[License details to be added]
-
 ## Maintainer
 
 **Bart van Ingen**  
