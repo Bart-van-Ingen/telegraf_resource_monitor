@@ -4,7 +4,7 @@
 
 # Telegraf Resource Monitor
 
-> ⚠️ **Warning: This package is currently under development and not ready for production use.** ⚠️
+> ⚠️ **Warning: This package is currently under development.** ⚠️
 
 A ROS 2 package that integrates [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) with ROS 2 to monitor system resources and publish them as ROS messages. This package bridges the gap between Telegraf's data collection capabilities and ROS 2's distributed messaging system in an easily configurable way.
 
