@@ -81,9 +81,9 @@ The package dynamically creates topics based on the metrics collected by Telegra
 - `/sensors/nvme_pci_0100/sensor_1` 
 
 
-Each topic publishes `custom_interfaces/Resource` messages containing:
+Each topic publishes `resource_monitoring_interfaces/Resource` messages containing:
 - Header with timestamp
-- Array of fields with metric names and values of type `custom_interfaces/Field`
+- Array of fields with metric names and values of type `resource_monitoring_interfaces/Field`
 
 ## Installation
 

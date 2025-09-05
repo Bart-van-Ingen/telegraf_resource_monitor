@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>custom_interfaces</name>
+  <name>resource_monitoring_interfaces</name>
   <version>0.0.0</version>
   <description>contains custom message nnd service call definitions</description>
   <maintainer email="van.ingen.bart@gmail.com">bart</maintainer>

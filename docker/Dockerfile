@@ -8,24 +8,18 @@ FROM osrf/ros:${ROS_DISTRO}-desktop AS base
 ENV ROS_DISTRO=${ROS_DISTRO}
 SHELL ["/bin/bash", "-c"]
 
-# Install basic apt packages
+# Install all apt packages in one layer and clean up cache
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget socat jq python3-pip
-
-
-RUN pip install -U pytest
+    wget socat jq python3-pip lm-sensors \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install -U pytest
 
 # Install Telegraf
-RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.35.3_linux_amd64.tar.gz
-# unpack Telegraf
-RUN tar -xzf telegraf-1.35.3_linux_amd64.tar.gz \
-    && rm telegraf-1.35.3_linux_amd64.tar.gz
-#move the binary to a location in the PATH
-RUN mv telegraf-1.35.3/usr/bin/telegraf /usr/local/bin/telegraf \
+RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.35.3_linux_amd64.tar.gz \
+    && tar -xzf telegraf-1.35.3_linux_amd64.tar.gz \
+    && rm telegraf-1.35.3_linux_amd64.tar.gz \
+    && mv telegraf-1.35.3/usr/bin/telegraf /usr/local/bin/telegraf \
     && chmod +x /usr/local/bin/telegraf
-
-# Install lm-sensors
-RUN apt-get install -y lm-sensors
 
 #####################
 # Overlay Image #
@@ -36,11 +30,12 @@ FROM base AS overlay
 RUN mkdir -p /ros_ws/src
 WORKDIR /ros_ws
 COPY ./telegraf_resource_monitor/ ./src/telegraf_resource_monitor/
-COPY ./custom_interfaces/ ./src/custom_interfaces/
+COPY ./resource_monitoring_interfaces/ ./src/resource_monitoring_interfaces/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
-    && colcon build --symlink-install
+    && colcon build --symlink-install \
+    && rm -rf /var/lib/apt/lists/*
 
 # Remove display warnings
 RUN mkdir /tmp/runtime-root
@@ -67,7 +62,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && apt-get update \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the ownership of the overlay workspace to the new user
 RUN chown -R dev:$dev /ros_ws

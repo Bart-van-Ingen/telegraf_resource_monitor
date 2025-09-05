@@ -1,3 +1,4 @@
+import contextlib
 import traceback
 
 import rclpy
@@ -7,7 +8,6 @@ from rclpy.node import Node
 from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
 from telegraf_resource_monitor.sensor_message_processor import SensorMessageProcessor
 from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
-import contextlib
 
 
 def main(args=None):
