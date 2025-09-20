@@ -6,13 +6,13 @@ from resource_monitoring_interfaces.msg import Field, Resource
 from telegraf_resource_monitor.sensor_message import SensorMessage
 
 
-class SensorMessagePublisher:
-    def __init__(self, node: Node, message: SensorMessage) -> None:
+class ResourcePublisher:
+    def __init__(self, node: Node, sensor_message: SensorMessage) -> None:
         self.node = node
         self.logger = node.get_logger()
 
-        sensor_type = message.name
-        sensor_tags = message.tags
+        sensor_type = sensor_message.name
+        sensor_tags = sensor_message.tags
 
         # Convert tags dict to a pathed string
         tags_str = (
@@ -28,17 +28,17 @@ class SensorMessagePublisher:
 
         # remove trailing slashes
         topic_name = topic_name.rstrip("/")
-        topic_name = topic_name.lower()
+        self.topic_name = topic_name.lower()
 
-        self.logger.info(f"creating publisher for resource {topic_name}")
+        self.logger.info(f"creating publisher for resource {self.topic_name}")
 
         self.publisher = node.create_publisher(
             msg_type=Resource,
-            topic=topic_name,
+            topic=self.topic_name,
             qos_profile=qos_profile_sensor_data,
         )
 
-    def publish(self, message: SensorMessage) -> None:
+    def publish_from_sensor_message(self, message: SensorMessage) -> None:
         fields = []
 
         for field_name, field_value in message.fields.items():

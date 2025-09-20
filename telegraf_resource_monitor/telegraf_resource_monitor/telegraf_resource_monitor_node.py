@@ -11,7 +11,9 @@ from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
 
 
 def main(args=None):
+
     rclpy.init(args=args)
+
     node = Node("telegraf_resource_monitor_node")
     logger = node.get_logger()
 
