@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -22,31 +22,16 @@ def generate_launch_description():
                 description="log level of node.",
             ),
             Node(
-                package="telegraf_resource_monitor",
-                executable="telegraf_resource_monitor_node",
-                name="telegraf_resource_monitor_node",
+                package="resource_diagnostics_updater",
+                executable="resource_diagnostics_updater_node",
+                name="resource_diagnostics_updater_node",
                 output={"both": {"screen", "log", "own_log"}},
                 emulate_tty=True,
                 ros_arguments=[
                     "--log-level",
-                    ["telegraf_resource_monitor_node:=", LaunchConfiguration("log_level")],
+                    ["resource_diagnostics_updater_node:=", LaunchConfiguration("log_level")],
                 ],
                 parameters=[LaunchConfiguration("config_file_path")],
-            ),
-            # start telegraf after a short delay to ensure the node is up and running and has
-            # created the unix socket before telegraf starts sending data
-            TimerAction(
-                period=0.1,
-                actions=[
-                    ExecuteProcess(
-                        cmd=[
-                            "telegraf",
-                            "--config",
-                            "/ros_ws/src/telegraf_resource_monitor/config/telegraf.conf",
-                        ],
-                        output="screen",
-                    )
-                ],
             ),
         ]
     )

@@ -1,0 +1,14 @@
+/resource_diagnostics_updater_node:
+  ros__parameters:
+    diagnosed_resources: |
+        - topic: cpu/cpu_total
+          name: CPU Usage Active
+          field: usage_active
+          warning_threshold: 60.0
+          error_threshold: 90.0
+
+        - topic: /disk/root
+          name: Root Disk Percent Used
+          field: used_percent
+          warning_threshold: 70.0
+          error_threshold: 90.0
