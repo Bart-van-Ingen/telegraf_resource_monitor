@@ -9,11 +9,12 @@ from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
 
 
 class UnixSocketManager:
-    def __init__(
-        self, logger: RcutilsLogger, sensor_message_buffer: SensorMessageBuffer
-    ) -> None:
+    def __init__(self, logger: RcutilsLogger, sensor_message_buffer: SensorMessageBuffer) -> None:
         self.logger = logger
         self.sensor_message_buffer = sensor_message_buffer
+
+        # Add shutdown flag so that we can shutdown in unit testing
+        self.shutdown_event = threading.Event()
 
         self.server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.socket_path = Path("/tmp/telegraf.sock")
@@ -29,8 +30,14 @@ class UnixSocketManager:
         self.listener_thread.start()
 
     def shutdown(self) -> None:
-        self.server_socket.close()
-        self.logger.info("unix socket closed.")
+        self.shutdown_event.set()
+
+        # Close the socket to unblock any waiting operations
+        try:
+            self.server_socket.close()
+            self.logger.info("unix socket closed.")
+        except Exception as e:
+            self.logger.warning(f"Error closing socket: {e}")
 
         # Remove existing socket file if it exists
         if self.socket_path.exists():
@@ -39,28 +46,82 @@ class UnixSocketManager:
         # Only join if we're not calling from the same thread
         current_thread = threading.current_thread()
         if self.listener_thread.is_alive() and self.listener_thread != current_thread:
-            self.listener_thread.join(timeout=0.1)  # Wait max 1 second
+            self.listener_thread.join(timeout=1.0)  # Wait max 1 second
 
     def start_socket_listener(self) -> None:
+        try:
+            self.server_socket.bind(str(self.socket_path))
+            self.server_socket.listen()
+            self.server_socket.settimeout(0.1)
 
-        self.server_socket.bind(str(self.socket_path))
-        self.server_socket.listen()
-        conn, addr = self.server_socket.accept()
+            while self.should_continue_loop():
+                result = self.handle_socket_operation(self.server_socket.accept)
 
-        message_buffer = ""
+                if result is None:  # timeout
+                    continue
 
-        with conn:
-            self.logger.debug(f"connected by {addr}")
-
-            while True:
-                received_data = conn.recv(1024)
-                if not received_data:
+                elif not result:
                     break
 
-                decoded_message = received_data.decode("utf-8")
-                message_buffer = self.buffer_complete_messages(
-                    decoded_message, message_buffer, self.sensor_message_buffer
-                )
+                recieved_data: tuple[socket.socket, str] = result
+
+                conn, addr = recieved_data
+
+                self.logger.debug(f"connected by {addr}")
+
+                self.handle_connection(conn)
+
+        except Exception as e:
+            self.logger.error(f"Error in socket listener: {e}")
+
+        finally:
+            self.logger.debug("Socket listener thread exiting")
+
+    def should_continue_loop(self) -> bool:
+        """Check if the main loop should continue running."""
+        return not self.shutdown_event.is_set()
+
+    def handle_socket_operation(self, operation_func, *args, **kwargs):
+        """Handle socket operations with common timeout and error handling."""
+        try:
+            return operation_func(*args, **kwargs)
+
+        except socket.timeout:
+            # Timeout allows us to check shutdown_event periodically
+            return None
+
+        except OSError:
+            return False
+
+    def handle_connection(self, conn: socket.socket) -> None:
+        """Handle a single client connection."""
+        message_buffer = ""
+
+        try:
+            with conn:
+                conn.settimeout(0.1)
+
+                while self.should_continue_loop():
+                    result = self.handle_socket_operation(conn.recv, 1024)
+
+                    if result is None:  # timeout
+                        continue
+
+                    elif not result:
+                        break
+
+                    recieved_data: bytes = result
+
+                    decoded_message = recieved_data.decode("utf-8")
+
+                    message_buffer = self.buffer_complete_messages(
+                        decoded_message,
+                        message_buffer,
+                        self.sensor_message_buffer,
+                    )
+
+        except Exception as e:
+            self.logger.error(f"Error handling connection: {e}")
 
     @staticmethod
     def buffer_complete_messages(
