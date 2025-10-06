@@ -15,11 +15,7 @@ class SensorMessagePublisher:
         sensor_tags = message.tags
 
         # Convert tags dict to a pathed string
-        tags_str = (
-            "/".join(f"{value}" for value in sensor_tags.values())
-            if sensor_tags
-            else ""
-        )
+        tags_str = "/".join(f"{value}" for value in sensor_tags.values()) if sensor_tags else ""
 
         topic_name = f"{sensor_type}/{tags_str}"
 
