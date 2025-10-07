@@ -1,3 +1,4 @@
+import sys
 import typing
 from dataclasses import dataclass
 
@@ -18,21 +19,35 @@ class DiagnosedResource:
     warning_threshold: float
     error_threshold: float
 
+    def __post_init__(self):
+        if self.warning_threshold >= self.error_threshold:
+            raise ValueError(
+                f"warning threshold {self.warning_threshold} must be less than"
+                f" error threshold {self.error_threshold}"
+            )
+
 
 class DiagnosticsPublisherManager:
     """Manages the shared diagnostics publisher and accumulated diagnostic statuses."""
 
     def __init__(self, node: Node) -> None:
         self.node = node
-        self.diagnostic_statuses: list[DiagnosticStatus] = []
+        self.all_diagnostic_statuses: list[DiagnosticStatus] = []
 
-        diagnosed_resources = self.get_diagnosed_resources_from_config()
+        self.diagnosed_resources = self.get_diagnosed_resources_from_config()
 
         self.node.get_logger().info(
             "configuring diagnostics publisher for resources:"
-            f" {[resource.topic for resource in diagnosed_resources]}"
+            f" {[resource.topic for resource in self.diagnosed_resources]}"
         )
 
+        self.configure_diagnostics_updaters(self.diagnosed_resources)
+
+        self.diagnostics_publisher = node.create_publisher(DiagnosticArray, "/diagnostics", 1)
+
+        self.diagnostics_publisher_timer = node.create_timer(1.0, self.publish_all_diagnostics)
+
+    def configure_diagnostics_updaters(self, diagnosed_resources):
         self.resource_diagnostics_updaters = []
 
         # Use a reentrant callback group to allow multiple resource callbacks to be processed in
@@ -45,11 +60,8 @@ class DiagnosticsPublisherManager:
                 resource,
                 callback_group,
             )
+
             self.resource_diagnostics_updaters.append(resource_diagnostics_updater)
-
-        self.diagnostics_publisher = node.create_publisher(DiagnosticArray, "/diagnostics", 1)
-
-        self.diagnostics_publisher_timer = node.create_timer(1.0, self.publish_all_diagnostics)
 
     def get_diagnosed_resources_from_config(self) -> list[DiagnosedResource]:
         self.node.declare_parameter('diagnosed_resources', '')
@@ -59,7 +71,12 @@ class DiagnosticsPublisherManager:
 
         diagnosed_resources_dicts = yaml.safe_load(diagnosed_resources_str)
 
+        if not diagnosed_resources_dicts:
+            self.node.get_logger().error("No diagnosed resources configured. Exiting.")
+            sys.exit(1)
+
         diagnosed_resources = []
+
         for resource_dict in diagnosed_resources_dicts:
             self.node.get_logger().debug(f"Loaded diagnosed resource: {resource_dict}")
             diagnosed_resources.append(DiagnosedResource(**resource_dict))
@@ -67,18 +84,16 @@ class DiagnosticsPublisherManager:
         return diagnosed_resources
 
     def add_diagnostic_status(self, diagnostic_status: DiagnosticStatus) -> None:
-        """Add a diagnostic status to the managed collection."""
-        self.diagnostic_statuses.append(diagnostic_status)
+        self.all_diagnostic_statuses.append(diagnostic_status)
 
     def publish_all_diagnostics(self) -> None:
-        """Publish all accumulated diagnostic statuses."""
-        self.publish_diagnostics(self.diagnostic_statuses)
+        self.publish_diagnostics(self.all_diagnostic_statuses)
 
     def publish_diagnostics(
         self,
         diagnostic_statuses: typing.Union[list[DiagnosticStatus], DiagnosticStatus],
     ) -> None:
-        """Publish specific diagnostic statuses."""
+
         if isinstance(diagnostic_statuses, DiagnosticStatus):
             diagnostic_statuses = [diagnostic_statuses]
 
@@ -94,7 +109,6 @@ class DiagnosticsPublisherManager:
 
 
 class ResourceDiagnosticsUpdater:
-    """Creates and manages diagnostic status for a specific resource."""
 
     def __init__(
         self,
@@ -128,7 +142,7 @@ class ResourceDiagnosticsUpdater:
         )
 
     def resource_callback(self, resource_message: Resource) -> None:
-        """Update the diagnostic status for this resource."""
+
         diagnosed_resource_field: Field = next(
             field
             for field in resource_message.fields
