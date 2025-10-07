@@ -37,7 +37,7 @@
     "python.testing.cwd": "${workspaceFolder}",
     "python.testing.pytestArgs": [
         "--color=yes",
-        "--verbose"
+        "-vvvvvrpP"
     ],
     // CPP SETTINGS
     "C_Cpp.default.intelliSenseMode": "clang-x64",
