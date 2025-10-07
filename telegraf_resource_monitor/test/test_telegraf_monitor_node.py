@@ -1,4 +1,3 @@
-# smoke test to make it initialize without error
 import pytest
 import rclpy
 from rclpy.node import Node
@@ -10,7 +9,7 @@ from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
 @pytest.fixture
 def test_node():
     rclpy.init()
-    test_node = Node("test_sensor_message_node")
+    test_node = Node("test_telegraf_resource_monitor_node")
 
     yield test_node
 
@@ -18,6 +17,7 @@ def test_node():
     rclpy.shutdown()
 
 
+# smoke test to make it initialize without error
 def test_telegraf_resource_monitor_node_initialization(test_node: Node):
     logger = test_node.get_logger()
 
