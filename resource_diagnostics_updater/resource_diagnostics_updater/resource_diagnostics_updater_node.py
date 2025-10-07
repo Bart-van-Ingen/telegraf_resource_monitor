@@ -19,6 +19,8 @@ def main(args=None):
     DiagnosticsPublisherManager(node)
 
     try:
+        # Use a MultiThreadedExecutor to allow multiple resource diagnostics updaters to run in
+        # parallel
         executor = MultiThreadedExecutor()
         executor.add_node(node)
         executor.spin()
