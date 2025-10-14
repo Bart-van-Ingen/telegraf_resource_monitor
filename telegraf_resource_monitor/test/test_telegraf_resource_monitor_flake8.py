@@ -17,6 +17,8 @@ import pathlib
 import pytest
 from ament_flake8.main import main_with_errors
 
+# modify the path to point to the package root so that it only check the package files
+
 file_path = pathlib.Path(__file__).parent.resolve()
 package_path = str(file_path).split("test")[0]
 
@@ -24,7 +26,5 @@ package_path = str(file_path).split("test")[0]
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    rc, errors = main_with_errors(argv=[package_path])
-    assert rc == 0, "Found %d code style errors / warnings:\n" % len(
-        errors
-    ) + "\n".join(errors)
+    rc, errors = main_with_errors(argv=[package_path]) # type: ignore
+    assert rc == 0, f"Found {len(errors)} code style errors / warnings:\n{chr(10).join(errors)}"
