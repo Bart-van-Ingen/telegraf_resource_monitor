@@ -4,10 +4,11 @@ import pytest
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-
-from resource_diagnostics_updater.resource_diagnostics_updater import (
+from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublisher
+from resource_diagnostics_updater.resource_diagnostics_updater_node import (
     DiagnosedResource,
-    DiagnosticsPublisherManager,
+    configure_diagnostics_updaters,
+    get_diagnosed_resources_from_config,
 )
 
 
@@ -103,17 +104,19 @@ def test_diagnostics_publisher_manager_config_loading(
         parameter_overrides=[diagnosed_resources_parameter],
     )
 
-    diagnostics_publisher_manager = DiagnosticsPublisherManager(test_node)
+    diagnosed_resources = get_diagnosed_resources_from_config(test_node)
 
-    assert (
-        diagnostics_publisher_manager.diagnosed_resources
-        == test_parameters.expected_diagnosed_resources
+    assert diagnosed_resources == test_parameters.expected_diagnosed_resources
+
+    diagnostic_updater = DiagnosticsPublisher(test_node)
+
+    resource_diagnostic_updaters = configure_diagnostics_updaters(
+        diagnosed_resources,
+        diagnostic_updater,
     )
 
-    assert len(diagnostics_publisher_manager.resource_diagnostics_updaters) == len(
-        test_parameters.expected_diagnosed_resources
-    )
+    assert len(resource_diagnostic_updaters) == len(test_parameters.expected_diagnosed_resources)
 
-    assert len(diagnostics_publisher_manager.all_diagnostic_statuses) == len(
+    assert len(diagnostic_updater.all_diagnostic_statuses) == len(
         test_parameters.expected_diagnosed_resources
     )

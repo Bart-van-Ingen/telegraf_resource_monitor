@@ -1,23 +1,19 @@
 from dataclasses import dataclass
-
-# import magicmock
 from unittest.mock import MagicMock
 
 import pytest
 import rclpy
 from diagnostic_msgs.msg import DiagnosticStatus
 from rclpy.node import Node
+from resource_diagnostics_updater.diagnosed_resource import DiagnosedResource
+from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublisher
 
-from resource_diagnostics_updater.resource_diagnostics_updater import (
-    DiagnosedResource,
-    DiagnosticsPublisherManager,
-    ResourceDiagnosticsUpdater,
-)
+from resource_diagnostics_updater.resource_diagnostics_updater import ResourceDiagnosticsUpdater
 from resource_monitoring_interfaces.msg import Field, Resource
 
 
 @pytest.fixture
-def test_diagnostics_publisher_manager():
+def test_diagnostics_publisher():
     rclpy.init()
     test_node = Node("test_node")
 
@@ -91,11 +87,11 @@ class UpdaterConfigTestParams:
     ],
 )
 def test_resource_diagnostics_updater_config_loading(
-    test_diagnostics_publisher_manager: DiagnosticsPublisherManager,
+    test_diagnostics_publisher: DiagnosticsPublisher,
     test_parameters: UpdaterConfigTestParams,
 ):
     diagnostic_updater = ResourceDiagnosticsUpdater(
-        test_diagnostics_publisher_manager,
+        test_diagnostics_publisher,
         test_parameters.diagnosed_resource,
         MagicMock(),
     )
