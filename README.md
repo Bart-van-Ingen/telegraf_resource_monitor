@@ -4,12 +4,11 @@
 
 # Telegraf Resource Monitor
 
-This repository provides a ROS 2-based resource monitoring solution that leverages Telegraf to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more.
+This repository provides a ROS 2-based resource monitoring solution that leverages [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more.
 
 ## Table of Contents
 
 - [Motivation](#motivation)
-   - [Telegraf as backbone](#telegraf-as-backbone)
 - [Architecture](#architecture)
    - [telegraf_resource_monitor](#telegraf_resource_monitor)
    - [diagnostics_resource_updater](#diagnostics_resource_updater)
@@ -34,7 +33,7 @@ This project attempts to fill that gap.
 
 ### Telegraf as backbone
 Resource monitoring is not a unique problem to robotics, and there are many existing tools that do this well. A well established tool within the cloud native and DevOps communities is Telegraf.
-Telegraf is an open-source agent for collecting and reporting metrics. It supports a variety of input plugins to gather data from different sources and output plugins to send data to various destinations. By integrating Telegraf with ROS 2, we do not have to reinvent the wheel of resource monitoring and can leverage its more advanced capabilities, such as aggregators and processors.
+[Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) is an open-source agent for collecting and reporting metrics. It supports a variety of input plugins to gather data from different sources and output plugins to send data to various destinations. By integrating Telegraf with ROS 2, we do not have to reinvent the wheel of resource monitoring and can leverage its more advanced capabilities, such as aggregators and processors.
 
 Telegraf also present the opportunity to build out remote monitoring capabilities of the same resources over the OTLP protocol, which is a common standard for telemetry data. This can be connect to any [opentelemetry collector](https://opentelemetry.io/docs/collector/distributions/) which can then pass it on to whatever remote monitoring environment you wish.
 
@@ -43,7 +42,7 @@ Telegraf also present the opportunity to build out remote monitoring capabilitie
 
 This repository contains three ROS 2 packages:
 - `telegraf_resource_monitor` 
-   Integrates [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) with ROS 2 to monitor system resources and publish them as ROS messages in an easily configurable way.
+   Integrates Telegraf with ROS 2 to monitor system resources and publish them as ROS messages.
 - `resource_diagnostics_updater`
    Subscribes to resource topics and updates the ROS 2 diagnostics system with the latest metrics, based on target resources stipulated in a configuration file. 
 - `resource_monitoring_interfaces`
@@ -56,7 +55,7 @@ The architecture between the packages is illustrated below:
 
 ### telegraf_resource_monitor
 
-The package consists of several key components:
+The package consists of:
 
 - **Telegraf Configuration**: Custom Telegraf config that outputs metrics to a Unix socket
 - **Unix Socket Manager**: Receives JSON data from Telegraf via Unix socket
@@ -119,21 +118,21 @@ The package includes a pre-configured Telegraf configuration file at `config/tel
 
 Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other plugins that can monitor relevant resources for you.
 
-No configuration is needed on the node side, since it will parse the available fields and use its names to generate the topics accordingly.
+Currently no configuration is needed on the node side, since it will parse the available fields and use its names to generate the topics accordingly.
 
 ### diagnostics_resource_updater
 
-The package consists of several key components:
+The package consists of:
 
 - **Diagnostics Resource Updater**: Subscribes to specific resource topics and updates the ROS 2 diagnostics system based on specified DiagnosedResource defined during initialization.
 - **Diagnostics Resource Updater Node**: Parses a configuration file to determine which resources to monitor and initializes the Diagnostics Resource Updaters accordingly.
-- **Diagnostics Publisher**: Publishes aggregated diagnostics information to the `/diagnostics` topic at a regular interval and interface to topic if diagnostics level is not OK.
+- **Diagnostics Publisher**: Publishes aggregated diagnostics information to the `/diagnostics` topic at a regular interval and is an interface to the diagnostics topic for the updaters.
 
 #### Usage
 
 ##### Basic Launch
 
-Run the following command in terminal to launch the diagnostics resource updater with a sample configuration file:
+Run the following command in terminal to launch the diagnostics resource updater with the default configuration file:
 
 ```bash
 ros2 launch resource_diagnostics_updater resource_diagnostics_updater_launch.py
@@ -151,8 +150,20 @@ log_level:=DEBUG
 ##### Configuration
 There is a sample configuration file at `config/resource_diagnostics.yaml` that specifies which resources to monitor and their corresponding diagnostic parameters. You can modify this file to suit your monitoring needs or create your own that you then specify during launch.
 
+The configuration file uses the following format:
+```yaml
+/resource_diagnostics_updater_node:
+  ros__parameters:
+    diagnosed_resources: |
+        - topic: <topic name of resource to monitor>
+          name: <name to show in diagnostics>
+          field: <field to monitor>
+          warning_threshold: <value for warning threshold> 
+          error_threshold: <value for error threshold>
+```
+
 ### resource_monitoring_interfaces
-Defines custom ROS 2 message types for resource monitoring, including:
+Defines custom ROS 2 message types for message sent by the [telegraf_resource_monitor](#telegraf_resource_monitor), including:
 - `Field.msg`: Represents a single metric field with name and value
 - `Resource.msg`: Represents a resource with a header and an array of `Field` messages
 
