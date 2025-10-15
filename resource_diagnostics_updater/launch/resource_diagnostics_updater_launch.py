@@ -11,7 +11,7 @@ def generate_launch_description():
                 name="config_file_path",
                 # since default value is not a path, launching only this launch file will output a
                 # warning specifying this fact.
-                default_value="config file path not specified in launch file!",
+                default_value="src/resource_diagnostics_updater/config/resource_diagnostics.yaml",
                 description="Path to client specific yaml config file.",
             ),
             DeclareLaunchArgument(
