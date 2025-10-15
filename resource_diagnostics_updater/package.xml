@@ -3,11 +3,11 @@
 <package format="3">
   <name>resource_diagnostics_updater</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Subscribes to resource topics and compares to config to determine diagnostic level </description>
   <maintainer email="van.ingen.bart@gmail.com">dev</maintainer>
-  <license>TODO: License declaration</license>
+  <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
+  <license>Apache-2.0</license>
 
-  <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
