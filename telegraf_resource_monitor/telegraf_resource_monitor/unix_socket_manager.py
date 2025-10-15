@@ -86,7 +86,7 @@ class UnixSocketManager:
         try:
             return operation_func(*args, **kwargs)
 
-        except socket.timeout:
+        except TimeoutError:
             # Timeout allows us to check shutdown_event periodically
             return None
 
