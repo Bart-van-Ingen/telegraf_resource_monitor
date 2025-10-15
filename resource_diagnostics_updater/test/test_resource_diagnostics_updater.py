@@ -93,7 +93,7 @@ def test_resource_diagnostics_updater_config_loading(
     diagnostic_updater = ResourceDiagnosticsUpdater(
         test_diagnostics_publisher,
         test_parameters.diagnosed_resource,
-        MagicMock(),
+        reentrant_callback_group=MagicMock(),
     )
 
     diagnostic_updater.resource_callback(test_parameters.resource_msg)

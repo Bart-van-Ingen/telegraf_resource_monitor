@@ -4,9 +4,9 @@ import pytest
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
+from resource_diagnostics_updater.diagnosed_resource import DiagnosedResource
 from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublisher
 from resource_diagnostics_updater.resource_diagnostics_updater_node import (
-    DiagnosedResource,
     configure_diagnostics_updaters,
     get_diagnosed_resources_from_config,
 )
@@ -24,7 +24,7 @@ def test_node():
 
 
 @dataclass
-class PublisherManagerConfigTestParams:
+class UpdaterNodeConfigTestParams:
     yaml_str: str
     expected_diagnosed_resources: list[DiagnosedResource]
 
@@ -33,7 +33,7 @@ class PublisherManagerConfigTestParams:
     "test_parameters",
     [
         pytest.param(
-            PublisherManagerConfigTestParams(
+            UpdaterNodeConfigTestParams(
                 yaml_str="""
         - topic: cpu/cpu_total
           name: CPU Usage Active
@@ -67,7 +67,7 @@ class PublisherManagerConfigTestParams:
             id="cpu and disk resources",
         ),
         pytest.param(
-            PublisherManagerConfigTestParams(
+            UpdaterNodeConfigTestParams(
                 yaml_str="""
         - topic: /mem
           name: Memory Usage
@@ -89,9 +89,9 @@ class PublisherManagerConfigTestParams:
         ),
     ],
 )
-def test_diagnostics_publisher_manager_config_loading(
+def test_initialize_updaters_from_config(
     test_node: Node,
-    test_parameters: PublisherManagerConfigTestParams,
+    test_parameters: UpdaterNodeConfigTestParams,
 ):
     diagnosed_resources_parameter = Parameter(
         'diagnosed_resources',

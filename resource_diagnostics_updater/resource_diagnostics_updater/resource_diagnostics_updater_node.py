@@ -14,6 +14,41 @@ from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublis
 from resource_diagnostics_updater.resource_diagnostics_updater import ResourceDiagnosticsUpdater
 
 
+def main(args=None):
+
+    rclpy.init(args=args)
+
+    node = Node("resource_diagnostics_updater_node")
+    logger = node.get_logger()
+
+    diagnosed_resources = get_diagnosed_resources_from_config(node)
+
+    diagnostics_publisher = DiagnosticsPublisher(node)
+
+    configure_diagnostics_updaters(diagnosed_resources, diagnostics_publisher)
+
+    try:
+        # Use a MultiThreadedExecutor to allow multiple resource diagnostics updaters to run in
+        # parallel
+        executor = MultiThreadedExecutor()
+        executor.add_node(node)
+        executor.spin()
+
+    except KeyboardInterrupt:
+        logger.info("system_monitor_node received valid kill signal")
+
+    except Exception as error:
+        logger.error(traceback.format_exc())
+        raise error
+
+    finally:
+
+        node.destroy_node()
+
+    with contextlib.suppress(RCLError):
+        rclpy.shutdown()
+
+
 def get_diagnosed_resources_from_config(node: Node) -> list[DiagnosedResource]:
 
     node.declare_parameter('diagnosed_resources', '')
@@ -62,41 +97,6 @@ def configure_diagnostics_updaters(
         resource_diagnostics_updaters.append(resource_diagnostics_updater)
 
     return resource_diagnostics_updaters
-
-
-def main(args=None):
-
-    rclpy.init(args=args)
-
-    node = Node("resource_diagnostics_updater_node")
-    logger = node.get_logger()
-
-    diagnosed_resources = get_diagnosed_resources_from_config(node)
-
-    diagnostics_publisher = DiagnosticsPublisher(node)
-
-    configure_diagnostics_updaters(diagnosed_resources, diagnostics_publisher)
-
-    try:
-        # Use a MultiThreadedExecutor to allow multiple resource diagnostics updaters to run in
-        # parallel
-        executor = MultiThreadedExecutor()
-        executor.add_node(node)
-        executor.spin()
-
-    except KeyboardInterrupt:
-        logger.info("system_monitor_node received valid kill signal")
-
-    except Exception as error:
-        logger.error(traceback.format_exc())
-        raise error
-
-    finally:
-
-        node.destroy_node()
-
-    with contextlib.suppress(RCLError):
-        rclpy.shutdown()
 
 
 if __name__ == "__main__":

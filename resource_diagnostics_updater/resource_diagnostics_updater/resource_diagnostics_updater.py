@@ -19,7 +19,7 @@ class ResourceDiagnosticsUpdater:
         self.diagnostics_publisher = diagnostics_publisher
         self.diagnosed_resource = diagnosed_resource
 
-        # Create diagnostic status for this resource
+        # Create diagnostic status for this resource whose values will be updated in the callback
         self.diagnostic_status = DiagnosticStatus()
         self.diagnostic_status.name = diagnosed_resource.name
         self.diagnostic_status.message = "unknown"
@@ -77,7 +77,8 @@ class ResourceDiagnosticsUpdater:
             self.diagnostic_status.message = f"{self.diagnosed_resource.name} ok"
             return
 
-        # only publish if status is warning or error
+        # only publish if status is warning or error, otherwise it will be published at the next
+        # timer event of the diagnostics publisher
         self.publish()
 
     def publish(self) -> None:

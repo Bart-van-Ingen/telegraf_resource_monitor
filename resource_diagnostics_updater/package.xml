@@ -5,7 +5,6 @@
   <version>0.0.0</version>
   <description>Subscribes to resource topics and compares to config to determine diagnostic level </description>
   <maintainer email="van.ingen.bart@gmail.com">dev</maintainer>
-  <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
   <license>Apache-2.0</license>
 
   <test_depend>ament_flake8</test_depend>
