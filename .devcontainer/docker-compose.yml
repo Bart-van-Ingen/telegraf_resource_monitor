@@ -15,6 +15,7 @@ services:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ./telegraf_resource_monitor:/ros_ws/src/telegraf_resource_monitor:cached
       - ./resource_monitoring_interfaces:/ros_ws/src/resource_monitoring_interfaces:cached
+      - ./resource_diagnostics_updater:/ros_ws/src/resource_diagnostics_updater:cached
       - ./.vscode:/ros_ws/.vscode:cached
       - ./pyproject.toml:/ros_ws/pyproject.toml:cached
 

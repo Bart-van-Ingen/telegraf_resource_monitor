@@ -20,6 +20,7 @@
         },
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
+    "black-formatter.args":["--config", "pyproject.toml"],
     "python.analysis.completeFunctionParens": true,
     "python.autoComplete.extraPaths": [
         "/opt/ros/humble/lib/python3.10/site-packages",
@@ -36,7 +37,7 @@
     "python.testing.cwd": "${workspaceFolder}",
     "python.testing.pytestArgs": [
         "--color=yes",
-        "--verbose"
+        "-vvvvvrpP"
     ],
     // CPP SETTINGS
     "C_Cpp.default.intelliSenseMode": "clang-x64",

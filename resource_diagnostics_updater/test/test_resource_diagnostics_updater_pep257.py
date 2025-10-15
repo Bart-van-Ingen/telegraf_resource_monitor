@@ -1,4 +1,4 @@
-# Copyright 2017 Open Source Robotics Foundation, Inc.
+# Copyright 2015 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,16 +15,14 @@
 import pathlib
 
 import pytest
-from ament_flake8.main import main_with_errors
-
-# modify the path to point to the package root so that it only check the package files
+from ament_pep257.main import main
 
 file_path = pathlib.Path(__file__).parent.resolve()
 package_path = str(file_path).split("test")[0]
 
 
-@pytest.mark.flake8
 @pytest.mark.linter
-def test_flake8():
-    rc, errors = main_with_errors(argv=[package_path])  # type: ignore
-    assert rc == 0, f"Found {len(errors)} code style errors / warnings:\n{chr(10).join(errors)}"
+@pytest.mark.pep257
+def test_pep257():
+    rc = main(argv=[package_path, "test"])
+    assert rc == 0, "Found code style errors / warnings"

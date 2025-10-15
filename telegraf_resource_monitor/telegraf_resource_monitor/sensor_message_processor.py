@@ -41,10 +41,8 @@ class SensorMessageProcessor:
             self.sensor_message_buffer.event.clear()
 
     def publish_sensor_message(self, message: SensorMessage) -> None:
-        self.logger.debug(
-            f"publishing sensor message: {message.name} with tags: {message.tags}"
-        )
 
+        self.logger.debug(f"publishing sensor message: {message.name} with tags: {message.tags}")
         sensor_message_publisher = self.get_publisher(message)
         sensor_message_publisher.publish(message)
 

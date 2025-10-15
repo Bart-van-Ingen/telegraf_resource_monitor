@@ -59,7 +59,6 @@ services:
       dockerfile: docker/Dockerfile
       target: dev
     volumes:
-      - ./.git:/ros_ws/src/.git:cached
       - ./.bash-history:/home/dev/.bash_history:cached
       # Mount host filesystem for system monitoring
       - /:/hostfs:ro

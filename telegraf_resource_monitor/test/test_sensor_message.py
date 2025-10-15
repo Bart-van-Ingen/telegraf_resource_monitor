@@ -3,7 +3,6 @@ from dataclasses import dataclass
 import pytest
 import rclpy
 from rclpy.node import Node
-
 from telegraf_resource_monitor.sensor_message import SensorMessage, SensorMessageBuffer
 
 

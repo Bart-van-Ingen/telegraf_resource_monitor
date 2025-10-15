@@ -2,7 +2,7 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-package_name = 'telegraf_resource_monitor'
+package_name = "resource_diagnostics_updater"
 
 setup(
     name=package_name,
@@ -17,17 +17,17 @@ setup(
             [str(launch_file_path) for launch_file_path in Path("launch").glob("*")],
         ),
     ],
-    install_requires=['setuptools'],
+    install_requires=["setuptools"],
     zip_safe=True,
-    maintainer='Bart',
-    maintainer_email='van.ingen.bart@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
-    tests_require=['pytest'],
+    maintainer="dev",
+    maintainer_email="bart@adinnovations.nl",
+    description="TODO: Package description",
+    license="TODO: License declaration",
+    tests_require=["pytest"],
     entry_points={
-        'console_scripts': [
-            'telegraf_resource_monitor_node ='
-            ' telegraf_resource_monitor.telegraf_resource_monitor_node:main'
+        "console_scripts": [
+            "resource_diagnostics_updater_node ="
+            " resource_diagnostics_updater.resource_diagnostics_updater_node:main"
         ],
     },
 )

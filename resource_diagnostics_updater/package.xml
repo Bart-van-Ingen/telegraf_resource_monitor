@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>telegraf_resource_monitor</name>
+  <name>resource_diagnostics_updater</name>
   <version>0.0.0</version>
-  <description>integrates cloud native Telegraf with ROS 2 to monitor system resources and publish
-them as ROS messages in an easily configurable way.</description>
-  <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
+  <description>Subscribes to resource topics and compares to config to determine diagnostic level </description>
+  <maintainer email="van.ingen.bart@gmail.com">dev</maintainer>
   <license>Apache-2.0</license>
 
   <test_depend>ament_flake8</test_depend>
