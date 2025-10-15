@@ -15,18 +15,20 @@ from resource_diagnostics_updater.resource_diagnostics_updater import ResourceDi
 
 
 def get_diagnosed_resources_from_config(node: Node) -> list[DiagnosedResource]:
+
     node.declare_parameter('diagnosed_resources', '')
-    diagnosed_resources_str = (
+
+    diagnosed_resources_yaml = (
         node.get_parameter('diagnosed_resources').get_parameter_value().string_value
     )
 
-    diagnosed_resources_dicts = yaml.safe_load(diagnosed_resources_str)
+    diagnosed_resources_dicts = yaml.safe_load(diagnosed_resources_yaml)
 
     if not diagnosed_resources_dicts:
         node.get_logger().error("No diagnosed resources configured. Exiting.")
         sys.exit(1)
 
-    diagnosed_resources = []
+    diagnosed_resources: list[DiagnosedResource] = []
 
     for resource_dict in diagnosed_resources_dicts:
         node.get_logger().debug(f"Loaded diagnosed resource: {resource_dict}")
@@ -41,7 +43,8 @@ def get_diagnosed_resources_from_config(node: Node) -> list[DiagnosedResource]:
 
 
 def configure_diagnostics_updaters(
-    diagnosed_resources, diagnostics_publisher: DiagnosticsPublisher
+    diagnosed_resources: list[DiagnosedResource],
+    diagnostics_publisher: DiagnosticsPublisher,
 ):
     resource_diagnostics_updaters = []
 

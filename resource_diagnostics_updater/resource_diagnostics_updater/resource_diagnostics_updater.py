@@ -25,7 +25,8 @@ class ResourceDiagnosticsUpdater:
         self.diagnostic_status.message = "unknown"
         self.diagnostic_status.hardware_id = "telegraf_resource_monitor"
 
-        # Register this diagnostic status with the manager
+        # Register this diagnostic status with the diagnostics publisher so that it gets published
+        #  at the publishers timer rate
         self.diagnostics_publisher.add_diagnostic_status(self.diagnostic_status)
 
         self.diagnostics_publisher.node.create_subscription(
@@ -80,5 +81,4 @@ class ResourceDiagnosticsUpdater:
         self.publish()
 
     def publish(self) -> None:
-        """Publish this resource's diagnostic status."""
         self.diagnostics_publisher.publish_diagnostics(self.diagnostic_status)
