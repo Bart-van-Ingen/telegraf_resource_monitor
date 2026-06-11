@@ -34,11 +34,15 @@ services:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
       - NVIDIA_DRIVER_CAPABILITIES=all
+      # X11 authentication file for secure display access
+      - XAUTHORITY=/tmp/.docker.xauth
     volumes:
       # Allows graphical programs in the container.
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
-  
+      # X11 authentication credentials for secure display access
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
   # Overlay image containing the example source code.
   overlay:
     extends: base
@@ -64,10 +68,10 @@ services:
       - /:/hostfs:ro
     environment:
       # Enable Docker host monitoring from within container
-        - HOST_ETC=/hostfs/etc
-        - HOST_PROC=/hostfs/proc
-        - HOST_SYS=/hostfs/sys
-        - HOST_VAR=/hostfs/var
-        - HOST_RUN=/hostfs/run
-        - HOST_MOUNT_PREFIX=/hostfs
+      - HOST_ETC=/hostfs/etc
+      - HOST_PROC=/hostfs/proc
+      - HOST_SYS=/hostfs/sys
+      - HOST_VAR=/hostfs/var
+      - HOST_RUN=/hostfs/run
+      - HOST_MOUNT_PREFIX=/hostfs
     command: bash

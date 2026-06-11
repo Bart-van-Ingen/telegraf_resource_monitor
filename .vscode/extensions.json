@@ -4,6 +4,7 @@
                 "ms-python.python", // language support
                 "charliermarsh.ruff", // python linter
                 "ms-python.black-formatter", // python formatter
+                // C++ related extensions
                 "ms-vscode.cpptools-extension-pack", // language support
                 "ms-vscode.cmake-tools", // cmake support
                 // Other extensions
@@ -12,10 +13,8 @@
                 "mhutchie.git-graph", // git graph
                 "mikestead.dotenv", // .env file support
                 "usernamehw.errorlens", // in file error highlighting
-                "visualstudioexptteam.vs", //IntelliCode
                 "vscode-icons-team.vscode-icons", // icons
                 "ibm.output-colorizer", // colorize output
                 "esbenp.prettier-vscode", // prettier for markdown formatting
-                "VisualStudioExptTeam.vscodeintellicode" // AI-assisted development
         ]
 }

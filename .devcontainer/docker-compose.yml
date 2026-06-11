@@ -14,6 +14,7 @@ services:
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ./telegraf_resource_monitor:/ros_ws/src/telegraf_resource_monitor:cached
+      - ./telegraf_resource_monitor_cpp:/ros_ws/src/telegraf_resource_monitor_cpp:cached
       - ./resource_monitoring_interfaces:/ros_ws/src/resource_monitoring_interfaces:cached
       - ./resource_diagnostics_updater:/ros_ws/src/resource_diagnostics_updater:cached
       - ./.vscode:/ros_ws/.vscode:cached

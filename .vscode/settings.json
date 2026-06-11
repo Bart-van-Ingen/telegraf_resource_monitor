@@ -20,7 +20,10 @@
         },
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "black-formatter.args":["--config", "pyproject.toml"],
+    "black-formatter.args": [
+        "--config",
+        "pyproject.toml"
+    ],
     "python.analysis.completeFunctionParens": true,
     "python.autoComplete.extraPaths": [
         "/opt/ros/humble/lib/python3.10/site-packages",
@@ -39,16 +42,6 @@
         "--color=yes",
         "-vvvvvrpP"
     ],
-    // CPP SETTINGS
-    "C_Cpp.default.intelliSenseMode": "clang-x64",
-    "search.exclude": {
-        "**/*.code-search": true,
-        "**/bower_components": true,
-        "**/build/**": true,
-        "**/install": true,
-        "**/log": true,
-        "**/node_modules": true
-    },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
@@ -60,4 +53,5 @@
     "prettier.configPath": ".config/.prettierrc",
     "prettier.ignorePath": ".config/.prettierignore",
     "prettier.printWidth": 100,
+    "cmake.ignoreCMakeListsMissing": true,
 }
