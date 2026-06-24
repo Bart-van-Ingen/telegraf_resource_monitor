@@ -39,7 +39,7 @@ services:
     volumes:
       # Allows graphical programs in the container.
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
+      - /tmp/.docker.xauth:/root/.Xauthority:rw
       # X11 authentication credentials for secure display access
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
 

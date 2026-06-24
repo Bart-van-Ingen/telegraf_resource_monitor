@@ -16,6 +16,14 @@
             "problemMatcher": "$gcc"
         },
         {
+            "label": "build package",
+            "detail": "Build a specific package",
+            "type": "shell",
+            "command": "./.vscode/tasks/build.sh --packages-select ${input:package}",
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
             "label": "debug",
             "detail": "Build workspace (debug)",
             "type": "shell",
@@ -247,8 +255,14 @@
     "inputs": [
         {
             "id": "package",
-            "type": "promptString",
-            "description": "Package name"
+            "type": "pickString",
+            "description": "Select ROS package",
+            "options": [
+                "resource_diagnostics_updater",
+                "resource_monitoring_interfaces",
+                "telegraf_resource_monitor",
+                "telegraf_resource_monitor_cpp"
+            ]
         }
     ]
 }

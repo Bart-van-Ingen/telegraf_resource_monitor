@@ -54,4 +54,5 @@
     "prettier.ignorePath": ".config/.prettierignore",
     "prettier.printWidth": 100,
     "cmake.ignoreCMakeListsMissing": true,
+    "C_Cpp.errorSquiggles": "enabled",
 }
