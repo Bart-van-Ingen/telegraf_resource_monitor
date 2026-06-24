@@ -341,6 +341,7 @@ def test_buffer(
 
     message = test_sensor_message_buffer.get_message()
 
+    assert message is not None
     assert message == test_parameters.expected_message
 
     assert test_sensor_message_buffer.is_empty()

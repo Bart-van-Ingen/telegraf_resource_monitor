@@ -6,6 +6,9 @@
 #include "std_msgs/msg/string.hpp"
 
 #include "telegraf_resource_monitor_cpp/telegraf_monitor.h"
+#include "telegraf_resource_monitor_cpp/sensor_message.h"
+
+
 
 using namespace std::chrono_literals;
 

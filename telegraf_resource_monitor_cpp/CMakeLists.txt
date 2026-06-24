@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_monitoring_interfaces REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 file(GLOB_RECURSE TELEGRAF_MONITOR_SOURCES CONFIGURE_DEPENDS
   src/*.cpp
@@ -25,6 +26,9 @@ ament_target_dependencies(
   "rclcpp"
   "resource_monitoring_interfaces"
 )
+
+# Link the third-party JSON library
+target_link_libraries(telegraf_monitor_node nlohmann_json::nlohmann_json)
 
 install(TARGETS telegraf_monitor_node
   DESTINATION lib/${PROJECT_NAME})

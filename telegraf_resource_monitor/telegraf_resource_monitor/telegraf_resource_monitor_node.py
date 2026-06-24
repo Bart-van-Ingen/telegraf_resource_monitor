@@ -17,7 +17,9 @@ def main(args=None):
 
     sensor_message_buffer = SensorMessageBuffer(logger)
 
-    unix_socket_manager = UnixSocketManager(logger, sensor_message_buffer)
+    node.declare_parameter("socket_path", "/tmp/telegraf.sock")
+    socket_path = node.get_parameter("socket_path").get_parameter_value().string_value
+    unix_socket_manager = UnixSocketManager(logger, sensor_message_buffer, socket_path)
     sensor_message_processor = SensorMessageProcessor(node, sensor_message_buffer)
 
     try:
@@ -26,17 +28,16 @@ def main(args=None):
     except KeyboardInterrupt:
         logger.info("system_monitor_node received valid kill signal")
 
-    except Exception as error:
+    except Exception:
         logger.error(traceback.format_exc())
-        raise error
+        raise
 
     finally:
         sensor_message_processor.shutdown()
         unix_socket_manager.shutdown()
         node.destroy_node()
-
-    with contextlib.suppress(RCLError):
-        rclpy.shutdown()
+        with contextlib.suppress(RCLError):
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":

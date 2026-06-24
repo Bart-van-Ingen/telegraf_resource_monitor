@@ -1,3 +1,4 @@
+from builtin_interfaces.msg import Time
 from rclpy._rclpy_pybind11 import RCLError
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
@@ -44,7 +45,7 @@ class SensorMessagePublisher:
             fields.append(field_msg)
 
         resource_msg = Resource()
-        resource_msg.header.stamp = self.node.get_clock().now().to_msg()
+        resource_msg.header.stamp = Time(sec=message.timestamp, nanosec=0)
         resource_msg.fields = fields
 
         try:

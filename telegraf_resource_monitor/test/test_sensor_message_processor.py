@@ -57,7 +57,7 @@ def test_buffer_complete_messages(
     test_buffer_and_processor: tuple[SensorMessageBuffer, SensorMessageProcessor],
     test_parameters: MessageProccessorTestParams,
 ):
-    sensor_message_buffer, _ = test_buffer_and_processor
+    sensor_message_buffer, processor = test_buffer_and_processor
     for sensor_message in test_parameters.sensor_messages:
         sensor_message_buffer.buffer.put(sensor_message)
 

@@ -12,6 +12,8 @@
   <depend>rclcpp</depend>
   <depend>resource_monitoring_interfaces</depend>
 
+  <depend>nlohmann-json3-dev</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
