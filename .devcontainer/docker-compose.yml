@@ -12,19 +12,29 @@ services:
     #   dockerfile: .devcontainer/Dockerfile
 
     volumes:
-      # Update this to wherever you want VS Code to mount the folder of your project
-      - ./telegraf_resource_monitor:/ros_ws/src/telegraf_resource_monitor:cached
-      - ./telegraf_resource_monitor_cpp:/ros_ws/src/telegraf_resource_monitor_cpp:cached
-      - ./resource_monitoring_interfaces:/ros_ws/src/resource_monitoring_interfaces:cached
-      - ./resource_diagnostics_updater:/ros_ws/src/resource_diagnostics_updater:cached
-      - ./.vscode:/ros_ws/.vscode:cached
-      - ./pyproject.toml:/ros_ws/pyproject.toml:cached
+      # Mount the whole repo at the workspace root so non-package files (docker/, .git,
+      # README, .clang-format, etc.) are visible at the top level.
+      # Paths are relative to the primary docker-compose.yml file's directory (docker/).
+      - ..:/ros_ws/src:cached
+
+      # VS Code opens /ros_ws (see devcontainer.json), but the repo -- and with it .vscode/ --
+      # is mounted one level down at /ros_ws/src. Mount it a second time at /ros_ws/.vscode so
+      # settings, tasks and the task scripts' own ./.vscode/tasks/*.sh paths resolve from the
+      # workspace root too.
+      - ../.vscode:/ros_ws/.vscode:cached
 
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     # cap_add:
     #   - SYS_PTRACE
     # security_opt:
     #   - seccomp:unconfined
+
+    environment:
+      # Pin colcon's build/install/log directories to /ros_ws regardless of the cwd a
+      # caller happens to be in — a `colcon build` run from inside a package directory
+      # would otherwise scatter a second set of artifacts there. Note that --base-paths
+      # only controls package discovery, not output location.
+      - COLCON_DEFAULTS_FILE=/ros_ws/src/.devcontainer/colcon_defaults.yaml
 
     # Overrides default command so things don't shut down after the process ends.
     command: /bin/sh -c "while sleep 1000; do :; done"

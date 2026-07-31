@@ -12,7 +12,7 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget socat jq python3-pip lm-sensors \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install -U pytest
+    && pip install "pytest<9.1"
 
 # Install Telegraf
 RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.35.3_linux_amd64.tar.gz \
@@ -29,8 +29,7 @@ FROM base AS overlay
 # Create an overlay Colcon workspace
 RUN mkdir -p /ros_ws/src
 WORKDIR /ros_ws
-COPY ./telegraf_resource_monitor/ ./src/telegraf_resource_monitor/
-COPY ./resource_monitoring_interfaces/ ./src/resource_monitoring_interfaces/
+COPY . ./src/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
@@ -51,6 +50,9 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 # Development Image #
 #####################
 FROM overlay AS dev
+
+# Add ccache and mold for quicker cpp compiling times
+RUN apt-get update && apt-get install -y ccache mold
 
 # Add dev user with same UID and GID as your host system
 # (copied from https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user)

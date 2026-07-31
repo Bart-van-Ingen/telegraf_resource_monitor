@@ -16,7 +16,7 @@ services:
   base:
     image: telegraf_resource_monitor:base
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
       args:
         ROS_DISTRO: humble
@@ -48,7 +48,7 @@ services:
     extends: base
     image: telegraf_resource_monitor:overlay
     build:
-      context: .
+      context: ..
       ssh:
         - default
       dockerfile: docker/Dockerfile
@@ -59,11 +59,11 @@ services:
     image: telegraf_resource_monitor:dev
     hostname: ros_dev_container
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
       target: dev
     volumes:
-      - ./.bash-history:/home/dev/.bash_history:cached
+      - ../.bash-history:/home/dev/.bash_history
       # Mount host filesystem for system monitoring
       - /:/hostfs:ro
     environment:

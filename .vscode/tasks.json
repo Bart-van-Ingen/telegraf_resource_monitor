@@ -41,7 +41,7 @@
             "label": "test",
             "detail": "Run all unit tests and show results.",
             "type": "shell",
-            "command": "./test.sh",
+            "command": "./.vscode/tasks/test.sh",
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -235,20 +235,6 @@
             "detail": "Install all dependencies specified in the workspaces package.xml files.",
             "type": "shell",
             "command": "sudo apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -y",
-            "problemMatcher": []
-        },
-        {
-            "label": "setup",
-            "detail": "Set up the workspace",
-            "type": "shell",
-            "command": "./setup.sh",
-            "problemMatcher": []
-        },
-        {
-            "label": "add submodules from .repos",
-            "detail": "Create a git submodule for all repositories in your .repos file",
-            "type": "shell",
-            "command": "python3 .devcontainer/repos_to_submodules.py",
             "problemMatcher": []
         }
     ],

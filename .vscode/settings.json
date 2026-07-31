@@ -10,6 +10,17 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
     },
+    // Colcon artifact trees are siblings of src/ under the workspace root.
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/install/**": true,
+        "**/log/**": true
+    },
+    "search.exclude": {
+        "build": true,
+        "install": true,
+        "log": true
+    },
     // PYTHON SETTINGS
     "python.defaultInterpreterPath": "/usr/bin/python3",
     "python.terminal.activateEnvironment": false,
@@ -18,12 +29,8 @@
         "editor.codeActionsOnSave": {
             "source.fixAll": "explicit"
         },
-        "editor.defaultFormatter": "ms-python.black-formatter"
+        "editor.defaultFormatter": "charliermarsh.ruff"
     },
-    "black-formatter.args": [
-        "--config",
-        "pyproject.toml"
-    ],
     "python.analysis.completeFunctionParens": true,
     "python.autoComplete.extraPaths": [
         "/opt/ros/humble/lib/python3.10/site-packages",
@@ -36,12 +43,17 @@
     "python.analysis.autoFormatStrings": true,
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.envFile": "${workspaceFolder}/.env",
-    "python.testing.cwd": "${workspaceFolder}",
+    // The workspace folder is the colcon root (/ros_ws); the repo is one level down, so root
+    // pytest here rather than at /ros_ws, where it would try to collect build/ and install/.
+    "python.testing.cwd": "${workspaceFolder}/src",
     "python.testing.pytestArgs": [
         "--color=yes",
         "-vvvvvrpP"
     ],
+    // CPP SETTINGS
+    "cmake.ignoreCMakeListsMissing": true,
+    "C_Cpp.errorSquiggles": "enabled",
+    // JSON settings
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
@@ -50,9 +62,9 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
     },
-    "prettier.configPath": ".config/.prettierrc",
-    "prettier.ignorePath": ".config/.prettierignore",
     "prettier.printWidth": 100,
-    "cmake.ignoreCMakeListsMissing": true,
-    "C_Cpp.errorSquiggles": "enabled",
+    // ROS2 SETTINGS
+    "ROS2.distro": "humble",
+    "ROS2.rosSetupScript": "/ros_ws/src/docker/entrypoint.sh",
+    "git-graph.maxDepthOfRepoSearch": 1,
 }

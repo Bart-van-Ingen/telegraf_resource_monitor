@@ -1,0 +1,23 @@
+# Default colcon arguments for this container.
+#
+# colcon resolves build/install/log relative to the current working directory,
+# so invoking it from anywhere other than /ros_ws (a package subdirectory, say)
+# would scatter a second set of artifact trees. Pinning the bases here keeps
+# every invocation writing to the same place. Wired up via COLCON_DEFAULTS_FILE
+# in .devcontainer/docker-compose.yml.
+#
+# The "" key holds arguments for the top-level `colcon` parser (the ones that
+# come before the verb, like --log-base). Verb-specific arguments go under the
+# verb name. Putting a global option under a verb -- or at the document root --
+# silently does nothing.
+"":
+  log-base: /ros_ws/log
+build:
+  build-base: /ros_ws/build
+  install-base: /ros_ws/install
+test:
+  build-base: /ros_ws/build
+  install-base: /ros_ws/install
+  test-result-base: /ros_ws/build
+test-result:
+  test-result-base: /ros_ws/build
