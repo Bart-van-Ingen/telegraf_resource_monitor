@@ -53,6 +53,8 @@
     // CPP SETTINGS
     "cmake.ignoreCMakeListsMissing": true,
     "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.clang_format_sortIncludes": true,
+    "C_Cpp.clang_format_style": "file:/ros_ws/src/.clang-format",
     // JSON settings
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
@@ -66,5 +68,6 @@
     // ROS2 SETTINGS
     "ROS2.distro": "humble",
     "ROS2.rosSetupScript": "/ros_ws/src/docker/entrypoint.sh",
+    // GIT GRAPH SETTINGS
     "git-graph.maxDepthOfRepoSearch": 1,
 }

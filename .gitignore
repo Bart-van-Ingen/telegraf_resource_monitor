@@ -1,3 +1,4 @@
 **/*.pyc
 .bash-history
 .vscode/browse.*
+**/test_detail.xml

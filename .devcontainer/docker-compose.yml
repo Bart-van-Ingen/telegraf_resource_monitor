@@ -23,11 +23,13 @@ services:
       # workspace root too.
       - ../.vscode:/ros_ws/.vscode:cached
 
+      - ~/.claude:/home/dev/.claude
+
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
-    # cap_add:
-    #   - SYS_PTRACE
-    # security_opt:
-    #   - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
 
     environment:
       # Pin colcon's build/install/log directories to /ros_ws regardless of the cwd a

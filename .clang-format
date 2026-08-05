@@ -1,87 +1,92 @@
-Language: Cpp
-# BasedOnStyle: Google
-AccessModifierOffset: -1
-AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
-AlignEscapedNewlinesLeft: true
-AlignOperands: true
-AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: All
-AllowShortIfStatementsOnASingleLine: true
-AllowShortLoopsOnASingleLine: true
-AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: true
-AlwaysBreakTemplateDeclarations: true
-BinPackArguments: true
-BinPackParameters: true
-BraceWrapping:
-  AfterClass: false
-  AfterControlStatement: false
-  AfterEnum: false
-  AfterFunction: false
-  AfterNamespace: false
-  AfterObjCDeclaration: false
-  AfterStruct: false
-  AfterUnion: false
-  BeforeCatch: false
-  BeforeElse: false
-  IndentBraces: false
-BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Attach
-BreakBeforeTernaryOperators: true
-BreakConstructorInitializersBeforeComma: false
-ColumnLimit: 100
-CommentPragmas: '^ IWYU pragma:'
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
-ConstructorInitializerIndentWidth: 4
-ContinuationIndentWidth: 4
-Cpp11BracedListStyle: true
-DerivePointerAlignment: true
-DisableFormat: false
-ExperimentalAutoDetectBinPacking: false
-ForEachMacros: [ foreach, Q_FOREACH, BOOST_FOREACH ]
-IncludeCategories:
-  - Regex: '^<.*\.h>'
-    Priority: 1
-  - Regex: '^<.*'
-    Priority: 2
-  - Regex: '.*'
-    Priority: 3
-IndentCaseLabels: true
+# based on: https://github.com/PickNikRobotics/roscpp_code_format
+---
+BasedOnStyle: Google
+Standard: Auto
+
+# ---- indentation -------------------------------------------------------
 IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ContinuationIndentWidth: 4
+AccessModifierOffset: -2
+ConstructorInitializerIndentWidth: 2
+IndentCaseLabels: true
 IndentWrappedFunctionNames: false
-KeepEmptyLinesAtTheStartOfBlocks: false
-MacroBlockBegin: ''
-MacroBlockEnd: ''
-MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
-ObjCBlockIndentWidth: 2
-ObjCSpaceAfterProperty: false
-ObjCSpaceBeforeProtocolList: false
-PenaltyBreakBeforeFirstCallParameter: 1
-PenaltyBreakComment: 300
-PenaltyBreakFirstLessLess: 120
-PenaltyBreakString: 1000
-PenaltyExcessCharacter: 1000000
-PenaltyReturnTypeOnItsOwnLine: 200
+
+# ---- line breaking -----------------------------------------------------
+ColumnLimit: 120
+MaxEmptyLinesToKeep: 1
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: true
+BinPackParameters: true
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializers: BeforeComma
+BreakTemplateDeclarations: Yes
+PackConstructorInitializers: NextLine
+ExperimentalAutoDetectBinPacking: false
+
+# ---- alignment / spacing ----------------------------------------------
+AlignEscapedNewlines: Right
+AlignTrailingComments: true
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
 PointerAlignment: Left
-ReflowComments: true
-SortIncludes: true
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
-SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 2
-SpacesInAngles: false
-SpacesInContainerLiterals: true
-SpacesInCStyleCastParentheses: false
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-Standard: Auto
-TabWidth: 8
-UseTab: Never
+SpacesInAngles: Never
+SpacesInParens: Never  # covers empty parens and C-style casts too
+
+# ---- penalties ---------------------------------------------------------
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 60
+PenaltyBreakFirstLessLess: 1000
+PenaltyBreakString: 1
+PenaltyExcessCharacter: 1000
+PenaltyReturnTypeOnItsOwnLine: 90
+
+# ---- braces ------------------------------------------------------------
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+
+# ---- #include ordering -------------------------------------------------
+# 1) C/C++ system headers   2) ROS 2 headers
+# 3) other third-party libs 4) headers from this workspace / package
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+# Disable clang-format's "main header goes first" rule, so that a .cpp's own
+# header stays in the package group instead of being hoisted above everything.
+IncludeIsMainRegex: "NEVER_MATCH_MAIN_HEADER$"
+IncludeCategories:
+  # --- 1. system headers: <sys/socket.h>, <unistd.h>, <cstdint>, <vector>
+  - Regex: '^<(sys|net|netinet|arpa|linux|asm|bits)/[[:alnum:]_/]+\.h>$'
+    Priority: 1
+  - Regex: '^<[[:alnum:]_]+\.h>$'
+    Priority: 1
+  - Regex: "^<[[:alnum:]_]+>$"
+    Priority: 1
+  # --- 2. ROS 2 core packages + generated interface packages
+  - Regex: "^[<\"](ament_[[:alnum:]_]+|builtin_interfaces|class_loader|composition_interfaces|diagnostic_updater|libstatistics_collector|message_filters|pluginlib|rcl|rcl_[[:alnum:]_]+|rclcpp|rclcpp_[[:alnum:]_]+|rcpputils|rcutils|rmw|rmw_[[:alnum:]_]+|rosbag2_[[:alnum:]_]+|rosidl_[[:alnum:]_]+|tf2|tf2_[[:alnum:]_]+|[[:alnum:]_]+_msgs|[[:alnum:]_]+_srvs|[[:alnum:]_]+_actions|[[:alnum:]_]+_interfaces)/"
+    Priority: 2
+  # --- 3. other third-party libraries
+  - Regex: "^[<\"](gtest|gmock|nlohmann|Eigen|boost|fmt|spdlog|yaml-cpp|opencv2|benchmark)[/.]"
+    Priority: 3
+  # --- 4. everything else = this package / this workspace
+  - Regex: ".*"
+    Priority: 4
