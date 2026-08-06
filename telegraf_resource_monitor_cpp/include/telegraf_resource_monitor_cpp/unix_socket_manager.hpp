@@ -1,16 +1,17 @@
 #pragma once
 #include <sys/un.h>
-
 #include <thread>
 
 #include "rclcpp/rclcpp.hpp"
-#include "sensor_message.h"
+
+#include "sensor_message.hpp"
 
 class UnixSocketManager
 {
 private:
   rclcpp::Logger logger_;
   SensorMessageBuffer& sensor_message_buffer_;
+  std::string socket_path_;
 
   std::thread read_thread_;  // read thread
 
@@ -24,6 +25,13 @@ private:
   void readData();
 
 public:
-  UnixSocketManager(rclcpp::Logger logger, SensorMessageBuffer& sensor_message_buffer);
+  UnixSocketManager(rclcpp::Logger logger, SensorMessageBuffer& sensor_message_buffer,
+                    std::string& socket_path);
+
   ~UnixSocketManager();
+
+  std::string getSocketPath()
+  {
+    return socket_path_;
+  }
 };

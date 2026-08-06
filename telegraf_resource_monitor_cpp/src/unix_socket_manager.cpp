@@ -1,22 +1,21 @@
-#include "telegraf_resource_monitor_cpp/unix_socket_manager.h"
-
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/un.h>
-#include <unistd.h>
-
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/un.h>
 #include <thread>
+#include <unistd.h>
 
 #include "rclcpp/rclcpp.hpp"
 
-constexpr char socket_path[] = "/tmp/telegraf.sock";
+#include "telegraf_resource_monitor_cpp/unix_socket_manager.hpp"
 
-UnixSocketManager::UnixSocketManager(rclcpp::Logger logger, SensorMessageBuffer& sensor_message_buffer)
-  : logger_{ logger }, sensor_message_buffer_{ sensor_message_buffer }
+UnixSocketManager::UnixSocketManager(rclcpp::Logger logger,
+                                     SensorMessageBuffer& sensor_message_buffer,
+                                     std::string& socket_path)
+  : logger_{ logger }, sensor_message_buffer_{ sensor_message_buffer }, socket_path_{ socket_path }
 {
   createSocket();
   bindSocket();
@@ -33,73 +32,75 @@ UnixSocketManager::~UnixSocketManager()
     read_thread_.join();
   }
   // Remove the socket file so future runs can bind to the same path.
-  if (unlink(socket_path) == -1)
+  if (unlink(socket_path_.c_str()) == -1)
   {
-    RCLCPP_WARN(logger_, "unlink(%s) at shutdown failed: %s", socket_path, std::strerror(errno));
+    RCLCPP_WARN_STREAM(logger_, "unlink(" << socket_path_
+                                          << ") at shutdown failed: " << std::strerror(errno));
   }
 
   RCLCPP_INFO(logger_, "UnixSocketManager exited");
-}
-
-void UnixSocketManager::recieveClientFileDescriptor()
-{
-  // Accept exactly one client connection. This call will block until a client
-  // connects or an error occurs. If the program must be interruptible consider
-  // using accept4/setting the socket non-blocking and polling/select instead.
-  client_fd_ = accept(listen_fd_, nullptr, nullptr);
-  if (client_fd_ == -1)
-  {
-    RCLCPP_ERROR(logger_, "accept() failed: %s", std::strerror(errno));
-    close(listen_fd_);
-    unlink(socket_path);
-  }
-  RCLCPP_INFO(logger_, "accepted client (client_fd_=%d). closing listening socket", client_fd_);
-
-  // Close the listening socket — we don't need to accept more clients.
-  close(listen_fd_);
-}
-void UnixSocketManager::bindSocket()
-{
-  struct sockaddr_un addr;
-  // Zero the address structure for portability and safety.
-  std::memset(&addr, 0, sizeof(addr));
-  addr.sun_family = AF_UNIX;
-  std::strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path) - 1);
-
-  // Bind the listening socket to the filesystem path.
-  if (bind(listen_fd_, reinterpret_cast<const struct sockaddr*>(&addr), sizeof(addr)) == -1)
-  {
-    RCLCPP_ERROR(logger_, "bind(%s) failed: %s", socket_path, std::strerror(errno));
-    close(listen_fd_);
-  }
-  RCLCPP_INFO(logger_, "bound UNIX socket to %s", socket_path);
-
-  // Allow a small backlog; since we only accept a single client this value is not critical.
-  if (listen(listen_fd_, 5) == -1)
-  {
-    RCLCPP_ERROR(logger_, "listen() failed: %s", std::strerror(errno));
-    close(listen_fd_);
-    unlink(socket_path);
-  }
-  RCLCPP_INFO(logger_, "listening for a single client on %s", socket_path);
 }
 
 void UnixSocketManager::createSocket()
 {
   // Ensure any stale socket file is removed before binding. If unlink fails
   // for another reason than non-existence, that's non-fatal but logged.
-  if (unlink(socket_path) == -1 && errno != ENOENT)
+  if (unlink(socket_path_.c_str()) == -1 && errno != ENOENT)
   {
-    RCLCPP_WARN(logger_, "unlink(%s) failed: %s", socket_path, std::strerror(errno));
+    RCLCPP_WARN_STREAM(logger_, "unlink(" << socket_path_ << ") failed: " << std::strerror(errno));
   }
 
   // Create the listening UNIX domain socket.
   listen_fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
   if (listen_fd_ == -1)
   {
-    RCLCPP_ERROR(logger_, "socket(AF_UNIX) failed: %s", std::strerror(errno));
+    RCLCPP_ERROR_STREAM(logger_, "socket(AF_UNIX) failed: " << std::strerror(errno));
   }
-  RCLCPP_INFO(logger_, "created UNIX socket (listen_fd_=%d)", listen_fd_);
+  RCLCPP_INFO_STREAM(logger_, "created UNIX socket (listen_fd_=" << listen_fd_ << ")");
+}
+
+void UnixSocketManager::bindSocket()
+{
+  sockaddr_un addr{};
+  addr.sun_family = AF_UNIX;
+
+  // make sure that we do not buffer overflow sun_path
+  std::strncpy(addr.sun_path, socket_path_.c_str(), sizeof(addr.sun_path) - 1);
+
+  // Bind the listening socket to the filesystem path.
+  if (bind(listen_fd_, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == -1)
+  {
+    RCLCPP_ERROR_STREAM(logger_, "bind(" << socket_path_ << ") failed: " << std::strerror(errno));
+    close(listen_fd_);
+  }
+  RCLCPP_INFO_STREAM(logger_, "bound UNIX socket to " << socket_path_);
+
+  // Allow a small backlog; since we only accept a single client this value is not critical.
+  if (listen(listen_fd_, 5) == -1)
+  {
+    RCLCPP_ERROR_STREAM(logger_, "listen() failed: " << std::strerror(errno));
+    close(listen_fd_);
+    unlink(socket_path_.c_str());
+  }
+  RCLCPP_INFO_STREAM(logger_, "listening for a single client on " << socket_path_);
+}
+
+void UnixSocketManager::recieveClientFileDescriptor()
+{
+  // Accept exactly one client connection. This call will block until a client
+  // connects or an error occurs.
+  client_fd_ = accept(listen_fd_, nullptr, nullptr);
+  if (client_fd_ == -1)
+  {
+    RCLCPP_ERROR_STREAM(logger_, "accept() failed: " << std::strerror(errno));
+    close(listen_fd_);
+    unlink(socket_path_.c_str());
+  }
+  RCLCPP_INFO_STREAM(logger_,
+                     "accepted client (client_fd_=" << client_fd_ << "). closing listening socket");
+
+  // Close the listening socket we don't need to accept more clients.
+  close(listen_fd_);
 }
 
 void UnixSocketManager::readData()
@@ -110,13 +111,15 @@ void UnixSocketManager::readData()
   FILE* socket_file = fdopen(client_fd_, "r");
   if (!socket_file)
   {
-    RCLCPP_ERROR(logger_, "fdopen(client_fd_=%d) failed: %s", client_fd_, std::strerror(errno));
+    RCLCPP_ERROR_STREAM(logger_,
+                        "fdopen(client_fd_=" << client_fd_ << ") failed: " << std::strerror(errno));
     close(client_fd_);
-    unlink(socket_path);
+    unlink(socket_path_.c_str());
     return;
   }
 
-  RCLCPP_INFO(logger_, "Unix socket connected to %d. Starting read thread", client_fd_);
+  RCLCPP_INFO_STREAM(logger_,
+                     "Unix socket connected to " << client_fd_ << ". Starting read thread");
 
   // getline will allocate/rescale `lineptr` as needed. We free it after use.
   char* lineptr = nullptr;
@@ -124,8 +127,7 @@ void UnixSocketManager::readData()
   ssize_t linelen;
 
   // Read lines from the stream until EOF. getline() returns the number of bytes read
-  // and stores the line in lineptr, resizing the buffer as needed; the loop continues
-  // while getline() returns a non-negative length.
+  // and stores the line in lineptr, resizing the buffer as needed
   while (rclcpp::ok() && (linelen = getline(&lineptr, &linecap, socket_file)) != -1)
   {
     // Strip trailing newline for cleaner logs and downstream processing.
@@ -134,7 +136,7 @@ void UnixSocketManager::readData()
       lineptr[linelen - 1] = '\0';
     }
     // More informative log including the number of bytes read and the content.
-    RCLCPP_DEBUG(logger_, "received %zd bytes: %s", linelen, lineptr);
+    RCLCPP_DEBUG_STREAM(logger_, "received " << linelen << " bytes: " << lineptr);
     sensor_message_buffer_.addMessage(std::string(lineptr));
   }
 

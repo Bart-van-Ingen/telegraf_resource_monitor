@@ -3,8 +3,9 @@
 #include <memory>
 
 #include "rclcpp/rclcpp.hpp"
-#include "sensor_message.h"
-#include "telegraf_resource_monitor_cpp/sensor_message_publisher.h"
+
+#include "sensor_message.hpp"
+#include "telegraf_resource_monitor_cpp/sensor_message_publisher.hpp"
 
 using TagsKey = std::map<std::string, std::string>;
 using PublisherPtr = std::shared_ptr<SensorMessagePublisher>;
@@ -22,7 +23,7 @@ private:
   std::thread publisher_thread_;  // read thread
 
   void processBufferedMessages();
-  void publishSensorMessage(const SensorMessage& message);
+  PublisherPtr getPublisher(const SensorMessage& message);
 
 public:
   SensorMessageProcessor(rclcpp::Node::SharedPtr node, SensorMessageBuffer& sensor_message_buffer);

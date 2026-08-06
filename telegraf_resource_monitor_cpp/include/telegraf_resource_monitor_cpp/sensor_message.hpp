@@ -1,11 +1,16 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
+#include <chrono>
+#include <condition_variable>
+#include <mutex>
+#include <optional>
 #include <queue>
 #include <string>
 #include <unordered_map>
 
 #include "rclcpp/rclcpp.hpp"
+
+#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
@@ -24,12 +29,15 @@ SensorMessage jsonToSensorMessage(std::string_view json_string);
 class SensorMessageBuffer
 {
 private:
-  const rclcpp::Logger& logger_;
+  rclcpp::Logger logger_;
   std::queue<SensorMessage> buffer_;
 
+  std::mutex mutex_;
+  std::condition_variable condition_variable_;
+
 public:
-  SensorMessageBuffer(rclcpp::Logger logger) : logger_(std::move(logger)) {};
+  explicit SensorMessageBuffer(rclcpp::Logger logger) : logger_(std::move(logger)){};
   void addMessage(std::string_view message);
-  SensorMessage getMessage();
+  std::optional<SensorMessage> getMessage(std::chrono::milliseconds timeout);
   bool isEmpty();
 };
