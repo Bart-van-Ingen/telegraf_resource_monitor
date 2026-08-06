@@ -1,69 +1,66 @@
 # based on: https://github.com/PickNikRobotics/roscpp_code_format
 ---
 BasedOnStyle: Google
+AccessModifierOffset: -2
+ConstructorInitializerIndentWidth: 2
+AlignEscapedNewlinesLeft: false
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakTemplateDeclarations: true
+AlwaysBreakBeforeMultilineStrings: true
+BreakBeforeBinaryOperators: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializersBeforeComma: true
+BinPackParameters: true
+ColumnLimit: 100
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+DerivePointerBinding: false
+PointerBindsToType: true
+ExperimentalAutoDetectBinPacking: false
+IndentCaseLabels: true
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+ObjCSpaceBeforeProtocolList: true
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 60
+PenaltyBreakString: 1
+PenaltyBreakFirstLessLess: 1000
+PenaltyExcessCharacter: 1000
+PenaltyReturnTypeOnItsOwnLine: 90
+SpacesBeforeTrailingComments: 2
+Cpp11BracedListStyle: false
 Standard: Auto
-
-# ---- indentation -------------------------------------------------------
 IndentWidth: 2
 TabWidth: 2
 UseTab: Never
-ContinuationIndentWidth: 4
-AccessModifierOffset: -2
-ConstructorInitializerIndentWidth: 2
-IndentCaseLabels: true
-IndentWrappedFunctionNames: false
-NamespaceIndentation: None
-
-# ---- line breaking -----------------------------------------------------
-ColumnLimit: 120
-MaxEmptyLinesToKeep: 1
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AlwaysBreakBeforeMultilineStrings: true
-BinPackParameters: true
-BreakBeforeBinaryOperators: None
-BreakBeforeTernaryOperators: false
-BreakConstructorInitializers: BeforeComma
-BreakTemplateDeclarations: Yes
-PackConstructorInitializers: NextLine
-ExperimentalAutoDetectBinPacking: false
-
-# ---- alignment / spacing ----------------------------------------------
-AlignEscapedNewlines: Right
-AlignTrailingComments: true
-Cpp11BracedListStyle: false
-DerivePointerAlignment: false
-PointerAlignment: Left
-SpaceAfterCStyleCast: false
+IndentFunctionDeclarationAfterType: false
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpaceAfterControlStatementKeyword: true
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
-SpacesBeforeTrailingComments: 2
-SpacesInAngles: Never
-SpacesInParens: Never  # covers empty parens and C-style casts too
+ContinuationIndentWidth: 4
+SpaceAfterCStyleCast: false
 
-# ---- penalties ---------------------------------------------------------
-PenaltyBreakBeforeFirstCallParameter: 19
-PenaltyBreakComment: 60
-PenaltyBreakFirstLessLess: 1000
-PenaltyBreakString: 1
-PenaltyExcessCharacter: 1000
-PenaltyReturnTypeOnItsOwnLine: 90
-
-# ---- braces ------------------------------------------------------------
+# Configure each individual brace in BraceWrapping
 BreakBeforeBraces: Custom
+
+# Control of individual brace wrapping cases
 BraceWrapping:
-  AfterClass: true
-  AfterControlStatement: Always
-  AfterEnum: true
-  AfterFunction: true
-  AfterNamespace: true
-  AfterStruct: true
-  AfterUnion: true
-  BeforeCatch: true
-  BeforeElse: true
-  IndentBraces: false
+  AfterClass: 'true'
+  AfterControlStatement: 'true'
+  AfterEnum : 'true'
+  AfterFunction : 'true'
+  AfterNamespace : 'true'
+  AfterStruct : 'true'
+  AfterUnion : 'true'
+  BeforeCatch : 'true'
+  BeforeElse : 'true'
+  IndentBraces : 'false'
 
 # ---- #include ordering -------------------------------------------------
 # 1) C/C++ system headers   2) ROS 2 headers
