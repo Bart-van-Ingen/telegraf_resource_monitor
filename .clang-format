@@ -1,0 +1,89 @@
+# based on: https://github.com/PickNikRobotics/roscpp_code_format
+---
+BasedOnStyle: Google
+AccessModifierOffset: -2
+ConstructorInitializerIndentWidth: 2
+AlignEscapedNewlinesLeft: false
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakTemplateDeclarations: true
+AlwaysBreakBeforeMultilineStrings: true
+BreakBeforeBinaryOperators: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializersBeforeComma: true
+BinPackParameters: true
+ColumnLimit: 100
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+DerivePointerBinding: false
+PointerBindsToType: true
+ExperimentalAutoDetectBinPacking: false
+IndentCaseLabels: true
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+ObjCSpaceBeforeProtocolList: true
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 60
+PenaltyBreakString: 1
+PenaltyBreakFirstLessLess: 1000
+PenaltyExcessCharacter: 1000
+PenaltyReturnTypeOnItsOwnLine: 90
+SpacesBeforeTrailingComments: 2
+Cpp11BracedListStyle: false
+Standard: Auto
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+IndentFunctionDeclarationAfterType: false
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpaceAfterControlStatementKeyword: true
+SpaceBeforeAssignmentOperators: true
+ContinuationIndentWidth: 4
+SpaceAfterCStyleCast: false
+
+# Configure each individual brace in BraceWrapping
+BreakBeforeBraces: Custom
+
+# Control of individual brace wrapping cases
+BraceWrapping:
+  AfterClass: 'true'
+  AfterControlStatement: 'true'
+  AfterEnum : 'true'
+  AfterFunction : 'true'
+  AfterNamespace : 'true'
+  AfterStruct : 'true'
+  AfterUnion : 'true'
+  BeforeCatch : 'true'
+  BeforeElse : 'true'
+  IndentBraces : 'false'
+
+# ---- #include ordering -------------------------------------------------
+# 1) C/C++ system headers   2) ROS 2 headers
+# 3) other third-party libs 4) headers from this workspace / package
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+# Disable clang-format's "main header goes first" rule, so that a .cpp's own
+# header stays in the package group instead of being hoisted above everything.
+IncludeIsMainRegex: "NEVER_MATCH_MAIN_HEADER$"
+IncludeCategories:
+  # --- 1. system headers: <sys/socket.h>, <unistd.h>, <cstdint>, <vector>
+  - Regex: '^<(sys|net|netinet|arpa|linux|asm|bits)/[[:alnum:]_/]+\.h>$'
+    Priority: 1
+  - Regex: '^<[[:alnum:]_]+\.h>$'
+    Priority: 1
+  - Regex: "^<[[:alnum:]_]+>$"
+    Priority: 1
+  # --- 2. ROS 2 core packages + generated interface packages
+  - Regex: "^[<\"](ament_[[:alnum:]_]+|builtin_interfaces|class_loader|composition_interfaces|diagnostic_updater|libstatistics_collector|message_filters|pluginlib|rcl|rcl_[[:alnum:]_]+|rclcpp|rclcpp_[[:alnum:]_]+|rcpputils|rcutils|rmw|rmw_[[:alnum:]_]+|rosbag2_[[:alnum:]_]+|rosidl_[[:alnum:]_]+|tf2|tf2_[[:alnum:]_]+|[[:alnum:]_]+_msgs|[[:alnum:]_]+_srvs|[[:alnum:]_]+_actions|[[:alnum:]_]+_interfaces)/"
+    Priority: 2
+  # --- 3. other third-party libraries
+  - Regex: "^[<\"](gtest|gmock|nlohmann|Eigen|boost|fmt|spdlog|yaml-cpp|opencv2|benchmark)[/.]"
+    Priority: 3
+  # --- 4. everything else = this package / this workspace
+  - Regex: ".*"
+    Priority: 4

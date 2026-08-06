@@ -16,7 +16,7 @@ services:
   base:
     image: telegraf_resource_monitor:base
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
       args:
         ROS_DISTRO: humble
@@ -34,17 +34,21 @@ services:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
       - NVIDIA_DRIVER_CAPABILITIES=all
+      # X11 authentication file for secure display access
+      - XAUTHORITY=/tmp/.docker.xauth
     volumes:
       # Allows graphical programs in the container.
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
-  
+      - /tmp/.docker.xauth:/root/.Xauthority:rw
+      # X11 authentication credentials for secure display access
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
   # Overlay image containing the example source code.
   overlay:
     extends: base
     image: telegraf_resource_monitor:overlay
     build:
-      context: .
+      context: ..
       ssh:
         - default
       dockerfile: docker/Dockerfile
@@ -55,19 +59,19 @@ services:
     image: telegraf_resource_monitor:dev
     hostname: ros_dev_container
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
       target: dev
     volumes:
-      - ./.bash-history:/home/dev/.bash_history:cached
+      - ../.bash-history:/home/dev/.bash_history
       # Mount host filesystem for system monitoring
       - /:/hostfs:ro
     environment:
       # Enable Docker host monitoring from within container
-        - HOST_ETC=/hostfs/etc
-        - HOST_PROC=/hostfs/proc
-        - HOST_SYS=/hostfs/sys
-        - HOST_VAR=/hostfs/var
-        - HOST_RUN=/hostfs/run
-        - HOST_MOUNT_PREFIX=/hostfs
+      - HOST_ETC=/hostfs/etc
+      - HOST_PROC=/hostfs/proc
+      - HOST_SYS=/hostfs/sys
+      - HOST_VAR=/hostfs/var
+      - HOST_RUN=/hostfs/run
+      - HOST_MOUNT_PREFIX=/hostfs
     command: bash

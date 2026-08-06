@@ -5,7 +5,7 @@
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
-		"../docker-compose.yaml",
+		"../docker/docker-compose.yaml",
 		"docker-compose.yml"
 	],
 	// The 'service' property is the name of the service for the container that VS Code should
@@ -13,7 +13,16 @@
 	"service": "dev",
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
+	//
+	// Open the colcon workspace root, not the repo (which is mounted at /ros_ws/src). The
+	// rde-ros-2 extension hardcodes <workspaceFolder>/{build,install} when locating gtest
+	// binaries, and tasks.json is written for a cwd of /ros_ws (see its src/-relative lint
+	// and scaffold tasks). docker-compose.yml bind-mounts .vscode/ at /ros_ws/.vscode too so
+	// this directory is still picked up.
 	"workspaceFolder": "/ros_ws",
+	// Ensures /tmp/.docker.xauth exists as a file (not a directory) on the host
+	// before docker compose starts, so the X11 auth bind mount doesn't fail.
+	"initializeCommand": "bash .devcontainer/setup-xauth.sh",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -39,11 +48,12 @@
 				"mhutchie.git-graph", // git graph
 				"mikestead.dotenv", // .env file support
 				"usernamehw.errorlens", // in file error highlighting
-				"visualstudioexptteam.vs", //IntelliCode
 				"vscode-icons-team.vscode-icons", // icons
 				"ibm.output-colorizer", // colorize output
-				"esbenp.prettier-vscode", // prettier for markdown formatting
-				"VisualStudioExptTeam.vscodeintellicode" // AI-assisted development
+				"esbenp.prettier-vscode",  // prettier for markdown formatting
+				"tamasfe.even-better-toml", // TOML support
+				"anthropic.claude-code" // AI help
+				
 			]
 		}
 	}
