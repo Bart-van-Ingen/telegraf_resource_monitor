@@ -16,12 +16,13 @@ TEST(SensorMessageBufferTest, ReturnsMessageWhenAvailable)
   std::thread producer([&buffer]() {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     // R indicates raw string literal
-    buffer.addMessage(R"({"name":"cpu","tags":{},"fields":{},"timestamp":1})");
+    buffer.add_message(R"({"name":"cpu","tags":{},"fields":{},"timestamp":1})");
   });
 
-  const std::optional<SensorMessage> message{ buffer.getMessage(std::chrono::milliseconds(500)) };
+  const std::optional<SensorMessage> message{buffer.get_message(std::chrono::milliseconds(500))};
   producer.join();
 
+  ASSERT_TRUE(buffer.is_empty());
   ASSERT_TRUE(message.has_value());
   EXPECT_EQ(message->name, "cpu");
 }

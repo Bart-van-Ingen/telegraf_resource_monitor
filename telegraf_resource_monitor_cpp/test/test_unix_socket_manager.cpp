@@ -60,29 +60,29 @@ void UnixSocketDummy::makeConnection()
 
 TEST(UnixSocketManagerTest, AcceptsConnectionWhenAvailable)
 {
-  std::string socket_path{ "/tmp/dummy_socket.sock" };
+  std::string socket_path{"/tmp/dummy_socket.sock"};
 
   // creates a new thread, capturing buffer by reference, and immediately starts running
   // the lambda body concurrently with the main test thread.
   std::thread producer([&socket_path]() {
-    UnixSocketDummy socket_dummy{ socket_path };
+    UnixSocketDummy socket_dummy{socket_path};
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     socket_dummy.makeConnection();
   });
 
-  auto logger{ rclcpp::get_logger("test_sensor_message_buffer") };
+  auto logger{rclcpp::get_logger("test_sensor_message_buffer")};
   logger.set_level(rclcpp::Logger::Level::Debug);
-  SensorMessageBuffer buffer{ logger };
+  SensorMessageBuffer buffer{logger};
   {
     // socket_manager's destructor joins its read thread, which only returns once
     // the dummy client's message has been read and the connection has hit EOF
     // (the dummy closes its fd right after writing). Scoping it here lets us wait
     // deterministically instead of sleeping an arbitrary amount of time.
-    UnixSocketManager socket_manager{ logger, buffer, socket_path };
+    UnixSocketManager socket_manager{logger, buffer, socket_path};
     producer.join();
   }
 
-  ASSERT_TRUE(!buffer.isEmpty());
+  ASSERT_TRUE(!buffer.is_empty());
 }
 
 int main(int argc, char** argv)

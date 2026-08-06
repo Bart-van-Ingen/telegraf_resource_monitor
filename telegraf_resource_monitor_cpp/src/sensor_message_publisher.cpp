@@ -16,28 +16,28 @@ SensorMessagePublisher::SensorMessagePublisher(rclcpp::Node::SharedPtr node,
                                                std::string_view sensor_type, TagsKey tag_keys)
   : node_(node)
 {
-  std::string topic_name{ createTopicName(sensor_type, tag_keys) };
+  std::string topic_name{create_topic_name(sensor_type, tag_keys)};
 
   RCLCPP_INFO(node->get_logger(), "made publisher for %s", topic_name.c_str());
 
   publisher_ptr_ = node->create_publisher<ResourceType>(topic_name, 10);
 }
 
-std::string SensorMessagePublisher::createTopicName(const std::string_view sensor_type,
-                                                    const TagsKey& sensor_tags)
+std::string SensorMessagePublisher::create_topic_name(const std::string_view sensor_type,
+                                                      const TagsKey& sensor_tags)
 {
   if (sensor_tags.empty())
   {
     return std::string(sensor_type);
   }
 
-  std::string topic_str{ combineTypeAndTags(sensor_type, sensor_tags) };
-  sanitizeTopicName(topic_str);
+  std::string topic_str{combine_type_and_tags(sensor_type, sensor_tags)};
+  sanitize_topic_name(topic_str);
   return topic_str;
 }
 
-std::string SensorMessagePublisher::combineTypeAndTags(const std::string_view sensor_type,
-                                                       const TagsKey& sensor_tags)
+std::string SensorMessagePublisher::combine_type_and_tags(const std::string_view sensor_type,
+                                                          const TagsKey& sensor_tags)
 {
   std::string topic_str{};
 
@@ -54,7 +54,7 @@ std::string SensorMessagePublisher::combineTypeAndTags(const std::string_view se
   return std::string(sensor_type) + "/" + topic_str;
 }
 
-void SensorMessagePublisher::sanitizeTopicName(std::string& topic_str)
+void SensorMessagePublisher::sanitize_topic_name(std::string& topic_str)
 {
   for (char& c : topic_str)
   {

@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   auto node = std::make_shared<Node>("node");
   node->declare_parameter("socket_path", "/tmp/telegraf.sock");
 
-  std::string socket_path{ node->get_parameter("socket_path").as_string() };
+  std::string socket_path{node->get_parameter("socket_path").as_string()};
 
   SensorMessageBuffer message_buffer(node->get_logger());
   UnixSocketManager manager(node->get_logger(), message_buffer, socket_path);

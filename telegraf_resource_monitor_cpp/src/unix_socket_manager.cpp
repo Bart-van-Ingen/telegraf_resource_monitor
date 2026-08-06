@@ -15,13 +15,13 @@
 UnixSocketManager::UnixSocketManager(rclcpp::Logger logger,
                                      SensorMessageBuffer& sensor_message_buffer,
                                      std::string& socket_path)
-  : logger_{ logger }, sensor_message_buffer_{ sensor_message_buffer }, socket_path_{ socket_path }
+  : logger_{logger}, sensor_message_buffer_{sensor_message_buffer}, socket_path_{socket_path}
 {
-  createSocket();
-  bindSocket();
-  recieveClientFileDescriptor();
+  create_socket();
+  bind_socket();
+  recieve_client_file_descriptor();
 
-  read_thread_ = std::thread(&UnixSocketManager::readData, this);
+  read_thread_ = std::thread(&UnixSocketManager::read_data, this);
 }
 
 UnixSocketManager::~UnixSocketManager()
@@ -41,7 +41,7 @@ UnixSocketManager::~UnixSocketManager()
   RCLCPP_INFO(logger_, "UnixSocketManager exited");
 }
 
-void UnixSocketManager::createSocket()
+void UnixSocketManager::create_socket()
 {
   // Ensure any stale socket file is removed before binding. If unlink fails
   // for another reason than non-existence, that's non-fatal but logged.
@@ -59,7 +59,7 @@ void UnixSocketManager::createSocket()
   RCLCPP_INFO_STREAM(logger_, "created UNIX socket (listen_fd_=" << listen_fd_ << ")");
 }
 
-void UnixSocketManager::bindSocket()
+void UnixSocketManager::bind_socket()
 {
   sockaddr_un addr{};
   addr.sun_family = AF_UNIX;
@@ -85,7 +85,7 @@ void UnixSocketManager::bindSocket()
   RCLCPP_INFO_STREAM(logger_, "listening for a single client on " << socket_path_);
 }
 
-void UnixSocketManager::recieveClientFileDescriptor()
+void UnixSocketManager::recieve_client_file_descriptor()
 {
   // Accept exactly one client connection. This call will block until a client
   // connects or an error occurs.
@@ -103,7 +103,7 @@ void UnixSocketManager::recieveClientFileDescriptor()
   close(listen_fd_);
 }
 
-void UnixSocketManager::readData()
+void UnixSocketManager::read_data()
 {
   // Use FILE* and getline for convenient line-oriented reads from the socket.
   // fdopen() creates a stream wrapper around the client_fd_. We must ensure
@@ -137,7 +137,7 @@ void UnixSocketManager::readData()
     }
     // More informative log including the number of bytes read and the content.
     RCLCPP_DEBUG_STREAM(logger_, "received " << linelen << " bytes: " << lineptr);
-    sensor_message_buffer_.addMessage(std::string(lineptr));
+    sensor_message_buffer_.add_message(std::string(lineptr));
   }
 
   // Clean up allocated buffer and close the FILE* (which also closes client_fd_).

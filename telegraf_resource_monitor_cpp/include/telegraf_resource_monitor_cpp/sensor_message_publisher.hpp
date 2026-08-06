@@ -16,11 +16,11 @@ private:
 
   rclcpp::Publisher<ResourceType>::SharedPtr publisher_ptr_;
 
-  std::string createTopicName(const std::string_view sensor_type, const TagsKey& sensor_tags);
+  std::string create_topic_name(const std::string_view sensor_type, const TagsKey& sensor_tags);
 
-  std::string combineTypeAndTags(const std::string_view sensor_type, const TagsKey& sensor_tags);
+  std::string combine_type_and_tags(const std::string_view sensor_type, const TagsKey& sensor_tags);
 
-  void sanitizeTopicName(std::string& topic_str);
+  void sanitize_topic_name(std::string& topic_str);
 
 public:
   SensorMessagePublisher(rclcpp::Node::SharedPtr node, std::string_view message, TagsKey tag_keys);

@@ -7,31 +7,31 @@ SensorMessageProcessor::SensorMessageProcessor(rclcpp::Node::SharedPtr node,
   , logger_(node_->get_logger())
   , sensor_message_buffer_(sensor_message_buffer)
 {
-  publisher_thread_ = std::thread(&SensorMessageProcessor::processBufferedMessages, this);
+  publisher_thread_ = std::thread(&SensorMessageProcessor::process_buffered_messages, this);
 }
 
-void SensorMessageProcessor::processBufferedMessages()
+void SensorMessageProcessor::process_buffered_messages()
 {
   while (rclcpp::ok())
   {
     // Wait up to 100ms for the next buffered sensor message; if none arrives,
     // retry.
-    const auto message = sensor_message_buffer_.getMessage(std::chrono::milliseconds(100));
+    const auto message = sensor_message_buffer_.get_message(std::chrono::milliseconds(100));
     if (!message.has_value())
     {
       continue;
     }
 
     SensorMessage sensor_message = message.value();
-    PublisherPtr publisher = getPublisher(sensor_message);
+    PublisherPtr publisher = get_publisher(sensor_message);
     publisher->publish(sensor_message);
   }
 }
 
-PublisherPtr SensorMessageProcessor::getPublisher(const SensorMessage& message)
+PublisherPtr SensorMessageProcessor::get_publisher(const SensorMessage& message)
 {
-  const std::string sensor_type{ message.name };
-  const TagsKey tags_key{ message.tags.begin(), message.tags.end() };
+  const std::string sensor_type{message.name};
+  const TagsKey tags_key{message.tags.begin(), message.tags.end()};
 
   // The [] operator on std::map will default-construct a new entry if
   // the key doesn't exist.

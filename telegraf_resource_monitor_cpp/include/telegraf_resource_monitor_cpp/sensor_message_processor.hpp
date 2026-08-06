@@ -22,8 +22,8 @@ private:
 
   std::thread publisher_thread_;  // read thread
 
-  void processBufferedMessages();
-  PublisherPtr getPublisher(const SensorMessage& message);
+  void process_buffered_messages();
+  PublisherPtr get_publisher(const SensorMessage& message);
 
 public:
   SensorMessageProcessor(rclcpp::Node::SharedPtr node, SensorMessageBuffer& sensor_message_buffer);

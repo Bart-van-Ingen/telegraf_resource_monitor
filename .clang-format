@@ -31,7 +31,7 @@ PenaltyBreakFirstLessLess: 1000
 PenaltyExcessCharacter: 1000
 PenaltyReturnTypeOnItsOwnLine: 90
 SpacesBeforeTrailingComments: 2
-Cpp11BracedListStyle: false
+Cpp11BracedListStyle: true
 Standard: Auto
 IndentWidth: 2
 TabWidth: 2

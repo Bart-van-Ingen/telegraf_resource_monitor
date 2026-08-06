@@ -24,7 +24,7 @@ struct SensorMessage
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorMessage, name, tags, fields, timestamp)
 
-SensorMessage jsonToSensorMessage(std::string_view json_string);
+SensorMessage json_to_sensor_message(std::string_view json_string);
 
 class SensorMessageBuffer
 {
@@ -37,7 +37,7 @@ private:
 
 public:
   explicit SensorMessageBuffer(rclcpp::Logger logger) : logger_(std::move(logger)){};
-  void addMessage(std::string_view message);
-  std::optional<SensorMessage> getMessage(std::chrono::milliseconds timeout);
-  bool isEmpty();
+  void add_message(std::string_view message);
+  std::optional<SensorMessage> get_message(std::chrono::milliseconds timeout);
+  bool is_empty();
 };

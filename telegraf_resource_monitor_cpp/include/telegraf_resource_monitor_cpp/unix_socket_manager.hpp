@@ -18,11 +18,11 @@ private:
   int listen_fd_ = -1;  // file descriptor for the listening socket
   int client_fd_ = -1;  // file descriptor for the accepted client connection
 
-  void createSocket();
-  void bindSocket();
-  void recieveClientFileDescriptor();
+  void create_socket();
+  void bind_socket();
+  void recieve_client_file_descriptor();
 
-  void readData();
+  void read_data();
 
 public:
   UnixSocketManager(rclcpp::Logger logger, SensorMessageBuffer& sensor_message_buffer,
@@ -30,7 +30,7 @@ public:
 
   ~UnixSocketManager();
 
-  std::string getSocketPath()
+  std::string get_socket_path()
   {
     return socket_path_;
   }
