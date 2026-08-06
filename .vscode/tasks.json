@@ -71,40 +71,6 @@
         },
         // Linting and static code analysis tasks
         {
-            "label": "fix",
-            "detail": "Reformat files with uncrustify.",
-            "type": "shell",
-            "command": "ament_uncrustify --reformat src/",
-            "problemMatcher": []
-        },
-        {
-            "label": "uncrustify",
-            "detail": "Lint files with uncrustify.",
-            "type": "shell",
-            "command": "ament_uncrustify src/",
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "silent",
-                "clear": true
-            },
-            "problemMatcher": [
-                {
-                    "owner": "uncrustify",
-                    "source": "uncrustify",
-                    "fileLocation": "relative",
-                    "pattern": [
-                        // just the file name message
-                        {
-                            "regexp": "^(.*)'(.*)':",
-                            "kind": "file",
-                            "file": 2,
-                            "message": 1
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "label": "cpplint",
             "detail": "Lint files with cpplint.",
             "type": "ament",
@@ -197,7 +163,6 @@
                 "lint_cmake",
                 "pep257",
                 "xmllint",
-                "uncrustify"
             ],
             "problemMatcher": []
         },
