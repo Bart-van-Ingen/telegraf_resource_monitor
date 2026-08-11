@@ -4,12 +4,14 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include <ros2_fmt_logger/logger.hpp>
+
 #include "sensor_message.hpp"
 
 class UnixSocketManager
 {
 private:
-  rclcpp::Logger logger_;
+  ros2_fmt_logger::Logger logger_;
   SensorMessageBuffer& sensor_message_buffer_;
   std::string socket_path_;
 
@@ -25,7 +27,8 @@ private:
   void read_data();
 
 public:
-  UnixSocketManager(rclcpp::Logger logger, SensorMessageBuffer& sensor_message_buffer,
+  UnixSocketManager(rclcpp::Logger logger,
+                    SensorMessageBuffer& sensor_message_buffer,
                     std::string& socket_path);
 
   ~UnixSocketManager();

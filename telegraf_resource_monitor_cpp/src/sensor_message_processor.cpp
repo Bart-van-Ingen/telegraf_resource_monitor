@@ -3,9 +3,9 @@
 
 SensorMessageProcessor::SensorMessageProcessor(rclcpp::Node::SharedPtr node,
                                                SensorMessageBuffer& sensor_message_buffer)
-  : node_(std::move(node))
-  , logger_(node_->get_logger())
-  , sensor_message_buffer_(sensor_message_buffer)
+  : node_{std::move(node)}
+  , logger_{node_->get_logger()}
+  , sensor_message_buffer_{sensor_message_buffer}
 {
   publisher_thread_ = std::thread(&SensorMessageProcessor::process_buffered_messages, this);
 }
@@ -31,6 +31,8 @@ void SensorMessageProcessor::process_buffered_messages()
 PublisherPtr SensorMessageProcessor::get_publisher(const SensorMessage& message)
 {
   const std::string sensor_type{message.name};
+
+  // order the keys consistently
   const TagsKey tags_key{message.tags.begin(), message.tags.end()};
 
   // The [] operator on std::map will default-construct a new entry if

@@ -15,7 +15,9 @@
 UnixSocketManager::UnixSocketManager(rclcpp::Logger logger,
                                      SensorMessageBuffer& sensor_message_buffer,
                                      std::string& socket_path)
-  : logger_{logger}, sensor_message_buffer_{sensor_message_buffer}, socket_path_{socket_path}
+  : logger_{logger}
+  , sensor_message_buffer_{sensor_message_buffer}
+  , socket_path_{socket_path}
 {
   create_socket();
   bind_socket();
@@ -34,11 +36,10 @@ UnixSocketManager::~UnixSocketManager()
   // Remove the socket file so future runs can bind to the same path.
   if (unlink(socket_path_.c_str()) == -1)
   {
-    RCLCPP_WARN_STREAM(logger_, "unlink(" << socket_path_
-                                          << ") at shutdown failed: " << std::strerror(errno));
+    logger_.warn("unlink({}) at shutdown failed: {}", socket_path_, std::strerror(errno));
   }
 
-  RCLCPP_INFO(logger_, "UnixSocketManager exited");
+  logger_.info("UnixSocketManager exited");
 }
 
 void UnixSocketManager::create_socket()
@@ -47,16 +48,16 @@ void UnixSocketManager::create_socket()
   // for another reason than non-existence, that's non-fatal but logged.
   if (unlink(socket_path_.c_str()) == -1 && errno != ENOENT)
   {
-    RCLCPP_WARN_STREAM(logger_, "unlink(" << socket_path_ << ") failed: " << std::strerror(errno));
+    logger_.warn("unlink({}) failed: {}", socket_path_, std::strerror(errno));
   }
 
   // Create the listening UNIX domain socket.
   listen_fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
   if (listen_fd_ == -1)
   {
-    RCLCPP_ERROR_STREAM(logger_, "socket(AF_UNIX) failed: " << std::strerror(errno));
+    logger_.error( "socket(AF_UNIX) failed: {}", std::strerror(errno));
   }
-  RCLCPP_INFO_STREAM(logger_, "created UNIX socket (listen_fd_=" << listen_fd_ << ")");
+  logger_.info( "created UNIX socket (listen_fd_= {})", listen_fd_);
 }
 
 void UnixSocketManager::bind_socket()
@@ -70,19 +71,19 @@ void UnixSocketManager::bind_socket()
   // Bind the listening socket to the filesystem path.
   if (bind(listen_fd_, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == -1)
   {
-    RCLCPP_ERROR_STREAM(logger_, "bind(" << socket_path_ << ") failed: " << std::strerror(errno));
+    logger_.error( "bind({}) failed: {}", socket_path_, std::strerror(errno));
     close(listen_fd_);
   }
-  RCLCPP_INFO_STREAM(logger_, "bound UNIX socket to " << socket_path_);
+  logger_.info("bound UNIX socket to {}", socket_path_);
 
   // Allow a small backlog; since we only accept a single client this value is not critical.
   if (listen(listen_fd_, 5) == -1)
   {
-    RCLCPP_ERROR_STREAM(logger_, "listen() failed: " << std::strerror(errno));
+    logger_.error("listen() failed: {}", std::strerror(errno));
     close(listen_fd_);
     unlink(socket_path_.c_str());
   }
-  RCLCPP_INFO_STREAM(logger_, "listening for a single client on " << socket_path_);
+  logger_.info("listening for a single client on {}", socket_path_);
 }
 
 void UnixSocketManager::recieve_client_file_descriptor()
@@ -92,12 +93,11 @@ void UnixSocketManager::recieve_client_file_descriptor()
   client_fd_ = accept(listen_fd_, nullptr, nullptr);
   if (client_fd_ == -1)
   {
-    RCLCPP_ERROR_STREAM(logger_, "accept() failed: " << std::strerror(errno));
+    logger_.error("accept() failed: {}", std::strerror(errno));
     close(listen_fd_);
     unlink(socket_path_.c_str());
   }
-  RCLCPP_INFO_STREAM(logger_,
-                     "accepted client (client_fd_=" << client_fd_ << "). closing listening socket");
+  logger_.info("accepted client (client_fd_={}). closing listening socket", client_fd_);
 
   // Close the listening socket we don't need to accept more clients.
   close(listen_fd_);
@@ -108,22 +108,20 @@ void UnixSocketManager::read_data()
   // Use FILE* and getline for convenient line-oriented reads from the socket.
   // fdopen() creates a stream wrapper around the client_fd_. We must ensure
   // that fclose() is called to release resources and close the underlying fd.
-  FILE* socket_file = fdopen(client_fd_, "r");
+  FILE* socket_file{fdopen(client_fd_, "r")};
   if (!socket_file)
   {
-    RCLCPP_ERROR_STREAM(logger_,
-                        "fdopen(client_fd_=" << client_fd_ << ") failed: " << std::strerror(errno));
+    logger_.error("fdopen(client_fd_={}) failed: {}", client_fd_, std::strerror(errno));
     close(client_fd_);
     unlink(socket_path_.c_str());
     return;
   }
 
-  RCLCPP_INFO_STREAM(logger_,
-                     "Unix socket connected to " << client_fd_ << ". Starting read thread");
+  logger_.info("Unix socket connected to {}. Starting read thread", client_fd_);
 
   // getline will allocate/rescale `lineptr` as needed. We free it after use.
-  char* lineptr = nullptr;
-  size_t linecap = 0;
+  char* lineptr{nullptr};
+  size_t linecap{0};
   ssize_t linelen;
 
   // Read lines from the stream until EOF. getline() returns the number of bytes read
@@ -136,8 +134,8 @@ void UnixSocketManager::read_data()
       lineptr[linelen - 1] = '\0';
     }
     // More informative log including the number of bytes read and the content.
-    RCLCPP_DEBUG_STREAM(logger_, "received " << linelen << " bytes: " << lineptr);
-    sensor_message_buffer_.add_message(std::string(lineptr));
+    logger_.debug("received {} bytes: {}", linelen, lineptr);
+    sensor_message_buffer_.add_message(static_cast<std::string>(lineptr));
   }
 
   // Clean up allocated buffer and close the FILE* (which also closes client_fd_).

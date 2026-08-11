@@ -13,12 +13,14 @@ using Time = builtin_interfaces::msg::Time;
 using TagsKey = std::map<std::string, std::string>;
 
 SensorMessagePublisher::SensorMessagePublisher(rclcpp::Node::SharedPtr node,
-                                               std::string_view sensor_type, TagsKey tag_keys)
-  : node_(node)
+                                               std::string_view sensor_type,
+                                               const TagsKey& tag_keys)
+  : node_{node}
+  , logger_{node->get_logger()}
 {
   std::string topic_name{create_topic_name(sensor_type, tag_keys)};
 
-  RCLCPP_INFO(node->get_logger(), "made publisher for %s", topic_name.c_str());
+  logger_.info("made publisher for {}", topic_name);
 
   publisher_ptr_ = node->create_publisher<ResourceType>(topic_name, 10);
 }

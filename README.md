@@ -62,6 +62,38 @@ The package consists of:
 - **Sensor Message Processor**: Processes incoming sensor data and manages publishers
 - **Sensor Message Publisher**: Publishes resource data as ROS 2 messages
 
+#### Data Flow and Buffering
+
+```
+Telegraf --> Unix socket --> read thread --> queue --> processor thread --> ROS publishers
+             (kernel buffer)  (getline)              (JSON parse, publish)
+```
+
+The read thread only reads lines and pushes the raw strings onto the queue.
+Parsing and publishing happen on the processor thread, so the socket is drained
+quickly no matter how slow those are.
+
+Note that there are two buffers. The kernel already buffers the Unix socket
+(about 208 KB) and blocks Telegraf's `write()` when full rather than dropping
+data. The queue is therefore not about data loss. It absorbs **bursts**: Telegraf
+writes on its `flush_interval`, not its `interval`, so `interval = "100ms"` with
+`flush_interval = "1s"` delivers a whole second of lines at once. Since
+`telegraf.conf` belongs to whoever installs the package, the queue keeps the node
+tolerant of rates it was not tuned for. It does not help with sustained overload,
+where the input rate simply exceeds what the node can publish.
+
+#### Tuning for High Rates
+
+- **Match `flush_interval` to `interval`**, or you collect more often but still
+  receive data in bursts.
+- **`procstat` scans `/proc` every interval** with `pid_finder = "native"`.
+  Measure its CPU cost, or give it a slower per-input `interval`.
+- **Each unique tag set creates a permanent publisher.** Stable tags (`cpu`,
+  `node_name`) are fine; changing ones (PIDs, container IDs) create publishers
+  without limit. Use `taginclude` and `tagexclude` to keep tags small.
+- **The queue is unbounded**, so a stalled publisher side grows memory instead of
+  pushing back on Telegraf.
+
 #### Topics Published
 
 The package dynamically creates topics based on the metrics collected by Telegraf. Examples include:

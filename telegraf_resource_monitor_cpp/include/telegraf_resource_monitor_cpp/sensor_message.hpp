@@ -11,6 +11,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include <nlohmann/json.hpp>
+#include <ros2_fmt_logger/logger.hpp>
 
 using json = nlohmann::json;
 
@@ -24,20 +25,19 @@ struct SensorMessage
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorMessage, name, tags, fields, timestamp)
 
-SensorMessage json_to_sensor_message(std::string_view json_string);
-
 class SensorMessageBuffer
 {
 private:
-  rclcpp::Logger logger_;
-  std::queue<SensorMessage> buffer_;
+  const ros2_fmt_logger::Logger logger_;
+  const std::size_t max_buffer_size_;
+  std::queue<std::string> buffer_;
 
   std::mutex mutex_;
   std::condition_variable condition_variable_;
 
 public:
-  explicit SensorMessageBuffer(rclcpp::Logger logger) : logger_(std::move(logger)){};
-  void add_message(std::string_view message);
-  std::optional<SensorMessage> get_message(std::chrono::milliseconds timeout);
+  explicit SensorMessageBuffer(rclcpp::Logger logger, const std::size_t max_buffer_size_);
+  void add_message(std::string&& message);
+  std::optional<SensorMessage> get_message(const std::chrono::milliseconds timeout);
   bool is_empty();
 };

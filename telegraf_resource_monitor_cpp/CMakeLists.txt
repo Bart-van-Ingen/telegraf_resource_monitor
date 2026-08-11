@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(resource_monitoring_interfaces REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(ros2_fmt_logger REQUIRED)
 
 file(GLOB_RECURSE TELEGRAF_MONITOR_SOURCES CONFIGURE_DEPENDS
   src/*.cpp
@@ -27,7 +28,10 @@ ament_target_dependencies(
 )
 
 # Link the third-party JSON library
-target_link_libraries(telegraf_monitor_node nlohmann_json::nlohmann_json)
+target_link_libraries(
+telegraf_monitor_node 
+nlohmann_json::nlohmann_json 
+ros2_fmt_logger::ros2_fmt_logger)
 
 install(TARGETS telegraf_monitor_node
   DESTINATION lib/${PROJECT_NAME})
@@ -61,7 +65,10 @@ if(BUILD_TESTING)
     )
     target_sources(${TEST_NAME} PRIVATE ${TEST_HELPER_SOURCES})
     ament_target_dependencies(${TEST_NAME} rclcpp resource_monitoring_interfaces)
-    target_link_libraries(${TEST_NAME} nlohmann_json::nlohmann_json)
+    target_link_libraries(
+      ${TEST_NAME}
+      nlohmann_json::nlohmann_json 
+      ros2_fmt_logger::ros2_fmt_logger)
   endforeach()
 
 endif()

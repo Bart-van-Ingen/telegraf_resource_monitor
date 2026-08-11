@@ -10,8 +10,10 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>nlohmann-json-dev</depend>
   <depend>resource_monitoring_interfaces</depend>
+
+  <depend>nlohmann-json-dev</depend>
+  <depend>ros2_fmt_logger</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

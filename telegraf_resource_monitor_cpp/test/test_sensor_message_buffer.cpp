@@ -9,7 +9,8 @@
 
 TEST(SensorMessageBufferTest, ReturnsMessageWhenAvailable)
 {
-  SensorMessageBuffer buffer(rclcpp::get_logger("test_sensor_message_buffer"));
+  SensorMessageBuffer buffer{rclcpp::get_logger("test_sensor_message_buffer"),
+                             static_cast<std::size_t>(100)};
 
   // creates a new thread, capturing buffer by reference, and immediately starts running
   // the lambda body concurrently with the main test thread.

@@ -28,7 +28,8 @@ public:
   void makeConnection();
 };
 
-UnixSocketDummy::UnixSocketDummy(std::string socket_path) : socket_path_(socket_path)
+UnixSocketDummy::UnixSocketDummy(std::string socket_path)
+  : socket_path_(socket_path)
 {
   fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
   addr_.sun_family = AF_UNIX;
@@ -72,7 +73,7 @@ TEST(UnixSocketManagerTest, AcceptsConnectionWhenAvailable)
 
   auto logger{rclcpp::get_logger("test_sensor_message_buffer")};
   logger.set_level(rclcpp::Logger::Level::Debug);
-  SensorMessageBuffer buffer{logger};
+  SensorMessageBuffer buffer{logger, static_cast<std::size_t>(100)};
   {
     // socket_manager's destructor joins its read thread, which only returns once
     // the dummy client's message has been read and the connection has hit EOF
