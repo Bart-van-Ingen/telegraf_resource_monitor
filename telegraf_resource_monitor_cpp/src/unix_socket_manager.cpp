@@ -15,7 +15,7 @@
 UnixSocketManager::UnixSocketManager(rclcpp::Logger logger,
                                      SensorMessageBuffer& sensor_message_buffer,
                                      std::string& socket_path)
-  : logger_{logger}
+  : logger_{std::move(logger)}
   , sensor_message_buffer_{sensor_message_buffer}
   , socket_path_{socket_path}
 {
