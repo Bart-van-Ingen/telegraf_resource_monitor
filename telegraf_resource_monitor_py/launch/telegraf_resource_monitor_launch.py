@@ -42,7 +42,7 @@ def generate_launch_description():
                         cmd=[
                             "telegraf",
                             "--config",
-                            "/ros_ws/src/telegraf_resource_monitor/config/telegraf.conf",
+                            "/ros_ws/src/telegraf_resource_monitor_py/config/telegraf.conf",
                         ],
                         output="screen",
                     )
