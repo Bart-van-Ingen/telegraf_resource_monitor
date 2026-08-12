@@ -4,7 +4,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 
 from resource_monitoring_interfaces.msg import Field, Resource
-from telegraf_resource_monitor.sensor_message import SensorMessage
+from telegraf_resource_monitor_py.sensor_message import SensorMessage
 
 
 class SensorMessagePublisher:

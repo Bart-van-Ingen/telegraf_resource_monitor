@@ -4,8 +4,8 @@ from threading import Thread
 
 from rclpy.node import Node
 
-from telegraf_resource_monitor.sensor_message import SensorMessage, SensorMessageBuffer
-from telegraf_resource_monitor.sensor_message_publisher import SensorMessagePublisher
+from telegraf_resource_monitor_py.sensor_message import SensorMessage, SensorMessageBuffer
+from telegraf_resource_monitor_py.sensor_message_publisher import SensorMessagePublisher
 
 
 class SensorMessageProcessor:

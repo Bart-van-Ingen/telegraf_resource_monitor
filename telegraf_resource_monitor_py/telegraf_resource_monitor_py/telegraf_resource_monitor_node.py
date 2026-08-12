@@ -5,9 +5,9 @@ import rclpy
 from rclpy._rclpy_pybind11 import RCLError
 from rclpy.node import Node
 
-from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
-from telegraf_resource_monitor.sensor_message_processor import SensorMessageProcessor
-from telegraf_resource_monitor.unix_socket_manager import UnixSocketManager
+from telegraf_resource_monitor_py.sensor_message import SensorMessageBuffer
+from telegraf_resource_monitor_py.sensor_message_processor import SensorMessageProcessor
+from telegraf_resource_monitor_py.unix_socket_manager import UnixSocketManager
 
 
 def main(args=None):

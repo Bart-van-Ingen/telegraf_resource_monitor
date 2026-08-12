@@ -22,7 +22,7 @@ def generate_launch_description():
                 description="log level of node.",
             ),
             Node(
-                package="telegraf_resource_monitor",
+                package="telegraf_resource_monitor_py",
                 executable="telegraf_resource_monitor_node",
                 name="telegraf_resource_monitor_node",
                 output={"both": {"screen", "log", "own_log"}},

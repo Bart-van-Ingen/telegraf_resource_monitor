@@ -5,7 +5,7 @@ from threading import Thread
 
 from rclpy.impl.rcutils_logger import RcutilsLogger
 
-from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
+from telegraf_resource_monitor_py.sensor_message import SensorMessageBuffer
 
 
 class UnixSocketManager:
