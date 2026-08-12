@@ -4,19 +4,19 @@
 
 # Telegraf Resource Monitor
 
-This repository provides a ROS 2-based resource monitoring solution that leverages [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more.
+This repository provides a ROS 2-based resource monitoring solution that leverages [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more. There are two implementations, one in Python and one in CPP.
 
 ## Table of Contents
 
 - [Motivation](#motivation)
-- [Architecture](#architecture)
-   - [telegraf_resource_monitor](#telegraf_resource_monitor)
-   - [diagnostics_resource_updater](#diagnostics_resource_updater)
-   - [resource_monitoring_interfaces](#resource_monitoring_interfaces)
 - [Installation](#installation)
    - [Prerequisites](#prerequisites)
    - [Installing Telegraf](#installing-telegraf)
    - [Installing Package](#installing-package)
+- [Architecture](#architecture)
+   - [telegraf_resource_monitor_py/cpp](#telegraf_resource_monitor_py/cpp)
+   - [diagnostics_resource_updater](#diagnostics_resource_updater)
+   - [resource_monitoring_interfaces](#resource_monitoring_interfaces)
 - [Maintainer](#maintainer)
 - [Acknowledgments](#acknowledgments)
 
@@ -37,23 +37,88 @@ Resource monitoring is not a unique problem to robotics, and there are many exis
 
 Telegraf also present the opportunity to build out remote monitoring capabilities of the same resources over the OTLP protocol, which is a common standard for telemetry data. This can be connect to any [opentelemetry collector](https://opentelemetry.io/docs/collector/distributions/) which can then pass it on to whatever remote monitoring environment you wish.
 
+
+## Installation
+
+### Prerequisites
+
+- ROS 2 Humble (or compatible)
+- lm-sensors (for temperature monitoring)
+
+### Installing Telegraf
+
+#### Through Apt
+
+As per https://www.influxdata.com/get-telegraf/
+
+```bash
+# Add InfluxDB repository
+# influxdata-archive.key GPG fingerprint:
+#   Primary key fingerprint: 24C9 75CB A61A 024E E1B6  3178 7C3D 5715 9FC2 F927
+#   Subkey fingerprint:      9D53 9D90 D332 8DC7 D6C8  D3B9 D8FF 8E1F 7DF8 B07E
+wget -q https://repos.influxdata.com/influxdata-archive.key
+gpg --show-keys --with-fingerprint --with-colons ./influxdata-archive.key 2>&1 | grep -q '^fpr:\+24C975CBA61A024EE1B631787C3D57159FC2F927:$' && cat influxdata-archive.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive.gpg > /dev/null
+echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main' | sudo tee /etc/apt/sources.list.d/influxdata.list
+
+sudo apt-get update && sudo apt-get install telegraf
+```
+
+#### As linux   binary
+
+find the specific version number from the [telegraf release page](https://github.com/influxdata/telegraf/releases) in the format x.xx.x.
+
+Then fill this value accordingly with the following commands in terminal
+
+```bash
+wget https://dl.influxdata.com/telegraf/releases/telegraf-x.xx.x_linux_amd64.tar.gz \
+    && tar -xzf telegraf-x.xx.x_linux_amd64.tar.gz \
+    && rm telegraf-x.xx.x_linux_amd64.tar.gz \
+    && mv telegraf-x.xx.x/usr/bin/telegraf /usr/local/bin/telegraf \
+    && chmod +x /usr/local/bin/telegraf
+```
+
+### Installing Package
+
+1. **Clone the repository** into your ROS 2 workspace:
+   ```bash
+   cd ~/ros2_ws/src
+   git clone https://github.com/Bart-van-Ingen/ros-telegraf-monitor.git
+   ```
+
+1. **Install dependencies**:
+   ```bash
+   cd ~/ros2_ws
+   rosdep install --from-paths src --ignore-src -r -y
+   ```
+
+1. **Build the package**:
+   ```bash
+   colcon build
+   ```
+
+1. **Source the workspace**:
+   ```bash
+   source install/setup.bash
+   ```
+
+
 ## Architecture
 
 
 This repository contains three ROS 2 packages:
-- `telegraf_resource_monitor` 
-   Integrates Telegraf with ROS 2 to monitor system resources and publish them as ROS messages.
+- `telegraf_resource_monitor_py` and `telegraf_resource_monitor_cpp` 
+   Both Python and CPP implementation integrates Telegraf with ROS 2 to monitor system resources and publish them as ROS messages.
 - `resource_diagnostics_updater`
    Subscribes to resource topics and updates the ROS 2 diagnostics system with the latest metrics, based on target resources stipulated in a configuration file. 
 - `resource_monitoring_interfaces`
-   Custom message definitions for resource monitoring.
+   Custom message definitions for resource monitoring. 
 
 The architecture between the packages is illustrated below:
 <p align="center">
    <img src="images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" width="70%" />
 </p>
 
-### telegraf_resource_monitor
+### telegraf_resource_monitor_py/cpp
 
 The package consists of:
 
@@ -69,12 +134,11 @@ Telegraf --> Unix socket --> read thread --> queue --> processor thread --> ROS 
              (kernel buffer)  (getline)              (JSON parse, publish)
 ```
 
-The read thread only reads lines and pushes the raw strings onto the queue.
-Parsing and publishing happen on the processor thread, so the socket is drained
+The read thread only reads lines and pushes the raw strings onto the queue inside the node.
+Parsing and publishing happen on a seperate processor thread, so the socket is drained
 quickly no matter how slow those are.
 
-Note that there are two buffers. The kernel already buffers the Unix socket
-(about 208 KB) and blocks Telegraf's `write()` when full rather than dropping
+Note that there are two buffers. The kernel already buffers the Unix socket and blocks Telegraf's `write()` when full rather than dropping
 data. The queue is therefore not about data loss. It absorbs **bursts**: Telegraf
 writes on its `flush_interval`, not its `interval`, so `interval = "100ms"` with
 `flush_interval = "1s"` delivers a whole second of lines at once. Since
@@ -82,17 +146,6 @@ writes on its `flush_interval`, not its `interval`, so `interval = "100ms"` with
 tolerant of rates it was not tuned for. It does not help with sustained overload,
 where the input rate simply exceeds what the node can publish.
 
-#### Tuning for High Rates
-
-- **Match `flush_interval` to `interval`**, or you collect more often but still
-  receive data in bursts.
-- **`procstat` scans `/proc` every interval** with `pid_finder = "native"`.
-  Measure its CPU cost, or give it a slower per-input `interval`.
-- **Each unique tag set creates a permanent publisher.** Stable tags (`cpu`,
-  `node_name`) are fine; changing ones (PIDs, container IDs) create publishers
-  without limit. Use `taginclude` and `tagexclude` to keep tags small.
-- **The queue is unbounded**, so a stalled publisher side grows memory instead of
-  pushing back on Telegraf.
 
 #### Topics Published
 
@@ -127,7 +180,7 @@ Each topic publishes `Resource` messages from the [resource_monitoring_interface
 Run the following command to launch the Telegraf resource monitor with default settings:
 
 ```bash
-ros2 launch telegraf_resource_monitor telegraf_resource_monitor_launch.py
+ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py
 ```
 
 ##### Launch with Custom Parameters and Logging Level
@@ -143,7 +196,7 @@ ros2 launch telegraf_resource_monitor telegraf_resource_monitor_launch.py \
 
 The package includes a pre-configured Telegraf configuration file at `config/telegraf.conf` that:
 
-- Collects metrics every 1 second (configurable per input)
+- Collects metrics every 100 millisecond (configurable per input)
 - Outputs data to Unix socket `/tmp/telegraf.sock`
 - Includes processors for data cleanup and tagging
 - Monitors CPU, memory, disk, sensors, and ROS processes
@@ -199,49 +252,6 @@ Defines custom ROS 2 message types for message sent by the [telegraf_resource_mo
 - `Field.msg`: Represents a single metric field with name and value
 - `Resource.msg`: Represents a resource with a header and an array of `Field` messages
 
-
-## Installation
-
-### Prerequisites
-
-- ROS 2 Humble (or compatible)
-- lm-sensors (for temperature monitoring)
-
-### Installing Telegraf
-
-```bash
-# Add InfluxDB repository
-curl -s https://repos.influxdata.com/influxdata-archive_compat.key | sudo apt-key add -
-echo "deb https://repos.influxdata.com/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/influxdata.list
-
-# Install Telegraf
-sudo apt update
-sudo apt install telegraf
-```
-
-### Installing Package
-
-1. **Clone the repository** into your ROS 2 workspace:
-   ```bash
-   cd ~/ros2_ws/src
-   git clone https://github.com/Bart-van-Ingen/ros-telegraf-monitor.git
-   ```
-
-1. **Install dependencies**:
-   ```bash
-   cd ~/ros2_ws
-   rosdep install --from-paths src --ignore-src -r -y
-   ```
-
-1. **Build the package**:
-   ```bash
-   colcon build
-   ```
-
-1. **Source the workspace**:
-   ```bash
-   source install/setup.bash
-   ```
 
 ## Maintainer
 
