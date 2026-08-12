@@ -16,25 +16,31 @@ file(GLOB_RECURSE TELEGRAF_MONITOR_SOURCES CONFIGURE_DEPENDS
   src/*.cpp
   include/*.hpp)
 
-add_executable(telegraf_monitor_node ${TELEGRAF_MONITOR_SOURCES})
-target_include_directories(telegraf_monitor_node PUBLIC
+add_executable(telegraf_resource_monitor_node ${TELEGRAF_MONITOR_SOURCES})
+target_include_directories(telegraf_resource_monitor_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(telegraf_monitor_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(telegraf_resource_monitor_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
-  telegraf_monitor_node
+  telegraf_resource_monitor_node
   "rclcpp"
   "resource_monitoring_interfaces"
 )
 
 # Link the third-party JSON library
 target_link_libraries(
-telegraf_monitor_node 
+telegraf_resource_monitor_node 
 nlohmann_json::nlohmann_json 
 ros2_fmt_logger::ros2_fmt_logger)
 
-install(TARGETS telegraf_monitor_node
+install(TARGETS telegraf_resource_monitor_node
   DESTINATION lib/${PROJECT_NAME})
+
+# Add the launch files
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -49,7 +55,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   file(GLOB TEST_HELPER_SOURCES CONFIGURE_DEPENDS src/*.cpp)
-  list(REMOVE_ITEM TEST_HELPER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/telegraf_monitor_node.cpp)
+  list(REMOVE_ITEM TEST_HELPER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/telegraf_resource_monitor_node.cpp)
 
   file(GLOB TEST_SOURCES CONFIGURE_DEPENDS test/test_*.cpp)
 
