@@ -25,7 +25,7 @@ private:
 public:
   UnixSocketDummy(std::string socket_path);
   ~UnixSocketDummy();
-  void makeConnection();
+  void make_connection();
 };
 
 UnixSocketDummy::UnixSocketDummy(std::string socket_path)
@@ -40,7 +40,7 @@ UnixSocketDummy::~UnixSocketDummy()
 {
 }
 
-void UnixSocketDummy::makeConnection()
+void UnixSocketDummy::make_connection()
 {
   if (connect(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) == -1)
   {
@@ -68,7 +68,7 @@ TEST(UnixSocketManagerTest, AcceptsConnectionWhenAvailable)
   std::thread producer([&socket_path]() {
     UnixSocketDummy socket_dummy{socket_path};
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    socket_dummy.makeConnection();
+    socket_dummy.make_connection();
   });
 
   auto logger{rclcpp::get_logger("test_sensor_message_buffer")};

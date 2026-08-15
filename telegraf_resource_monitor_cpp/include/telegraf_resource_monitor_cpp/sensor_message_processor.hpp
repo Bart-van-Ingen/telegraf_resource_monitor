@@ -1,8 +1,11 @@
 #pragma once
 
+#include <map>
 #include <memory>
+#include <string>
+#include <thread>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 
 #include <ros2_fmt_logger/logger.hpp>
 
@@ -28,5 +31,6 @@ private:
   PublisherPtr get_publisher(const SensorMessage& message);
 
 public:
-  SensorMessageProcessor(rclcpp::Node::SharedPtr node, SensorMessageBuffer& sensor_message_buffer);
+  SensorMessageProcessor(const rclcpp::Node::SharedPtr& node,
+                         SensorMessageBuffer& sensor_message_buffer);
 };

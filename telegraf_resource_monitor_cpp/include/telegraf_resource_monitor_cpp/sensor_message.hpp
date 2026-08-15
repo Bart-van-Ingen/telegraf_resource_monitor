@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/logger.hpp"
 
 #include <nlohmann/json.hpp>
 #include <ros2_fmt_logger/logger.hpp>
@@ -29,14 +29,14 @@ class SensorMessageBuffer
 {
 private:
   const ros2_fmt_logger::Logger logger_;
-  const std::size_t max_buffer_size_;
-  std::queue<std::string> buffer_;
+  const std::size_t max_buffer_size_{1};
+  std::queue<std::string> buffer_{};
 
-  std::mutex mutex_;
-  std::condition_variable condition_variable_;
+  std::mutex mutex_{};
+  std::condition_variable condition_variable_{};
 
 public:
-  explicit SensorMessageBuffer(rclcpp::Logger logger, const std::size_t max_buffer_size_);
+  SensorMessageBuffer(const rclcpp::Logger& logger, const std::size_t max_buffer_size_);
   void add_message(std::string&& message);
   std::optional<SensorMessage> get_message(const std::chrono::milliseconds timeout);
   bool is_empty();

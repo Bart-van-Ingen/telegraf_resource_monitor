@@ -1,9 +1,21 @@
+#include <chrono>
+#include <memory>
+#include <string>
+#include <thread>
+#include <utility>
+
+#include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
+
+#include <ros2_fmt_logger/logger.hpp>
+
+#include "telegraf_resource_monitor_cpp/sensor_message.hpp"
 #include "telegraf_resource_monitor_cpp/sensor_message_processor.hpp"
 #include "telegraf_resource_monitor_cpp/sensor_message_publisher.hpp"
 
-SensorMessageProcessor::SensorMessageProcessor(rclcpp::Node::SharedPtr node,
+SensorMessageProcessor::SensorMessageProcessor(const rclcpp::Node::SharedPtr& node,
                                                SensorMessageBuffer& sensor_message_buffer)
-  : node_{std::move(node)}
+  : node_{node}
   , logger_{node_->get_logger()}
   , sensor_message_buffer_{sensor_message_buffer}
 {

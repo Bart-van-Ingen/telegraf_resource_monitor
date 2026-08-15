@@ -1,8 +1,9 @@
 #pragma once
-#include <sys/un.h>
+
+#include <string>
 #include <thread>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/logger.hpp"
 
 #include <ros2_fmt_logger/logger.hpp>
 
@@ -27,13 +28,13 @@ private:
   void read_data();
 
 public:
-  UnixSocketManager(rclcpp::Logger logger,
+  UnixSocketManager(const rclcpp::Logger& logger,
                     SensorMessageBuffer& sensor_message_buffer,
                     std::string& socket_path);
 
   ~UnixSocketManager();
 
-  std::string get_socket_path()
+  const std::string get_socket_path()
   {
     return socket_path_;
   }

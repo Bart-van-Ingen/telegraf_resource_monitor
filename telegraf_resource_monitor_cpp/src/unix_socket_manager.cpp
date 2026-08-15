@@ -2,20 +2,24 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <sys/un.h>
 #include <thread>
 #include <unistd.h>
 
-#include "rclcpp/rclcpp.hpp"
+#include <stdio.h>
 
+#include "rclcpp/logger.hpp"
+#include "rclcpp/utilities.hpp"
+
+#include "telegraf_resource_monitor_cpp/sensor_message.hpp"
 #include "telegraf_resource_monitor_cpp/unix_socket_manager.hpp"
 
-UnixSocketManager::UnixSocketManager(rclcpp::Logger logger,
+UnixSocketManager::UnixSocketManager(const rclcpp::Logger& logger,
                                      SensorMessageBuffer& sensor_message_buffer,
                                      std::string& socket_path)
-  : logger_{std::move(logger)}
+  : logger_{logger}
   , sensor_message_buffer_{sensor_message_buffer}
   , socket_path_{socket_path}
 {
@@ -55,9 +59,9 @@ void UnixSocketManager::create_socket()
   listen_fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
   if (listen_fd_ == -1)
   {
-    logger_.error( "socket(AF_UNIX) failed: {}", std::strerror(errno));
+    logger_.error("socket(AF_UNIX) failed: {}", std::strerror(errno));
   }
-  logger_.info( "created UNIX socket (listen_fd_= {})", listen_fd_);
+  logger_.info("created UNIX socket (listen_fd_= {})", listen_fd_);
 }
 
 void UnixSocketManager::bind_socket()
@@ -71,7 +75,7 @@ void UnixSocketManager::bind_socket()
   // Bind the listening socket to the filesystem path.
   if (bind(listen_fd_, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == -1)
   {
-    logger_.error( "bind({}) failed: {}", socket_path_, std::strerror(errno));
+    logger_.error("bind({}) failed: {}", socket_path_, std::strerror(errno));
     close(listen_fd_);
   }
   logger_.info("bound UNIX socket to {}", socket_path_);

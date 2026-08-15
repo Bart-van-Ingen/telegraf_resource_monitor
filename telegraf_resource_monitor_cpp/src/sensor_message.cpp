@@ -1,12 +1,17 @@
 #include <chrono>
-#include <string_view>
+#include <cstddef>
+#include <mutex>
+#include <optional>
+#include <string>
+#include <utility>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/logger.hpp"
 
 #include "telegraf_resource_monitor_cpp/sensor_message.hpp"
 
-SensorMessageBuffer::SensorMessageBuffer(rclcpp::Logger logger, const std::size_t max_buffer_size)
-  : logger_(std::move(logger))
+SensorMessageBuffer::SensorMessageBuffer(const rclcpp::Logger& logger,
+                                         const std::size_t max_buffer_size)
+  : logger_(logger)
   , max_buffer_size_{max_buffer_size} {};
 
 void SensorMessageBuffer::add_message(std::string&& message)
