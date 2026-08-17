@@ -25,7 +25,6 @@
     "python.defaultInterpreterPath": "/usr/bin/python3",
     "python.terminal.activateEnvironment": false,
     "[python]": {
-        "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.fixAll": "explicit"
         },
@@ -52,9 +51,13 @@
     ],
     // CPP SETTINGS
     "cmake.ignoreCMakeListsMissing": true,
-    "C_Cpp.errorSquiggles": "enabled",
-    "C_Cpp.clang_format_sortIncludes": true,
-    "C_Cpp.clang_format_style": "file:/ros_ws/src/.clang-format",
+    "clangd.enable": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    },
+    "[c]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    },
     // JSON settings
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
@@ -62,23 +65,9 @@
     // MARKDOWN SETTINGS
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
     },
     "prettier.printWidth": 100,
-    // ROS2 SETTINGS
-    "ROS2.distro": "humble",
-    "ROS2.rosSetupScript": "/ros_ws/src/docker/entrypoint.sh",
     // GIT GRAPH SETTINGS
     "git-graph.maxDepthOfRepoSearch": 1,
-    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
-    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
-    // Stands in for clang-tidy: runs it as normal, then checks the paired
-    // .hpp on its own so misc-include-cleaner sees the header too.
-    "C_Cpp.codeAnalysis.clangTidy.path": "/ros_ws/.vscode/clang-tidy/clang-tidy-wrapper.sh",
-    // The clang-tidy bundled with the extension ships no clang builtin
-    // headers, so every run fails on "'stddef.h' file not found". Point it
-    // at GCC's copy instead.
-    "C_Cpp.codeAnalysis.clangTidy.args": [
-        "--extra-arg=-isystem/usr/lib/gcc/x86_64-linux-gnu/11/include"
-    ],
+    "ROS2.distro": "humble",
 }

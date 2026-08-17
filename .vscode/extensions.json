@@ -4,7 +4,7 @@
                 "ms-python.python", // language support
                 "charliermarsh.ruff", // python linter
                 // C++ related extensions
-                "ms-vscode.cpptools-extension-pack", // language support
+                "llvm-vs-code-extensions.vscode-clangd", // language support
                 "ms-vscode.cmake-tools", // cmake support
                 // Other extensions
                 "ranch-hand-robotics.rde-ros-2", // ROS2 support
