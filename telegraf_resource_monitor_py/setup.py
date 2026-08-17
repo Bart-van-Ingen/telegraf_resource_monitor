@@ -16,6 +16,12 @@ setup(
             str(Path('share') / package_name / 'launch'),
             [str(launch_file_path) for launch_file_path in Path('launch').glob('*')],
         ),
+        # Include the telegraf config so the launch files can find it in the install space
+        # rather than through a hardcoded source-tree path.
+        (
+            str(Path('share') / package_name / 'config'),
+            [str(config_file_path) for config_file_path in Path('config').glob('*')],
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
