@@ -14,7 +14,8 @@ AlwaysBreakBeforeMultilineStrings: true
 BreakBeforeBinaryOperators: false
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: true
-BinPackParameters: true
+PackConstructorInitializers: Never
+BinPackParameters: false
 ColumnLimit: 100
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 DerivePointerBinding: false
@@ -31,7 +32,7 @@ PenaltyBreakFirstLessLess: 1000
 PenaltyExcessCharacter: 1000
 PenaltyReturnTypeOnItsOwnLine: 90
 SpacesBeforeTrailingComments: 2
-Cpp11BracedListStyle: false
+Cpp11BracedListStyle: true
 Standard: Auto
 IndentWidth: 2
 TabWidth: 2
@@ -82,7 +83,7 @@ IncludeCategories:
   - Regex: "^[<\"](ament_[[:alnum:]_]+|builtin_interfaces|class_loader|composition_interfaces|diagnostic_updater|libstatistics_collector|message_filters|pluginlib|rcl|rcl_[[:alnum:]_]+|rclcpp|rclcpp_[[:alnum:]_]+|rcpputils|rcutils|rmw|rmw_[[:alnum:]_]+|rosbag2_[[:alnum:]_]+|rosidl_[[:alnum:]_]+|tf2|tf2_[[:alnum:]_]+|[[:alnum:]_]+_msgs|[[:alnum:]_]+_srvs|[[:alnum:]_]+_actions|[[:alnum:]_]+_interfaces)/"
     Priority: 2
   # --- 3. other third-party libraries
-  - Regex: "^[<\"](gtest|gmock|nlohmann|Eigen|boost|fmt|spdlog|yaml-cpp|opencv2|benchmark)[/.]"
+  - Regex: "^[<\"](gtest|gmock|nlohmann|ros2_fmt_logger|Eigen|boost|fmt|spdlog|yaml-cpp|opencv2|benchmark)[/.]"
     Priority: 3
   # --- 4. everything else = this package / this workspace
   - Regex: ".*"

@@ -25,7 +25,6 @@
     "python.defaultInterpreterPath": "/usr/bin/python3",
     "python.terminal.activateEnvironment": false,
     "[python]": {
-        "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.fixAll": "explicit"
         },
@@ -52,9 +51,13 @@
     ],
     // CPP SETTINGS
     "cmake.ignoreCMakeListsMissing": true,
-    "C_Cpp.errorSquiggles": "enabled",
-    "C_Cpp.clang_format_sortIncludes": true,
-    "C_Cpp.clang_format_style": "file:/ros_ws/src/.clang-format",
+    "clangd.enable": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    },
+    "[c]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    },
     // JSON settings
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
@@ -62,12 +65,9 @@
     // MARKDOWN SETTINGS
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
     },
     "prettier.printWidth": 100,
-    // ROS2 SETTINGS
-    "ROS2.distro": "humble",
-    "ROS2.rosSetupScript": "/ros_ws/src/docker/entrypoint.sh",
     // GIT GRAPH SETTINGS
     "git-graph.maxDepthOfRepoSearch": 1,
+    "ROS2.distro": "humble",
 }

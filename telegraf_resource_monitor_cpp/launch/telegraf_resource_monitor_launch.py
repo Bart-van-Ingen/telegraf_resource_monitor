@@ -1,7 +1,16 @@
+from pathlib import Path
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
+# There is a single telegraf config for both implementations and it lives in the python
+# package, hence the cross-package lookup here.
+DEFAULT_TELEGRAF_CONFIG_PATH = str(
+    Path(get_package_share_directory("telegraf_resource_monitor_py")) / "config" / "telegraf.conf"
+)
 
 
 def generate_launch_description():
@@ -21,8 +30,13 @@ def generate_launch_description():
                 default_value="INFO",
                 description="log level of node.",
             ),
+            DeclareLaunchArgument(
+                name="telegraf_config_path",
+                default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
+                description="Path to the telegraf config file telegraf is started with.",
+            ),
             Node(
-                package="telegraf_resource_monitor",
+                package="telegraf_resource_monitor_cpp",
                 executable="telegraf_resource_monitor_node",
                 name="telegraf_resource_monitor_node",
                 output={"both": {"screen", "log", "own_log"}},
@@ -42,7 +56,7 @@ def generate_launch_description():
                         cmd=[
                             "telegraf",
                             "--config",
-                            "/ros_ws/src/telegraf_resource_monitor/config/telegraf.conf",
+                            LaunchConfiguration("telegraf_config_path"),
                         ],
                         output="screen",
                     )

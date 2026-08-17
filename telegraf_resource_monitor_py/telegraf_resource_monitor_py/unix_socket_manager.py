@@ -5,11 +5,16 @@ from threading import Thread
 
 from rclpy.impl.rcutils_logger import RcutilsLogger
 
-from telegraf_resource_monitor.sensor_message import SensorMessageBuffer
+from telegraf_resource_monitor_py.sensor_message import SensorMessageBuffer
 
 
 class UnixSocketManager:
-    def __init__(self, logger: RcutilsLogger, sensor_message_buffer: SensorMessageBuffer) -> None:
+    def __init__(
+        self,
+        logger: RcutilsLogger,
+        sensor_message_buffer: SensorMessageBuffer,
+        socket_path: str = "/tmp/telegraf.sock",
+    ) -> None:
         self.logger = logger
         self.sensor_message_buffer = sensor_message_buffer
 
@@ -17,7 +22,7 @@ class UnixSocketManager:
         self.shutdown_event = threading.Event()
 
         self.server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.socket_path = Path("/tmp/telegraf.sock")
+        self.socket_path = Path(socket_path)
         logger.info(f"server listening on {self.socket_path}")
 
         # Remove existing socket file if it exists
@@ -63,9 +68,9 @@ class UnixSocketManager:
                 elif not result:
                     break
 
-                recieved_data: tuple[socket.socket, str] = result
+                received_data: tuple[socket.socket, str] = result
 
-                conn, addr = recieved_data
+                conn, addr = received_data
 
                 self.logger.debug(f"connected by {addr}")
 
@@ -110,9 +115,9 @@ class UnixSocketManager:
                     elif not result:
                         break
 
-                    recieved_data: bytes = result
+                    received_data: bytes = result
 
-                    decoded_message = recieved_data.decode("utf-8")
+                    decoded_message = received_data.decode("utf-8")
 
                     message_buffer = self.buffer_complete_messages(
                         decoded_message,

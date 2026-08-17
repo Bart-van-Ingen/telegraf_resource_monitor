@@ -4,8 +4,8 @@ from threading import Thread
 
 from rclpy.node import Node
 
-from telegraf_resource_monitor.sensor_message import SensorMessage, SensorMessageBuffer
-from telegraf_resource_monitor.sensor_message_publisher import SensorMessagePublisher
+from telegraf_resource_monitor_py.sensor_message import SensorMessage, SensorMessageBuffer
+from telegraf_resource_monitor_py.sensor_message_publisher import SensorMessagePublisher
 
 
 class SensorMessageProcessor:
@@ -32,13 +32,9 @@ class SensorMessageProcessor:
 
     def process_buffered_messages(self) -> None:
         while not self.shutdown_event.is_set():
-            self.sensor_message_buffer.event.wait(0.1)  # timeout to check for shutdown_event
-
-            while not self.sensor_message_buffer.is_empty():
-                message: SensorMessage = self.sensor_message_buffer.get_message()
+            message = self.sensor_message_buffer.get_message(timeout=0.1)
+            if message is not None:
                 self.publish_sensor_message(message)
-
-            self.sensor_message_buffer.event.clear()
 
     def publish_sensor_message(self, message: SensorMessage) -> None:
 

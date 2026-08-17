@@ -32,7 +32,7 @@ WORKDIR /ros_ws
 COPY . ./src/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
-    && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
+    && rosdep install -y --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
     && colcon build --symlink-install \
     && rm -rf /var/lib/apt/lists/*
 

@@ -1,25 +1,22 @@
+from builtin_interfaces.msg import Time
 from rclpy._rclpy_pybind11 import RCLError
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 
 from resource_monitoring_interfaces.msg import Field, Resource
-from telegraf_resource_monitor.sensor_message import SensorMessage
+from telegraf_resource_monitor_py.sensor_message import SensorMessage
 
 
-class ResourcePublisher:
-    def __init__(self, node: Node, sensor_message: SensorMessage) -> None:
+class SensorMessagePublisher:
+    def __init__(self, node: Node, message: SensorMessage) -> None:
         self.node = node
         self.logger = node.get_logger()
 
-        sensor_type = sensor_message.name
-        sensor_tags = sensor_message.tags
+        sensor_type = message.name
+        sensor_tags = message.tags
 
         # Convert tags dict to a pathed string
-        tags_str = (
-            "/".join(f"{value}" for value in sensor_tags.values())
-            if sensor_tags
-            else ""
-        )
+        tags_str = "/".join(f"{value}" for value in sensor_tags.values()) if sensor_tags else ""
 
         topic_name = f"{sensor_type}/{tags_str}"
 
@@ -28,17 +25,17 @@ class ResourcePublisher:
 
         # remove trailing slashes
         topic_name = topic_name.rstrip("/")
-        self.topic_name = topic_name.lower()
+        topic_name = topic_name.lower()
 
-        self.logger.info(f"creating publisher for resource {self.topic_name}")
+        self.logger.info(f"creating publisher for resource {topic_name}")
 
         self.publisher = node.create_publisher(
             msg_type=Resource,
-            topic=self.topic_name,
+            topic=topic_name,
             qos_profile=qos_profile_sensor_data,
         )
 
-    def publish_from_sensor_message(self, message: SensorMessage) -> None:
+    def publish(self, message: SensorMessage) -> None:
         fields = []
 
         for field_name, field_value in message.fields.items():
@@ -48,7 +45,7 @@ class ResourcePublisher:
             fields.append(field_msg)
 
         resource_msg = Resource()
-        resource_msg.header.stamp = self.node.get_clock().now().to_msg()
+        resource_msg.header.stamp = Time(sec=message.timestamp, nanosec=0)
         resource_msg.fields = fields
 
         try:

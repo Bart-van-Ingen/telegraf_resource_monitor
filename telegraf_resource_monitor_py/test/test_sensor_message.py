@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pytest
 import rclpy
 from rclpy.node import Node
-from telegraf_resource_monitor.sensor_message import SensorMessage, SensorMessageBuffer
+from telegraf_resource_monitor_py.sensor_message import SensorMessage, SensorMessageBuffer
 
 
 @pytest.fixture
@@ -341,6 +341,7 @@ def test_buffer(
 
     message = test_sensor_message_buffer.get_message()
 
+    assert message is not None
     assert message == test_parameters.expected_message
 
     assert test_sensor_message_buffer.is_empty()
