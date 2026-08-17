@@ -27,7 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             ('telegraf_resource_monitor_node ='
-            ' telegraf_resource_monitor_py.telegraf_resource_monitor_node:main')
+             'telegraf_resource_monitor_py.telegraf_resource_monitor_node:main')
         ],
     },
 )
