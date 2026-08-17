@@ -24,6 +24,12 @@ Checks: "-*,
   "
 HeaderFilterRegex: '.*src/.*\.(hpp|cpp)$'
 CheckOptions:
+  # ROS generates each interface as a thin public header over nested
+  # detail/ headers. include-cleaner therefore calls the public header
+  # unused and asks for the detail one, which must never be included
+  # directly. Suffix-matched regexes, so no package names are needed.
+  - key: misc-include-cleaner.IgnoreHeaders
+    value: ".*/msg/.*;.*/srv/.*;.*/action/.*"
   - key: llvm-namespace-comment.ShortNamespaceLines
     value: "10"
   - key: llvm-namespace-comment.SpacesBeforeComments

@@ -1,7 +1,12 @@
 #pragma once
 
-#include "rclcpp/rclcpp.hpp"
+#include <map>
+#include <string>
+#include <string_view>
+
+#include "rclcpp/node.hpp"
 #include "resource_monitoring_interfaces/msg/resource.hpp"
+#include <rclcpp/publisher.hpp>
 
 #include <ros2_fmt_logger/logger.hpp>
 
@@ -26,7 +31,7 @@ private:
   void sanitize_topic_name(std::string& topic_str);
 
 public:
-  SensorMessagePublisher(rclcpp::Node::SharedPtr node,
+  SensorMessagePublisher(const rclcpp::Node::SharedPtr& node,
                          std::string_view message,
                          const TagsKey& tag_keys);
 

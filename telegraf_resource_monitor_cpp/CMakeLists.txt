@@ -60,6 +60,10 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
+  # the following line skips uncrustify, which enforces the ROS style and
+  # disagrees with src/.clang-format on brace placement and pointer
+  # alignment. clang-format is the single source of truth for this repo.
+  set(ament_cmake_uncrustify_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 
   file(GLOB TEST_SOURCES CONFIGURE_DEPENDS test/test_*.cpp)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <memory>
 #include <string>
 #include <thread>
 
@@ -13,8 +12,7 @@
 #include "telegraf_resource_monitor_cpp/sensor_message_publisher.hpp"
 
 using TagsKey = std::map<std::string, std::string>;
-using PublisherPtr = std::shared_ptr<SensorMessagePublisher>;
-using PublisherMap = std::map<TagsKey, PublisherPtr>;
+using PublisherMap = std::map<TagsKey, SensorMessagePublisher>;
 
 class SensorMessageProcessor
 {
@@ -28,9 +26,10 @@ private:
   std::thread publisher_thread_;  // read thread
 
   void process_buffered_messages();
-  PublisherPtr get_publisher(const SensorMessage& message);
+  SensorMessagePublisher& get_publisher(const SensorMessage& message);
 
 public:
   SensorMessageProcessor(const rclcpp::Node::SharedPtr& node,
                          SensorMessageBuffer& sensor_message_buffer);
+  ~SensorMessageProcessor();
 };

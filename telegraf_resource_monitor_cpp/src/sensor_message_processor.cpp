@@ -1,5 +1,4 @@
 #include <chrono>
-#include <memory>
 #include <string>
 #include <thread>
 #include <utility>
@@ -22,6 +21,14 @@ SensorMessageProcessor::SensorMessageProcessor(const rclcpp::Node::SharedPtr& no
   publisher_thread_ = std::thread(&SensorMessageProcessor::process_buffered_messages, this);
 }
 
+SensorMessageProcessor::~SensorMessageProcessor()
+{
+  if (publisher_thread_.joinable())
+  {
+    publisher_thread_.join();
+  }
+}
+
 void SensorMessageProcessor::process_buffered_messages()
 {
   while (rclcpp::ok())
@@ -35,12 +42,12 @@ void SensorMessageProcessor::process_buffered_messages()
     }
 
     SensorMessage sensor_message = message.value();
-    PublisherPtr publisher = get_publisher(sensor_message);
-    publisher->publish(sensor_message);
+    SensorMessagePublisher& publisher = get_publisher(sensor_message);
+    publisher.publish(sensor_message);
   }
 }
 
-PublisherPtr SensorMessageProcessor::get_publisher(const SensorMessage& message)
+SensorMessagePublisher& SensorMessageProcessor::get_publisher(const SensorMessage& message)
 {
   const std::string sensor_type{message.name};
 
@@ -54,11 +61,11 @@ PublisherPtr SensorMessageProcessor::get_publisher(const SensorMessage& message)
   auto it = sensor_type_publishers.find(tags_key);
   if (it == sensor_type_publishers.end())
   {
+    // move semantics will occur on emplace of temporary SensorMessagePublisher
     it = sensor_type_publishers
-             .emplace(tags_key,
-                      std::make_shared<SensorMessagePublisher>(node_, sensor_type, tags_key))
+             .emplace(tags_key, SensorMessagePublisher(node_, sensor_type, tags_key))
              .first;
   }
-  PublisherPtr publisher = it->second;
+  SensorMessagePublisher& publisher{it->second};
   return publisher;
 }

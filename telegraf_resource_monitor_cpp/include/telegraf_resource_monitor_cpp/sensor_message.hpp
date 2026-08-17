@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <condition_variable>
+#include <cstddef>
 #include <mutex>
 #include <optional>
 #include <queue>
@@ -10,7 +11,9 @@
 
 #include "rclcpp/logger.hpp"
 
+#include <nlohmann/detail/macro_scope.hpp>
 #include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 #include <ros2_fmt_logger/logger.hpp>
 
 using json = nlohmann::json;

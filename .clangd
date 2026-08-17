@@ -1,0 +1,18 @@
+---
+# clangd has its own Include Cleaner and ignores the clang-tidy
+# misc-include-cleaner check entirely, so the equivalent settings in
+# .clang-tidy do not reach the editor. Keep the two in step.
+Diagnostics:
+  # Off by default in clangd, which is why nothing flags a header that
+  # uses std::string without including <string>. Turn it on.
+  MissingIncludes: Strict
+  UnusedIncludes: Strict
+  Includes:
+    # ROS generates each interface as a thin public header over nested
+    # detail/ headers. Without these, clangd calls the public header
+    # unused and asks for the detail one, which must never be included
+    # directly. Suffix-matched regexes, so no package names are needed.
+    IgnoreHeader:
+      - .*/msg/.*
+      - .*/srv/.*
+      - .*/action/.*
