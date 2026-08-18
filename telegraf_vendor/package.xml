@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>telegraf_vendor</name>
+  <version>0.0.0</version>
+  <description>Vendor package that provides the telegraf binary. Uses an existing system
+install if one is found, otherwise downloads the upstream release into the workspace
+install space so no system paths are touched.</description>
+  <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
