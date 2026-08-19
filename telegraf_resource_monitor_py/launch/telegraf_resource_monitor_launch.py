@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_prefix, get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
 from launch.substitutions import LaunchConfiguration
@@ -10,6 +10,10 @@ from launch_ros.actions import Node
 DEFAULT_TELEGRAF_CONFIG_PATH = str(
     Path(get_package_share_directory("telegraf_resource_monitor_py")) / "config" / "telegraf.conf"
 )
+
+# Resolve the vendored binary directly instead of relying on PATH, so this also works when
+# install/setup.bash was not sourced by whatever started this launch file (systemd, Docker, etc).
+TELEGRAF_BIN = str(Path(get_package_prefix("telegraf_vendor")) / "bin" / "telegraf")
 
 
 def generate_launch_description():
@@ -53,7 +57,7 @@ def generate_launch_description():
                 actions=[
                     ExecuteProcess(
                         cmd=[
-                            "telegraf",
+                            TELEGRAF_BIN,
                             "--config",
                             LaunchConfiguration("telegraf_config_path"),
                         ],

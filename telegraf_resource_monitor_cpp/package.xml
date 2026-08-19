@@ -17,6 +17,7 @@
 
   <!-- the launch file starts telegraf with the config installed by the python package -->
   <exec_depend>telegraf_resource_monitor_py</exec_depend>
+  <exec_depend>telegraf_vendor</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>

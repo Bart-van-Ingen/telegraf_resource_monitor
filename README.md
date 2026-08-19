@@ -42,12 +42,25 @@ Telegraf also present the opportunity to build out remote monitoring capabilitie
 
 ### Prerequisites
 
-- ROS 2 Humble (or compatible)
-- lm-sensors (for temperature monitoring)
+- ROS 2 Humble
+- (OPTIONAL) lm-sensors, for temperature monitoring
 
 ### Installing Telegraf
 
-#### Through apt
+Telegraf can be fetched
+automatically into the workspace by the `telegraf_vendor` package (recommended), or be installed system-wide (apt or binary, below).
+
+#### Through the vendor package (recommended)
+
+Nothing to do here: `telegraf_vendor` downloads telegraf during `colcon build`
+and installs it into the workspace, so no system-wide install is needed. If
+telegraf is already on your system, it is reused instead of downloaded. See
+[docs/vendor_packages.md](docs/vendor_packages.md) for what a vendor package is
+and how this one works. Skip straight to [Installing the Package](#installing-the-package).
+
+
+<details>
+<summary><b>Through apt</b></summary>
 
 As per https://www.influxdata.com/get-telegraf/
 
@@ -62,8 +75,11 @@ echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repo
 
 sudo apt-get update && sudo apt-get install telegraf
 ```
+</details>
 
-#### As linux binary
+<details>
+<summary><b>As linux binary</b></summary>
+
 
 find the specific version number from the [telegraf release page](https://github.com/influxdata/telegraf/releases) in the format x.xx.x.
 
@@ -76,6 +92,7 @@ wget https://dl.influxdata.com/telegraf/releases/telegraf-x.xx.x_linux_amd64.tar
     && mv telegraf-x.xx.x/usr/bin/telegraf /usr/local/bin/telegraf \
     && chmod +x /usr/local/bin/telegraf
 ```
+</details>
 
 ### Installing the Package
 

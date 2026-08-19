@@ -33,7 +33,7 @@ COPY . ./src/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install -y --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
-    && colcon build --symlink-install \
+    && /ros_ws/src/.vscode/tasks/build.sh \
     && rm -rf /var/lib/apt/lists/*
 
 # Remove display warnings
