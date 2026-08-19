@@ -33,7 +33,10 @@ COPY . ./src/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install -y --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
-    && /ros_ws/src/.vscode/tasks/build.sh \
+    && colcon build \
+    --symlink-install \
+    --cmake-args \
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=On" \
     && rm -rf /var/lib/apt/lists/*
 
 # Remove display warnings
@@ -68,10 +71,15 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the ownership of the overlay workspace to the new user
-RUN chown -R dev:$dev /ros_ws
+RUN chown -R dev:dev /ros_ws
 
 # Set the ownership of the XDG_RUNTIME_DIR to the new user for vscode
 RUN chown -R dev:dev /tmp/runtime-root
+
+# Add SSH keys for github SSH git actions
+RUN mkdir -p /home/$USERNAME/.ssh
+RUN ssh-keyscan github.com >> /home/$USERNAME/.ssh/known_hosts
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 
 # Switch from root to user
 USER $USERNAME
