@@ -171,14 +171,14 @@
             "label": "new ament_cmake package",
             "detail": "Create a new ROS cpp package from a template.",
             "type": "shell",
-            "command": "ros2 pkg create --destination-directory src --build-type ament_cmake ${input:package}",
+            "command": "ros2 pkg create --destination-directory src --build-type ament_cmake ${input:newPackageName}",
             "problemMatcher": []
         },
         {
             "label": "new ament_python package",
             "detail": "Create a new ROS python package from a template.",
             "type": "shell",
-            "command": "ros2 pkg create --destination-directory src --build-type ament_python ${input:package}",
+            "command": "ros2 pkg create --destination-directory src --build-type ament_python ${input:newPackageName}",
             "problemMatcher": []
         },
         {
@@ -210,10 +210,16 @@
             "description": "Select ROS package",
             "options": [
                 "resource_diagnostics_updater",
+                "resource_diagnostics_updater_cpp",
                 "resource_monitoring_interfaces",
                 "telegraf_resource_monitor",
                 "telegraf_resource_monitor_cpp"
             ]
+        },
+        {
+            "id": "newPackageName",
+            "type": "promptString",
+            "description": "Name of the new ROS package"
         }
     ]
 }
