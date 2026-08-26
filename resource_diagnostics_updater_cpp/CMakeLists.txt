@@ -41,8 +41,14 @@ yaml-cpp
 ros2_fmt_logger::ros2_fmt_logger)
 
 
+# Parsing the rclcpp header tree dominates compile time for every file here,
+# so build it once as a precompiled header and share it across targets.
+target_precompile_headers(resource_diagnostics_updater_lib PRIVATE
+  <rclcpp/rclcpp.hpp>)
+
 add_executable(resource_diagnostics_updater_node src/resource_diagnostics_updater_node.cpp)
 target_link_libraries(resource_diagnostics_updater_node resource_diagnostics_updater_lib)
+target_precompile_headers(resource_diagnostics_updater_node REUSE_FROM resource_diagnostics_updater_lib)
 
 install(TARGETS resource_diagnostics_updater_node
   DESTINATION lib/${PROJECT_NAME})

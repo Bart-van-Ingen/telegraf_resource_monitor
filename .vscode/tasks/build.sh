@@ -15,10 +15,16 @@ JOBS=$(( $(nproc) + 2 ))
 # Build from the colcon workspace root regardless of where this was invoked from
 cd /ros_ws
 
+# Compile with clang 21 from apt.llvm.org instead of GCC: measured ~30% faster
+# on this workspace. Ubuntu 22.04's own clang 14/15 cannot compile this code;
+# see docs/clang_compiler.md for the research behind this choice.
 colcon build \
     --symlink-install \
     --parallel-workers "$JOBS" \
     --cmake-args \
+    "-GNinja" \
+    "-DCMAKE_C_COMPILER=clang-21" \
+    "-DCMAKE_CXX_COMPILER=clang++-21" \
     "-DCMAKE_BUILD_TYPE=$BUILD_TYPE" \
     "-DCMAKE_EXPORT_COMPILE_COMMANDS=On" \
     "-DCMAKE_C_COMPILER_LAUNCHER=ccache" \

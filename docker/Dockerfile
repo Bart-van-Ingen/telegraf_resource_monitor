@@ -54,8 +54,15 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 #####################
 FROM overlay AS dev
 
-# Add ccache and mold for quicker cpp compiling times
-RUN apt-get update && apt-get install -y ccache mold
+# Add ccache, mold and ninja for quicker cpp compiling times.
+RUN apt-get update && apt-get install -y ccache mold ninja-build
+
+# Add clang 21 from apt.llvm.org. build.sh compiles with it. See docs/clang_compiler.md.
+RUN wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key > /etc/apt/trusted.gpg.d/apt.llvm.org.asc \
+    && echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-21 main" > /etc/apt/sources.list.d/llvm21.list \
+    && apt-get update \
+    && apt-get install -y clang-21 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add dev user with same UID and GID as your host system
 # (copied from https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user)

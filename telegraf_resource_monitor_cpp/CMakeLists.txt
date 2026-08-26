@@ -38,8 +38,14 @@ telegraf_resource_monitor_lib
 nlohmann_json::nlohmann_json
 ros2_fmt_logger::ros2_fmt_logger)
 
+# Parsing the rclcpp header tree dominates compile time for every file here,
+# so build it once as a precompiled header and share it across targets.
+target_precompile_headers(telegraf_resource_monitor_lib PRIVATE
+  <rclcpp/rclcpp.hpp>)
+
 add_executable(telegraf_resource_monitor_node src/telegraf_resource_monitor_node.cpp)
 target_link_libraries(telegraf_resource_monitor_node telegraf_resource_monitor_lib)
+target_precompile_headers(telegraf_resource_monitor_node REUSE_FROM telegraf_resource_monitor_lib)
 
 install(TARGETS telegraf_resource_monitor_node
   DESTINATION lib/${PROJECT_NAME})
@@ -76,6 +82,7 @@ if(BUILD_TESTING)
 
     # Include dirs, rclcpp, JSON and the logger all propagate from the library.
     target_link_libraries(${TEST_NAME} telegraf_resource_monitor_lib)
+    target_precompile_headers(${TEST_NAME} REUSE_FROM telegraf_resource_monitor_lib)
   endforeach()
 
 endif()
