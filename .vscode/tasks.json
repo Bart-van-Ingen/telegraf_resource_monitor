@@ -70,26 +70,58 @@
             "problemMatcher": []
         },
         // Linting and static code analysis tasks
+        // These invoke the ament_* CLI tools directly. They used to use "type": "ament", which
+        // was provided by the discontinued ms-iot.vscode-ros extension. Its replacement,
+        // ranch-hand-robotics.rde-ros-2, only registers the "ROS2" and "colcon" task types, so
+        // "ament" tasks and the "$ament_*" problem matchers no longer resolve to anything.
         {
             "label": "cpplint",
             "detail": "Lint files with cpplint.",
-            "type": "ament",
-            "task": "cpplint",
-            "path": "src/",
-            "problemMatcher": "$ament_cpplint",
+            "type": "shell",
+            "command": "ament_cpplint src/",
+            "problemMatcher": {
+                "owner": "ament_cpplint",
+                "source": "cpplint",
+                "severity": "warning",
+                "fileLocation": [
+                    "autoDetect",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^(.+?):(\\d+):\\s+(.+?)\\s+\\[(\\S+)\\]\\s+\\[\\d+\\]$",
+                    "file": 1,
+                    "line": 2,
+                    "message": 3,
+                    "code": 4
+                }
+            },
             "presentation": {
                 "panel": "dedicated",
                 "reveal": "silent",
                 "clear": true
-            },
+            }
         },
         {
             "label": "cppcheck",
             "detail": "Run static code checker cppcheck.",
-            "type": "ament",
-            "task": "cppcheck",
-            "path": "src/",
-            "problemMatcher": "$ament_cppcheck",
+            "type": "shell",
+            "command": "ament_cppcheck src/",
+            "problemMatcher": {
+                "owner": "ament_cppcheck",
+                "source": "cppcheck",
+                "severity": "error",
+                "fileLocation": [
+                    "autoDetect",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^\\[(.+?):(\\d+)\\]:\\s+\\(([^)]+)\\)\\s+(.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "code": 3,
+                    "message": 4
+                }
+            },
             "presentation": {
                 "panel": "dedicated",
                 "reveal": "silent",
@@ -104,10 +136,24 @@
         {
             "label": "lint_cmake",
             "detail": "Run lint on cmake files.",
-            "type": "ament",
-            "task": "lint_cmake",
-            "path": "src/",
-            "problemMatcher": "$ament_lint_cmake",
+            "type": "shell",
+            "command": "ament_lint_cmake src/",
+            "problemMatcher": {
+                "owner": "ament_lint_cmake",
+                "source": "lint_cmake",
+                "severity": "warning",
+                "fileLocation": [
+                    "autoDetect",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^(.+?):(\\d+):\\s+(.+?)\\s+\\[(\\S+)\\]$",
+                    "file": 1,
+                    "line": 2,
+                    "message": 3,
+                    "code": 4
+                }
+            },
             "presentation": {
                 "panel": "dedicated",
                 "reveal": "silent",
@@ -117,10 +163,25 @@
         {
             "label": "flake8",
             "detail": "Run flake8 on python files.",
-            "type": "ament",
-            "task": "flake8",
-            "path": "src/",
-            "problemMatcher": "$ament_flake8",
+            "type": "shell",
+            "command": "ament_flake8 src/",
+            "problemMatcher": {
+                "owner": "ament_flake8",
+                "source": "flake8",
+                "severity": "warning",
+                "fileLocation": [
+                    "autoDetect",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^(.+?):(\\d+):(\\d+):\\s+([A-Z]+\\d+)\\s+(.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "code": 4,
+                    "message": 5
+                }
+            },
             "presentation": {
                 "panel": "dedicated",
                 "reveal": "silent",
@@ -130,10 +191,24 @@
         {
             "label": "pep257",
             "detail": "Run pep257 on python files.",
-            "type": "ament",
-            "task": "pep257",
-            "path": "src/",
-            "problemMatcher": "$ament_pep257",
+            "type": "shell",
+            "command": "ament_pep257 src/",
+            "problemMatcher": {
+                "owner": "ament_pep257",
+                "source": "pep257",
+                "severity": "warning",
+                "fileLocation": [
+                    "autoDetect",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^(.+?):(\\d+) in .+?: (D\\d+): (.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "code": 3,
+                    "message": 4
+                }
+            },
             "presentation": {
                 "panel": "dedicated",
                 "reveal": "silent",
@@ -143,10 +218,24 @@
         {
             "label": "xmllint",
             "detail": "Run xmllint on xml files.",
-            "type": "ament",
-            "task": "xmllint",
-            "path": "src/",
-            "problemMatcher": "$ament_xmllint",
+            "type": "shell",
+            "command": "ament_xmllint src/",
+            "problemMatcher": {
+                "owner": "ament_xmllint",
+                "source": "xmllint",
+                "severity": "error",
+                "fileLocation": [
+                    "autoDetect",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^(.+?):(\\d+):\\s+(.+?)\\s*:\\s+(.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "code": 3,
+                    "message": 4
+                }
+            },
             "presentation": {
                 "panel": "dedicated",
                 "reveal": "silent",
