@@ -15,7 +15,7 @@ using namespace rclcpp;
 int main(int argc, char* argv[])
 {
   init(argc, argv);
-  auto node = std::make_shared<Node>("node");
+  auto node = std::make_shared<Node>("telegraf_resource_monitoring_node");
   node->declare_parameter("socket_path", "/tmp/telegraf.sock");
   node->declare_parameter("max_buffer_size", 100);
 

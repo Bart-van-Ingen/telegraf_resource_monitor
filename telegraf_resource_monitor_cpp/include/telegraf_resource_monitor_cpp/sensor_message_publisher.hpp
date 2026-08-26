@@ -19,8 +19,8 @@ using TagsKey = std::map<std::string, std::string>;
 class SensorMessagePublisher
 {
 private:
-  rclcpp::Node::SharedPtr node_;
-  ros2_fmt_logger::Logger logger_;
+  const rclcpp::Node::SharedPtr node_;
+  const ros2_fmt_logger::Logger logger_;
 
   rclcpp::Publisher<ResourceType>::SharedPtr publisher_ptr_;
 

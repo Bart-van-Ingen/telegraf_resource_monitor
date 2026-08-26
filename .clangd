@@ -16,3 +16,4 @@ Diagnostics:
       - .*/msg/.*
       - .*/srv/.*
       - .*/action/.*
+      - .*/yaml-cpp/.*

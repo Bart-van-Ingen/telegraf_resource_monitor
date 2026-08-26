@@ -17,8 +17,8 @@ using PublisherMap = std::map<TagsKey, SensorMessagePublisher>;
 class SensorMessageProcessor
 {
 private:
-  rclcpp::Node::SharedPtr node_;
-  ros2_fmt_logger::Logger logger_;
+  const rclcpp::Node::SharedPtr node_;
+  const ros2_fmt_logger::Logger logger_;
 
   std::map<std::string, PublisherMap> sensor_publishers_;
   SensorMessageBuffer& sensor_message_buffer_;

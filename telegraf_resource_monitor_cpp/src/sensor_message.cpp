@@ -11,9 +11,10 @@
 
 SensorMessageBuffer::SensorMessageBuffer(const rclcpp::Logger& logger,
                                          const std::size_t max_buffer_size)
-  : logger_(logger)
+  : logger_{logger}
   , max_buffer_size_{max_buffer_size} {};
 
+// we use a r value reference so that we can move it into the buffer without needing to copy
 void SensorMessageBuffer::add_message(std::string&& message)
 {
   {
