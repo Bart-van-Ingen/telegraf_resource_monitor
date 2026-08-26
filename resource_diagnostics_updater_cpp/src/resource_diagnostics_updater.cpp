@@ -1,6 +1,5 @@
 
 #include <algorithm>
-#include <functional>
 #include <utility>
 
 #include "rclcpp/node.hpp"
@@ -15,7 +14,6 @@
 #include "resource_monitoring_interfaces/msg/resource.hpp"
 
 using ResourceType = resource_monitoring_interfaces::msg::Resource;
-using std::placeholders::_1;
 
 ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
                                                        DiagnosticPublisher& diagnostic_publisher,

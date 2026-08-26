@@ -7,6 +7,7 @@
 #include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <diagnostic_msgs/msg/diagnostic_status.hpp>
 #include <rclcpp/publisher.hpp>
+#include <rclcpp/timer.hpp>
 
 #include <ros2_fmt_logger/logger.hpp>
 
@@ -21,6 +22,7 @@ private:
   const ros2_fmt_logger::Logger logger_;
   std::vector<DiagnositcsStatusReferenceType> statuses_{};
   rclcpp::Publisher<DiagnosticArrayType>::SharedPtr publisher_ptr_{};
+  rclcpp::TimerBase::SharedPtr timer_{};
 
   
   public:

@@ -11,7 +11,6 @@
 
 #include "resource_diagnostics_updater_cpp/diagnostic_publisher.hpp"
 
-
 using namespace std::chrono_literals;
 
 DiagnosticPublisher::DiagnosticPublisher(const rclcpp::Node::SharedPtr& node)
@@ -19,7 +18,7 @@ DiagnosticPublisher::DiagnosticPublisher(const rclcpp::Node::SharedPtr& node)
   , logger_{node->get_logger()}
 {
   publisher_ptr_ = node->create_publisher<DiagnosticArrayType>("/diagnostics", 1);
-  node->create_wall_timer(1000ms, [this] { publish_diagnostics(statuses_); });
+  timer_ = node->create_wall_timer(1s, [this] { publish_diagnostics(statuses_); });
 }
 
 void DiagnosticPublisher::publish_diagnostics(
@@ -44,5 +43,6 @@ void DiagnosticPublisher::publish_diagnostics(
 
 void DiagnosticPublisher::add_diagnostic_status(const DiagnosticStatusType& diagnostic_status)
 {
+  logger_.debug("adding diagnostic status {} to timer", diagnostic_status.name);
   statuses_.emplace_back(diagnostic_status);
 }
