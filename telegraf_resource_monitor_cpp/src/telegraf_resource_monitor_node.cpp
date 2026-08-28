@@ -19,12 +19,12 @@ int main(int argc, char* argv[])
   node->declare_parameter("socket_path", "/tmp/telegraf.sock");
   node->declare_parameter("max_buffer_size", 100);
 
-  std::string socket_path{node->get_parameter("socket_path").as_string()};
-  std::size_t max_buffer_size{
+  const std::string socket_path{node->get_parameter("socket_path").as_string()};
+  const std::size_t max_buffer_size{
       static_cast<std::size_t>(node->get_parameter("max_buffer_size").as_int())};
 
   SensorMessageBuffer message_buffer{node->get_logger(), max_buffer_size};
-  UnixSocketManager manager{node->get_logger(), message_buffer, socket_path};
+  UnixSocketManager manager{node->get_logger(), socket_path, message_buffer};
   SensorMessageProcessor processor{node, message_buffer};
 
   spin(node);

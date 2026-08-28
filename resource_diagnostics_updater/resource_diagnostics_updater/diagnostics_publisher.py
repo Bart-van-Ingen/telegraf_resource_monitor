@@ -3,12 +3,11 @@ from rclpy.node import Node
 
 
 class DiagnosticsPublisher:
-
     def __init__(self, node: Node) -> None:
         self.node = node
         self.all_diagnostic_statuses: list[DiagnosticStatus] = []
 
-        self.diagnostics_publisher = node.create_publisher(DiagnosticArray, "/diagnostics", 1)
+        self.diagnostics_publisher = node.create_publisher(DiagnosticArray, '/diagnostics', 1)
 
         # Publish diagnostics at 1 Hz as default
         self.diagnostics_publisher_timer = node.create_timer(1.0, self.publish_all_diagnostics)
@@ -32,7 +31,7 @@ class DiagnosticsPublisher:
         diagnostics_array.status = diagnostic_statuses
 
         self.node.get_logger().debug(
-            f"Publishing diagnostics: {[status.name for status in diagnostic_statuses]}"
+            f'Publishing diagnostics: {[status.name for status in diagnostic_statuses]}'
         )
 
         self.diagnostics_publisher.publish(diagnostics_array)

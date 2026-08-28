@@ -12,9 +12,9 @@
 class UnixSocketManager
 {
 private:
-  ros2_fmt_logger::Logger logger_;
+  const ros2_fmt_logger::Logger logger_;
+  const std::string socket_path_;
   SensorMessageBuffer& sensor_message_buffer_;
-  std::string socket_path_;
 
   std::thread read_thread_;  // read thread
 
@@ -29,8 +29,8 @@ private:
 
 public:
   UnixSocketManager(const rclcpp::Logger& logger,
-                    SensorMessageBuffer& sensor_message_buffer,
-                    std::string& socket_path);
+                    const std::string& socket_path,
+                    SensorMessageBuffer& sensor_message_buffer);
 
   ~UnixSocketManager();
 

@@ -24,9 +24,9 @@ private:
 
   rclcpp::Publisher<ResourceType>::SharedPtr publisher_ptr_;
 
-  std::string create_topic_name(const std::string_view sensor_type, const TagsKey& sensor_tags);
+  std::string create_topic_name(std::string_view sensor_type, const TagsKey& sensor_tags);
 
-  std::string combine_type_and_tags(const std::string_view sensor_type, const TagsKey& sensor_tags);
+  std::string combine_type_and_tags(std::string_view sensor_type, const TagsKey& sensor_tags);
 
   void sanitize_topic_name(std::string& topic_str);
 

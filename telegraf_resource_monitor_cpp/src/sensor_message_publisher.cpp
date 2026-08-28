@@ -30,7 +30,7 @@ SensorMessagePublisher::SensorMessagePublisher(const rclcpp::Node::SharedPtr& no
   publisher_ptr_ = node->create_publisher<ResourceType>(topic_name, 10);
 }
 
-std::string SensorMessagePublisher::create_topic_name(const std::string_view sensor_type,
+std::string SensorMessagePublisher::create_topic_name(std::string_view sensor_type,
                                                       const TagsKey& sensor_tags)
 {
   if (sensor_tags.empty())
@@ -43,7 +43,7 @@ std::string SensorMessagePublisher::create_topic_name(const std::string_view sen
   return topic_str;
 }
 
-std::string SensorMessagePublisher::combine_type_and_tags(const std::string_view sensor_type,
+std::string SensorMessagePublisher::combine_type_and_tags(std::string_view sensor_type,
                                                           const TagsKey& sensor_tags)
 {
   std::string topic_str{};

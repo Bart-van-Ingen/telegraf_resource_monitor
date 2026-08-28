@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "rclcpp/node.hpp"
+#include <diagnostic_msgs/msg/detail/key_value__struct.hpp>
 
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -14,6 +15,7 @@
 #include "resource_monitoring_interfaces/msg/resource.hpp"
 
 using ResourceType = resource_monitoring_interfaces::msg::Resource;
+using KeyValueType = diagnostic_msgs::msg::KeyValue;
 
 ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
                                                        DiagnosticPublisher& diagnostic_publisher,
@@ -32,7 +34,7 @@ ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
       diagnosed_resource_.topic, 1,
       [this](const ResourceType::ConstSharedPtr& resource) { resource_callback(*resource); });
 
-  logger_.info("resource diagnostic update initiated for {} in {} on topic {}",
+  logger_.info("resource diagnostic updater initiated for {} in {} on topic {}",
                diagnosed_resource_.name, diagnosed_resource_.field, diagnosed_resource_.topic);
 }
 
@@ -52,6 +54,12 @@ void ResourceDiagnosticsUpdater::resource_callback(const ResourceType& resource)
     logger_.warn("cannot find {}", diagnosed_resource_.field);
     return;
   }
+
+  KeyValueType key_value{};
+  key_value.key = find->name;
+  key_value.value = fmt::format("{}", find->value);
+
+  diagnostic_status_.values = {std::move(key_value)};
 
   if (find->value >= diagnosed_resource_.error_threshold)
   {

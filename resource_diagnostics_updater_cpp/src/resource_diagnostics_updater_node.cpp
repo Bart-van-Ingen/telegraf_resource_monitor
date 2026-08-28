@@ -23,15 +23,11 @@ int main(int argc, char* argv[])
   auto node = std::make_shared<Node>("resource_diagnostics_updater_node");
   const ros2_fmt_logger::Logger logger{node->get_logger()};
 
-  DiagnosticPublisher diagnostics_publisher{node};
-
-  // we use a deque since this will not trigger a reallocation when we add subscibers.
-  // we also do not require random access
-  std::deque<ResourceDiagnosticsUpdater> resource_diagnostic_updaters{};
-
+  // get the config yaml in string form from the node config
   node->declare_parameter("diagnosed_resources", " ");
   std::string diagnosed_resources{node->get_parameter("diagnosed_resources").as_string()};
 
+  // parse the yaml to get the resources that we are going to publish diagnostics on
   YAML::Node config{};
   try
   {
@@ -43,16 +39,20 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  DiagnosticPublisher diagnostics_publisher{node};
+
+  // setup deque to hold all the resources since this will not trigger a reallocation
+  // when we add subscibers. we also do not require random access, so no vector is needed
+  std::deque<ResourceDiagnosticsUpdater> resource_diagnostic_updaters{};
+
   for (const YAML::Node& resource : config)
   {
     DiagnosedResource diagnosed_resource{resource};
 
-    logger.info("config at {} is {}, with topic name {}", diagnosed_resource.field,
-                diagnosed_resource.name, diagnosed_resource.topic);
-
     // we construct the resource diagnostic updaters directly in the deque so no move is triggered.
     // if we did not do this then the "this" in lambda function in the subscription would be
-    // dangling
+    // dangling as it would be pointing to the temporary created variable that would go out of scope
+    // on the next for loop itteration
     resource_diagnostic_updaters.emplace_back(*node, diagnostics_publisher,
                                               std::move(diagnosed_resource));
   }
