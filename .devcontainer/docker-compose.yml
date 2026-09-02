@@ -22,7 +22,6 @@ services:
       # settings, tasks and the task scripts' own ./.vscode/tasks/*.sh paths resolve from the
       # workspace root too.
       - ../.vscode:/ros_ws/.vscode:cached
-
       - ~/.claude:/home/dev/.claude
 
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.

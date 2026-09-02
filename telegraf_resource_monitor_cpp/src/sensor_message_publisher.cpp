@@ -2,11 +2,15 @@
 
 #include <cctype>
 #include <map>
+#include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include "rclcpp/node.hpp"
 #include <builtin_interfaces/msg/time.hpp>
+
+#include <fmt/format.h>
 
 #include "resource_monitoring_interfaces/msg/field.hpp"
 #include "resource_monitoring_interfaces/msg/resource.hpp"
@@ -25,9 +29,9 @@ SensorMessagePublisher::SensorMessagePublisher(const rclcpp::Node::SharedPtr& no
 {
   std::string topic_name{create_topic_name(sensor_type, tag_keys)};
 
-  logger_.info("made publisher for {}", topic_name);
-
   publisher_ptr_ = node->create_publisher<ResourceType>(topic_name, 10);
+
+  logger_.info("made resource publisher for {}", topic_name);
 }
 
 std::string SensorMessagePublisher::create_topic_name(std::string_view sensor_type,
@@ -72,13 +76,17 @@ void SensorMessagePublisher::sanitize_topic_name(std::string& topic_str)
   }
 }
 
-void SensorMessagePublisher::publish(SensorMessage& message)
+void SensorMessagePublisher::publish(SensorMessage& message) const
 {
   Time current_time{};
   current_time.set__sec(message.timestamp);
 
-  ResourceType resource{};
-  resource.header.stamp = current_time;
+  // The message is built in a unique_ptr so it can be published by moving it. With
+  // intra process communication enabled, publishing a unique_ptr hands ownership to the
+  // intra process manager and subscribers in the same process read this exact instance.
+  // refer to src/docs/intra_process_communication.md for more.
+  auto resource = std::make_unique<ResourceType>();
+  resource->header.stamp = current_time;
 
   for (const auto& [field_name, field_value] : message.fields)
   {
@@ -86,8 +94,13 @@ void SensorMessagePublisher::publish(SensorMessage& message)
     field_msg.name = field_name;
     field_msg.value = field_value;
 
-    resource.fields.push_back(field_msg);
+    resource->fields.emplace_back(std::move(field_msg));
   }
 
-  publisher_ptr_->publish(resource);
+  // logging the address here and in the subscriber shows whether both ends touch the same
+  // instance, which is the proof that intra process communication is actually being used
+  logger_.debug("publishing message on {} at address {}", publisher_ptr_->get_topic_name(),
+                fmt::ptr(resource.get()));
+
+  publisher_ptr_->publish(std::move(resource));
 }

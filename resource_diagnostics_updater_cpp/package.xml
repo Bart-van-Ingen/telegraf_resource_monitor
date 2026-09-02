@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>resource_monitoring_interfaces</depend>
 
   <depend>yaml-cpp</depend>

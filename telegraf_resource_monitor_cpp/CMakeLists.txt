@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(resource_monitoring_interfaces REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(ros2_fmt_logger REQUIRED)
@@ -19,7 +20,9 @@ find_package(ros2_fmt_logger REQUIRED)
 file(GLOB_RECURSE TELEGRAF_MONITOR_SOURCES CONFIGURE_DEPENDS
   src/*.cpp
   include/*.hpp)
-list(REMOVE_ITEM TELEGRAF_MONITOR_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/telegraf_resource_monitor_node.cpp)
+# the component source is excluded here because it builds into the shared component
+# library below. the plugin registration in it must live in that shared library
+list(REMOVE_ITEM TELEGRAF_MONITOR_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/telegraf_resource_monitor_component.cpp)
 
 add_library(telegraf_resource_monitor_lib STATIC ${TELEGRAF_MONITOR_SOURCES})
 target_include_directories(telegraf_resource_monitor_lib PUBLIC
@@ -43,12 +46,26 @@ ros2_fmt_logger::ros2_fmt_logger)
 target_precompile_headers(telegraf_resource_monitor_lib PRIVATE
   <rclcpp/rclcpp.hpp>)
 
-add_executable(telegraf_resource_monitor_node src/telegraf_resource_monitor_node.cpp)
-target_link_libraries(telegraf_resource_monitor_node telegraf_resource_monitor_lib)
-target_precompile_headers(telegraf_resource_monitor_node REUSE_FROM telegraf_resource_monitor_lib)
+# the static lib is linked into the shared component library, so it must be
+# compiled as position independent code
+set_target_properties(telegraf_resource_monitor_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-install(TARGETS telegraf_resource_monitor_node
-  DESTINATION lib/${PROJECT_NAME})
+# The composable node. Loading it into a component container needs a shared library.
+add_library(telegraf_resource_monitor_component SHARED src/telegraf_resource_monitor_component.cpp)
+target_link_libraries(telegraf_resource_monitor_component telegraf_resource_monitor_lib)
+ament_target_dependencies(telegraf_resource_monitor_component "rclcpp_components")
+target_precompile_headers(telegraf_resource_monitor_component REUSE_FROM telegraf_resource_monitor_lib)
+
+# This also generates and installs the telegraf_resource_monitor_node executable,
+# so "ros2 run" as a separate process keeps working
+rclcpp_components_register_node(telegraf_resource_monitor_component
+  PLUGIN "TelegrafResourceMonitorNode"
+  EXECUTABLE telegraf_resource_monitor_node)
+
+install(TARGETS telegraf_resource_monitor_component
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
 
 # Add the launch files
 install(DIRECTORY
@@ -82,7 +99,11 @@ if(BUILD_TESTING)
 
     # Include dirs, rclcpp, JSON and the logger all propagate from the library.
     target_link_libraries(${TEST_NAME} telegraf_resource_monitor_lib)
-    target_precompile_headers(${TEST_NAME} REUSE_FROM telegraf_resource_monitor_lib)
+    # the tests cannot reuse the library's precompiled header anymore: the library is
+    # built with -fPIC (needed for the shared component library) while test
+    # executables are built as PIE, and clang rejects a precompiled header whose
+    # PIC/PIE flags differ. so each test builds its own.
+    target_precompile_headers(${TEST_NAME} PRIVATE <rclcpp/rclcpp.hpp>)
   endforeach()
 
 endif()

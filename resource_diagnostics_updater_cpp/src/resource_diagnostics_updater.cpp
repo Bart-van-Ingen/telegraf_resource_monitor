@@ -4,6 +4,7 @@
 
 #include "rclcpp/node.hpp"
 #include <diagnostic_msgs/msg/detail/key_value__struct.hpp>
+#include <rclcpp/message_info.hpp>
 
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -32,7 +33,14 @@ ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
 
   subscription_ = node.create_subscription<ResourceType>(
       diagnosed_resource_.topic, 1,
-      [this](const ResourceType::ConstSharedPtr& resource) { resource_callback(*resource); });
+      [this](const ResourceType::ConstSharedPtr& resource, const rclcpp::MessageInfo& info) {
+        // the address matches the one the publisher logged when the message came through the
+        // intra process manager. a different address means it was copied by the middleware
+        logger_.debug("received message at address {} from {}", fmt::ptr(resource.get()),
+                      info.get_rmw_message_info().from_intra_process ? "intra process" :
+                                                                       "the middleware");
+        resource_callback(*resource);
+      });
 
   logger_.info("resource diagnostic updater initiated for {} in {} on topic {}",
                diagnosed_resource_.name, diagnosed_resource_.field, diagnosed_resource_.topic);

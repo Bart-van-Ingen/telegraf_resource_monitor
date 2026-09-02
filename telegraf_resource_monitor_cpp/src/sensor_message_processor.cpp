@@ -1,4 +1,5 @@
 #include <chrono>
+#include <optional>
 #include <string>
 #include <thread>
 #include <utility>
@@ -11,6 +12,8 @@
 #include "telegraf_resource_monitor_cpp/sensor_message.hpp"
 #include "telegraf_resource_monitor_cpp/sensor_message_processor.hpp"
 #include "telegraf_resource_monitor_cpp/sensor_message_publisher.hpp"
+
+using namespace std::chrono_literals;
 
 SensorMessageProcessor::SensorMessageProcessor(const rclcpp::Node::SharedPtr& node,
                                                SensorMessageBuffer& sensor_message_buffer)
@@ -34,38 +37,41 @@ void SensorMessageProcessor::process_buffered_messages()
   while (rclcpp::ok())
   {
     // Wait up to 100ms for the next buffered sensor message; if none arrives,
-    // retry.
-    const auto message = sensor_message_buffer_.get_message(std::chrono::milliseconds(100));
-    if (!message.has_value())
+    // retry. Note that std::optional has a usage syntax that is essentially identical to a pointer,
+    // but is not a pointer.
+    std::optional<SensorMessage> message = sensor_message_buffer_.get_message(100ms);
+    if (!message)
     {
       continue;
     }
 
-    SensorMessage sensor_message = message.value();
-    SensorMessagePublisher& publisher = get_publisher(sensor_message);
-    publisher.publish(sensor_message);
+    const SensorMessagePublisher& publisher = get_publisher(*message);
+    publisher.publish(*message);
   }
 }
 
-SensorMessagePublisher& SensorMessageProcessor::get_publisher(const SensorMessage& message)
+const SensorMessagePublisher& SensorMessageProcessor::get_publisher(const SensorMessage& message)
 {
   const std::string sensor_type{message.name};
 
-  // order the keys consistently
+  // order the keys consistently using the map instead of the unordered map
   const TagsKey tags_key{message.tags.begin(), message.tags.end()};
 
   // The [] operator on std::map will default-construct a new entry if
   // the key doesn't exist.
-  PublisherMap& sensor_type_publishers = sensor_publishers_[sensor_type];
+  PublisherMap& sensor_type_publishers{sensor_publishers_[sensor_type]};
 
-  auto it = sensor_type_publishers.find(tags_key);
-  if (it == sensor_type_publishers.end())
+  // find returns an itterator that will point to a pair contain the key and publisher
+  auto key_publisher_pair = sensor_type_publishers.find(tags_key);
+  if (key_publisher_pair == sensor_type_publishers.end())
   {
-    // move semantics will occur on emplace of temporary SensorMessagePublisher
-    it = sensor_type_publishers
-             .emplace(tags_key, SensorMessagePublisher(node_, sensor_type, tags_key))
-             .first;
+    // move semantics will occur on emplace of temporary SensorMessagePublisher.
+    // emplace returns a pair, where the first is the itterator.
+    key_publisher_pair = sensor_type_publishers
+                             .emplace(tags_key,
+                                      SensorMessagePublisher(node_, sensor_type, tags_key))
+                             .first;
   }
-  SensorMessagePublisher& publisher{it->second};
-  return publisher;
+  // second is the SensorMessagePublisher we found or constructed above in the map
+  return key_publisher_pair->second;
 }

@@ -35,5 +35,5 @@ public:
                          std::string_view message,
                          const TagsKey& tag_keys);
 
-  void publish(SensorMessage& message);
+  void publish(SensorMessage& message) const;
 };

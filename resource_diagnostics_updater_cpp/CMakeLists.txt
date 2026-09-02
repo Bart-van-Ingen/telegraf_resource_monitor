@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(diagnostic_msgs REQUIRED)
 find_package(resource_monitoring_interfaces REQUIRED)
 find_package(ros2_fmt_logger REQUIRED)
@@ -20,7 +21,9 @@ find_package(yaml-cpp REQUIRED)
 file(GLOB_RECURSE RESOURCE_DIAGNOSTICS_UPDATER_SOURCES CONFIGURE_DEPENDS
   src/*.cpp
   include/*.hpp)
-list(REMOVE_ITEM RESOURCE_DIAGNOSTICS_UPDATER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/resource_diagnostics_updater_node.cpp)
+# the component source is excluded here because it builds into the shared component
+# library below. the plugin registration in it must live in that shared library
+list(REMOVE_ITEM RESOURCE_DIAGNOSTICS_UPDATER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/resource_diagnostics_updater_component.cpp)
 
 add_library(resource_diagnostics_updater_lib STATIC ${RESOURCE_DIAGNOSTICS_UPDATER_SOURCES})
 target_include_directories(resource_diagnostics_updater_lib PUBLIC
@@ -46,12 +49,26 @@ ros2_fmt_logger::ros2_fmt_logger)
 target_precompile_headers(resource_diagnostics_updater_lib PRIVATE
   <rclcpp/rclcpp.hpp>)
 
-add_executable(resource_diagnostics_updater_node src/resource_diagnostics_updater_node.cpp)
-target_link_libraries(resource_diagnostics_updater_node resource_diagnostics_updater_lib)
-target_precompile_headers(resource_diagnostics_updater_node REUSE_FROM resource_diagnostics_updater_lib)
+# the static lib is linked into the shared component library, so it must be
+# compiled as position independent code
+set_target_properties(resource_diagnostics_updater_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-install(TARGETS resource_diagnostics_updater_node
-  DESTINATION lib/${PROJECT_NAME})
+# The composable node. Loading it into a component container needs a shared library.
+add_library(resource_diagnostics_updater_component SHARED src/resource_diagnostics_updater_component.cpp)
+target_link_libraries(resource_diagnostics_updater_component resource_diagnostics_updater_lib)
+ament_target_dependencies(resource_diagnostics_updater_component "rclcpp_components")
+target_precompile_headers(resource_diagnostics_updater_component REUSE_FROM resource_diagnostics_updater_lib)
+
+# This also generates and installs the resource_diagnostics_updater_node executable,
+# so "ros2 run" as a separate process keeps working
+rclcpp_components_register_node(resource_diagnostics_updater_component
+  PLUGIN "ResourceDiagnosticsUpdaterNode"
+  EXECUTABLE resource_diagnostics_updater_node)
+
+install(TARGETS resource_diagnostics_updater_component
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
 
 # Add the launch files
 install(DIRECTORY
