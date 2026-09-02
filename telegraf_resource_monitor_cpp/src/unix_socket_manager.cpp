@@ -2,13 +2,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <stdio.h>
 #include <string>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <thread>
 #include <unistd.h>
-
-#include <stdio.h>
 
 #include "rclcpp/logger.hpp"
 #include "rclcpp/utilities.hpp"
@@ -17,11 +16,11 @@
 #include "telegraf_resource_monitor_cpp/unix_socket_manager.hpp"
 
 UnixSocketManager::UnixSocketManager(const rclcpp::Logger& logger,
-                                     SensorMessageBuffer& sensor_message_buffer,
-                                     std::string& socket_path)
+                                     const std::string& socket_path,
+                                     SensorMessageBuffer& sensor_message_buffer)
   : logger_{logger}
-  , sensor_message_buffer_{sensor_message_buffer}
   , socket_path_{socket_path}
+  , sensor_message_buffer_{sensor_message_buffer}
 {
   create_socket();
   bind_socket();

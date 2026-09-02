@@ -1,20 +1,15 @@
+import sys
 from pathlib import Path
 
-from ament_index_python.packages import get_package_prefix, get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
-# There is a single telegraf config for both implementations and it lives in the python
-# package, hence the cross-package lookup here.
-DEFAULT_TELEGRAF_CONFIG_PATH = str(
-    Path(get_package_share_directory("telegraf_resource_monitor_py")) / "config" / "telegraf.conf"
-)
+# ros2 launch loads this file as a module, so its own directory is not on the path yet
+sys.path.insert(0, str(Path(__file__).parent))
 
-# Resolve the vendored binary directly instead of relying on PATH, so this also works when
-# install/setup.bash was not sourced by whatever started this launch file (systemd, Docker, etc).
-TELEGRAF_BIN = str(Path(get_package_prefix("telegraf_vendor")) / "bin" / "telegraf")
+from telegraf_launch_utils import telegraf_actions
 
 
 def generate_launch_description():
@@ -34,11 +29,6 @@ def generate_launch_description():
                 default_value="INFO",
                 description="log level of node.",
             ),
-            DeclareLaunchArgument(
-                name="telegraf_config_path",
-                default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
-                description="Path to the telegraf config file telegraf is started with.",
-            ),
             Node(
                 package="telegraf_resource_monitor_cpp",
                 executable="telegraf_resource_monitor_node",
@@ -51,20 +41,7 @@ def generate_launch_description():
                 ],
                 parameters=[LaunchConfiguration("config_file_path")],
             ),
-            # start telegraf after a short delay to ensure the node is up and running and has
-            # created the unix socket before telegraf starts sending data
-            TimerAction(
-                period=0.1,
-                actions=[
-                    ExecuteProcess(
-                        cmd=[
-                            TELEGRAF_BIN,
-                            "--config",
-                            LaunchConfiguration("telegraf_config_path"),
-                        ],
-                        output="screen",
-                    )
-                ],
-            ),
+            # telegraf arguments, and telegraf itself once the node created its socket
+            *telegraf_actions(),
         ]
     )

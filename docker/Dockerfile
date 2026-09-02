@@ -33,7 +33,10 @@ COPY . ./src/
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install -y --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} \
-    && /ros_ws/src/.vscode/tasks/build.sh \
+    && colcon build \
+    --symlink-install \
+    --cmake-args \
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=On" \
     && rm -rf /var/lib/apt/lists/*
 
 # Remove display warnings
@@ -51,8 +54,15 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 #####################
 FROM overlay AS dev
 
-# Add ccache and mold for quicker cpp compiling times
-RUN apt-get update && apt-get install -y ccache mold
+# Add ccache, mold and ninja for quicker cpp compiling times.
+RUN apt-get update && apt-get install -y ccache mold ninja-build
+
+# Add clang 21 from apt.llvm.org. build.sh compiles with it. See docs/clang_compiler.md.
+RUN wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key > /etc/apt/trusted.gpg.d/apt.llvm.org.asc \
+    && echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-21 main" > /etc/apt/sources.list.d/llvm21.list \
+    && apt-get update \
+    && apt-get install -y clang-21 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add dev user with same UID and GID as your host system
 # (copied from https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user)
@@ -68,10 +78,15 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the ownership of the overlay workspace to the new user
-RUN chown -R dev:$dev /ros_ws
+RUN chown -R dev:dev /ros_ws
 
 # Set the ownership of the XDG_RUNTIME_DIR to the new user for vscode
 RUN chown -R dev:dev /tmp/runtime-root
+
+# Add SSH keys for github SSH git actions
+RUN mkdir -p /home/$USERNAME/.ssh
+RUN ssh-keyscan github.com >> /home/$USERNAME/.ssh/known_hosts
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 
 # Switch from root to user
 USER $USERNAME

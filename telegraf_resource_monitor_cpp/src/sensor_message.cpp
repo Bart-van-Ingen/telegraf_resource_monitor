@@ -11,9 +11,10 @@
 
 SensorMessageBuffer::SensorMessageBuffer(const rclcpp::Logger& logger,
                                          const std::size_t max_buffer_size)
-  : logger_(logger)
+  : logger_{logger}
   , max_buffer_size_{max_buffer_size} {};
 
+// we use a r value reference so that we can move it into the buffer without needing to copy
 void SensorMessageBuffer::add_message(std::string&& message)
 {
   {
@@ -36,7 +37,6 @@ SensorMessageBuffer::get_message(const std::chrono::milliseconds timeout)
   std::string message{};
   {
     std::unique_lock<std::mutex> lock{mutex_};
-    logger_.debug("getting message from buffer");
 
     if (!condition_variable_.wait_for(lock, timeout, [this] { return !buffer_.empty(); }))
     {
@@ -52,7 +52,6 @@ SensorMessageBuffer::get_message(const std::chrono::milliseconds timeout)
   // https://json.nlohmann.me/home/faq/#brace-initialization-yields-arrays
   json parsed_data = json::parse(message.begin(), message.end());
   SensorMessage sensor_message{parsed_data.get<SensorMessage>()};
-  logger_.debug("sensor_message has name {}", sensor_message.name);
 
   return sensor_message;
 }

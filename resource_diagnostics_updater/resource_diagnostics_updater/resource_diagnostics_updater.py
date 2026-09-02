@@ -8,7 +8,6 @@ from resource_monitoring_interfaces.msg import Field, Resource
 
 
 class ResourceDiagnosticsUpdater:
-
     def __init__(
         self,
         diagnostics_publisher: DiagnosticsPublisher,
@@ -22,8 +21,8 @@ class ResourceDiagnosticsUpdater:
         # Create diagnostic status for this resource whose values will be updated in the callback
         self.diagnostic_status = DiagnosticStatus()
         self.diagnostic_status.name = diagnosed_resource.name
-        self.diagnostic_status.message = "unknown"
-        self.diagnostic_status.hardware_id = "telegraf_resource_monitor"
+        self.diagnostic_status.message = 'unknown'
+        self.diagnostic_status.hardware_id = 'telegraf_resource_monitor'
 
         # Register this diagnostic status with the diagnostics publisher so that it gets published
         #  at the publishers timer rate
@@ -59,26 +58,26 @@ class ResourceDiagnosticsUpdater:
         if diagnosed_resource_field.value >= self.diagnosed_resource.error_threshold:
             self.diagnostic_status.level = DiagnosticStatus.ERROR
             self.diagnostic_status.message = (
-                f"error for {self.diagnosed_resource.name} ({self.diagnosed_resource.field}):"
-                f" {diagnosed_resource_field.value} over error threshold"
-                f" {self.diagnosed_resource.error_threshold}"
+                f'error for {self.diagnosed_resource.name} ({self.diagnosed_resource.field}):'
+                f' {diagnosed_resource_field.value} over error threshold'
+                f' {self.diagnosed_resource.error_threshold}'
             )
 
         elif diagnosed_resource_field.value >= self.diagnosed_resource.warning_threshold:
             self.diagnostic_status.level = DiagnosticStatus.WARN
             self.diagnostic_status.message = (
-                f"warning for {self.diagnosed_resource.name} {self.diagnosed_resource.field}:"
-                f" {diagnosed_resource_field.value} over warning threshold"
-                f" {self.diagnosed_resource.warning_threshold}"
+                f'warning for {self.diagnosed_resource.name} {self.diagnosed_resource.field}:'
+                f' {diagnosed_resource_field.value} over warning threshold'
+                f' {self.diagnosed_resource.warning_threshold}'
             )
 
         else:
             self.diagnostic_status.level = DiagnosticStatus.OK
-            self.diagnostic_status.message = f"{self.diagnosed_resource.name} ok"
+            self.diagnostic_status.message = f'{self.diagnosed_resource.name} ok'
             return
 
-        # only publish if status is warning or error, otherwise it will be published at the next
-        # timer event of the diagnostics publisher
+        # only immediately publish if status is warning or error, otherwise it will be published at
+        # the next timer event of the diagnostics publisher
         self.publish()
 
     def publish(self) -> None:

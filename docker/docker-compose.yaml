@@ -11,6 +11,8 @@
 # To open an interactive shell to a running container:
 #   docker exec -it <container_name> bash
 
+name: telegraf-resource-monitor
+
 services:
   # Base image containing dependencies.
   base:

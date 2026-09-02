@@ -19,14 +19,14 @@ using TagsKey = std::map<std::string, std::string>;
 class SensorMessagePublisher
 {
 private:
-  rclcpp::Node::SharedPtr node_;
-  ros2_fmt_logger::Logger logger_;
+  const rclcpp::Node::SharedPtr node_;
+  const ros2_fmt_logger::Logger logger_;
 
   rclcpp::Publisher<ResourceType>::SharedPtr publisher_ptr_;
 
-  std::string create_topic_name(const std::string_view sensor_type, const TagsKey& sensor_tags);
+  std::string create_topic_name(std::string_view sensor_type, const TagsKey& sensor_tags);
 
-  std::string combine_type_and_tags(const std::string_view sensor_type, const TagsKey& sensor_tags);
+  std::string combine_type_and_tags(std::string_view sensor_type, const TagsKey& sensor_tags);
 
   void sanitize_topic_name(std::string& topic_str);
 
@@ -35,5 +35,5 @@ public:
                          std::string_view message,
                          const TagsKey& tag_keys);
 
-  void publish(SensorMessage& message);
+  void publish(SensorMessage& message) const;
 };

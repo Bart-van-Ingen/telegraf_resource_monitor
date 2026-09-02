@@ -2,13 +2,15 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <thread>
 #include <unistd.h>
 
-#include "rclcpp/rclcpp.hpp"
+#include <rclcpp/logger.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include <gtest/gtest.h>
 
@@ -23,41 +25,32 @@ private:
   sockaddr_un addr_{};
 
 public:
-  UnixSocketDummy(std::string socket_path);
-  ~UnixSocketDummy();
-  void make_connection();
+  UnixSocketDummy(const std::string& socket_path)
+    : socket_path_(socket_path)
+  {
+    fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
+    addr_.sun_family = AF_UNIX;
+    std::strncpy(addr_.sun_path, socket_path_.c_str(), sizeof(addr_.sun_path) - 1);
+  }
+  void make_connection()
+  {
+    if (connect(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) == -1)
+    {
+      std::cout << "connect not possible: " << std::strerror(errno) << "\n";
+      return;
+    }
+    if (write(fd_,
+              R"({"name":"cpu","tags":{},"fields":{},"timestamp":1})"
+              "\n",
+              51) == -1)
+    {
+      std::cout << "write not possible"
+                << "\n";
+    }
+
+    close(fd_);
+  }
 };
-
-UnixSocketDummy::UnixSocketDummy(std::string socket_path)
-  : socket_path_(socket_path)
-{
-  fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
-  addr_.sun_family = AF_UNIX;
-  std::strncpy(addr_.sun_path, socket_path_.c_str(), sizeof(addr_.sun_path) - 1);
-}
-
-UnixSocketDummy::~UnixSocketDummy()
-{
-}
-
-void UnixSocketDummy::make_connection()
-{
-  if (connect(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) == -1)
-  {
-    std::cout << "connect not possible: " << std::strerror(errno) << "\n";
-    return;
-  }
-  if (write(fd_,
-            R"({"name":"cpu","tags":{},"fields":{},"timestamp":1})"
-            "\n",
-            51) == -1)
-  {
-    std::cout << "write not possible"
-              << "\n";
-  }
-
-  close(fd_);
-}
 
 TEST(UnixSocketManagerTest, AcceptsConnectionWhenAvailable)
 {
@@ -79,7 +72,7 @@ TEST(UnixSocketManagerTest, AcceptsConnectionWhenAvailable)
     // the dummy client's message has been read and the connection has hit EOF
     // (the dummy closes its fd right after writing). Scoping it here lets us wait
     // deterministically instead of sleeping an arbitrary amount of time.
-    UnixSocketManager socket_manager{logger, buffer, socket_path};
+    UnixSocketManager socket_manager{logger, socket_path, buffer};
     producer.join();
   }
 
