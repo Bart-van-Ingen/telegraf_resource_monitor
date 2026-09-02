@@ -4,7 +4,7 @@
   <name>telegraf_resource_monitor_cpp</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="bart@adinnovations.com">dev</maintainer>
+  <maintainer email="van.ingen.bart@gmail.com">dev</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
