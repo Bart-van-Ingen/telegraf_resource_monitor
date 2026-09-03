@@ -1,10 +1,12 @@
 <p align="center">
-   <img src="images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
+   <img src="docs/images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
 </p>
 
 # Telegraf Resource Monitor
 
 This repository provides a ROS 2-based resource monitoring solution that leverages [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more. There are two implementations, one in Python and one in CPP.
+
+Full documentation: <https://bart-van-ingen.github.io/telegraf_resource_monitor/>
 
 ## Table of Contents
 
@@ -135,7 +137,7 @@ This repository contains four ROS 2 packages:
 The architecture between the packages is illustrated below:
 
 <p align="center">
-   <img src="images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" width="70%" />
+   <img src="docs/images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" width="70%" />
 </p>
 
 ### telegraf_resource_monitor_py/cpp
