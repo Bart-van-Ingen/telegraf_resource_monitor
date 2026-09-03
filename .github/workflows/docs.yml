@@ -1,7 +1,8 @@
 name: Documentation
 
-# Builds the MkDocs site and publishes it to GitHub Pages on every push to main.
-# Pull requests only build the site, to catch breakage before it is merged.
+# Builds the MkDocs site on every push to main, on pull requests, and on a manual
+# run from any branch. Only main is published to GitHub Pages; every other run
+# uploads the site as a downloadable artifact so you can preview it.
 on:
   push:
     branches: [main]
@@ -13,10 +14,11 @@ permissions:
   pages: write
   id-token: write
 
-# Let a running deployment finish, so a queued one never overwrites a newer site.
+# One run per branch. Main is never cancelled mid-deploy, so a queued run cannot
+# overwrite a newer site; branch builds are cancelled when you push again.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
@@ -34,15 +36,25 @@ jobs:
       - name: Build the site
         run: uv run --locked --group docs mkdocs build
 
+      # Downloadable from the run summary. Unzip it and open index.html.
+      - name: Upload the site for preview
+        if: github.ref != 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: site
+
       - name: Upload the site as a Pages artifact
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
+  # Only main publishes, so a manual run on a branch can never overwrite the
+  # live site.
   deploy:
     needs: build
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
