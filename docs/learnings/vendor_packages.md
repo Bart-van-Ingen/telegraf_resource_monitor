@@ -1,4 +1,4 @@
-# ROS 2 Vendor Packages — Summary
+# Vendor Packages
 
 ## What a vendor package is
 

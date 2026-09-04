@@ -4,20 +4,13 @@
    <img src="images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="50%" />
 </p>
 
-## Motivation
+This site contains the detailed documentation of the [Telegraf Resource Monitor](https://github.com/Bart-van-Ingen/telegraf_resource_monitor).
+This repository provides a ROS 2-based resource monitoring solution that leverages Telegraf to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics.  
+Everything needed to run the package without knowing the details can be found on the repo readme, so head on over there if you are in a hurry, I won't hold it against you.
 
-Monitoring system resources is important for maintaining the health and determining performance of robotic systems. There does not seem to be a well established solution to do this in ROS 2, with these the current ones that can be found easily online:
 
-- [AgoraRobotics/ros2-system-monitor](https://github.com/AgoraRobotics/ros2-system-monitor)
-- [kei1107/ros2-system-monitor](https://github.com/kei1107/ros2-system-monitor)
-- [ethz-asl/ros-system-monitor](https://github.com/ethz-asl/ros-system-monitor)
-- [tier4/system_monitor](https://tier4.github.io/autoware.iv/tree/main/system/system_monitor/)
+For the rest of you, this documentation contains two things:
 
-This project attempts to fill that gap.
+ - the motivation and architecture of this package
+ - things I learned along the way that supplement ros2 documentation
 
-## Telegraf as backbone
-
-Resource monitoring is not a unique problem to robotics, and there are many existing tools that do this well. A well established tool within the cloud native and DevOps communities is Telegraf.
-[Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) is an open-source agent for collecting and reporting metrics. It supports a variety of input plugins to gather data from different sources and output plugins to send data to various destinations. By integrating Telegraf with ROS 2, we do not have to reinvent the wheel of resource monitoring and can leverage its more advanced capabilities, such as aggregators and processors.
-
-Telegraf also present the opportunity to build out remote monitoring capabilities of the same resources over the OTLP protocol, which is a common standard for telemetry data. This can be connect to any [opentelemetry collector](https://opentelemetry.io/docs/collector/distributions/) which can then pass it on to whatever remote monitoring environment you wish.

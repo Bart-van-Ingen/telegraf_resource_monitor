@@ -53,11 +53,13 @@ markdown_extensions:
 plugins:
   - search
 
-# nav:
-#   - Home: index.md
-#   - Build and tooling:
-#       - Vendor packages: vendor_packages.md
-#       - Clang compiler setup: clang_compiler.md
-#   - ROS 2 concepts:
-#       - Composable nodes: composable_nodes.md
-#       - Intra-process communication: intra_process_communication.md
+nav:
+  - Home: index.md
+  - Motivation: motivation.md
+  - Architecture: architecture.md
+  - Telegraf Installation: installation.md
+  - Learnings:
+      - Build Command & Clang: learnings/clang_compiler.md
+      - Composable Nodes: learnings/composable_nodes.md
+      - Intra-Process Communication: learnings/intra_process_communication.md
+      - Vendor Packages: learnings/vendor_packages.md
