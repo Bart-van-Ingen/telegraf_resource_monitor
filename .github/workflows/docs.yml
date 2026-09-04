@@ -27,7 +27,7 @@ jobs:
 
       # --locked fails the build if uv.lock is out of date with pyproject.toml.
       - name: Build the site
-        run: uv run --locked --group docs mkdocs build
+        run: uv run --group docs mkdocs build
 
       - name: Upload the site as a Pages artifact
         if: github.event_name != 'pull_request'
