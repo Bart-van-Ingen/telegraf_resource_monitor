@@ -1,8 +1,15 @@
+<p align="center">
+   <img src="docs/images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
+</p>
+
 # Telegraf Resource Monitor
 
 This repository provides a ROS 2-based resource monitoring solution that leverages [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more. There are two implementations, one in Python and one in CPP.
 
-Full documentation: <https://bart-van-ingen.github.io/telegraf_resource_monitor/>
+## Documentation
+
+The motivation, architecture and more can be found on the accompanying pages:
+<https://bart-van-ingen.github.io/telegraf_resource_monitor/>
 
 ## Table of Contents
 
@@ -60,7 +67,7 @@ Full documentation: <https://bart-van-ingen.github.io/telegraf_resource_monitor/
 Run the following command to launch the Telegraf resource monitor with default settings:
 
 <details>
-<summary><b>Python</b></summary>
+<summary><b>Python version</b></summary>
 
 ```bash
 ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py
@@ -69,7 +76,7 @@ ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py
 </details>
 
 <details>
-<summary><b>C++</b></summary>
+<summary><b>C++ version</b></summary>
 
 ```bash
 ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py
@@ -82,7 +89,7 @@ ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py
 the following command allows you to specify a custom ROS2 configuration file and set the logging level:
 
 <details>
-<summary><b>Python</b></summary>
+<summary><b>Python version</b></summary>
 
 ```bash
 ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py \
@@ -93,7 +100,7 @@ ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py \
 </details>
 
 <details>
-<summary><b>C++</b></summary>
+<summary><b>C++ version</b></summary>
 
 ```bash
 ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py \
@@ -169,6 +176,8 @@ The configuration file uses the following format:
 
 
 ## The documentation
+
+The more detailed documentation is deployed using mkdocs. To run it on your local device, run the following terminal command:
 
 ```bash
 uv run --directory src --group docs mkdocs serve -a 127.0.0.1:8001

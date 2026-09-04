@@ -3,14 +3,15 @@
 Telegraf can be fetched automatically into the workspace by the `telegraf_vendor` package
 (recommended), or be installed system-wide (apt or binary, below).
 
-## Through the vendor package (recommended)
-
-Nothing to do here: `telegraf_vendor` downloads telegraf during `colcon build`
+If you install the system using rosdep and colcon there is nothing to do here: `telegraf_vendor` downloads telegraf during `colcon build`
 and installs it into the workspace, so no system-wide install is needed. If
 telegraf is already on your system, it is reused instead of downloaded. See
-[docs/vendor_packages.md](docs/vendor_packages.md) for what a vendor package is
-and how this one works. Skip straight to [Installing the Package](#installing-the-package).
+[vendor_packages](../learnings/vendor_packages) for what a vendor package is
+and how this one works. Amazing.
 
+## Alternative approaches
+
+If you **really** want to use a different way of installation, you can use the following:
 <details>
 <summary><b>Through apt</b></summary>
 

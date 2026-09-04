@@ -1,6 +1,6 @@
 # Architecture
 
-This repository contains four ROS 2 packages:
+The repository contains four ROS 2 packages:
 
 - `telegraf_resource_monitor_py` and `telegraf_resource_monitor_cpp`  
   Both Python and CPP implementation integrates Telegraf with ROS 2 to monitor system resources and publish them as ROS messages. Their architecture is the same, but there are some differences in the details, which are called out below.
