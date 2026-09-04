@@ -47,14 +47,9 @@ convention you learn by reading existing ones. The official tooling
 helper), REP 2005, and the existing `*_vendor` packages in the ROS 2 core set
 together show the pattern is accepted, but none of them defines it.
 
-[../../learnings/vendor_packages_details.md](../../learnings/vendor_packages_details.md#where-the-convention-is-written-down)
-lists all of them, with links to the packages worth reading as a reference.
-
 ## Best practices
 
-Drawn from the reference packages and the ament docs. The sources for each
-point are in
-[../../learnings/vendor_packages_details.md](../../learnings/vendor_packages_details.md):
+Drawn from the reference packages and the ament docs:
 
 1. **Naming.** Call it `<thing>_vendor`, lowercase with underscores. The
    `_vendor` suffix signals to everyone that it fetches third-party software.
@@ -105,9 +100,6 @@ Rule of thumb: `ament_vendor()` shines when you are vendoring a **library built
 from source with CMake**. For a **standalone prebuilt executable** like telegraf,
 plain CMake is shorter and puts the binary exactly where it needs to be.
 
-[../../learnings/vendor_packages_details.md](../../learnings/vendor_packages_details.md#why-this-repo-does-not-use-ament_vendor)
-gives each reason in full.
-
 ## The core idea in one line
 
 A vendor package is the ROS-approved way to say: "my project needs this
@@ -120,6 +112,3 @@ install it by hand, and don't touch the system."
 
 - [Gazebo — ROS 2 Vendor Packages (definition)](https://gazebosim.org/docs/latest/ros2_gz_vendor_pkgs/)
 - [ament_cmake documentation](https://docs.ros.org/en/rolling/How-To-Guides/Ament-CMake-Documentation.html)
-
-The reference packages, REP 2005 and the `ament_vendor()` source are listed in
-[../../learnings/vendor_packages_details.md](../../learnings/vendor_packages_details.md#sources).

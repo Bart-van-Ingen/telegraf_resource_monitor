@@ -1,4 +1,4 @@
-# Intra-Process Communication — Summary
+# Intra-Process Communication
 
 Read [composable_nodes.md](composable_nodes.md) first. Containers make
 intra-process communication possible, and that page explains containers.
@@ -53,8 +53,7 @@ this, the framework can give the same message to the reader in the process and
 to DDS.
 
 Do not change the subscriber to ask for ownership. In the mixed case, that costs
-one more full copy of each message. The section
-[Why the subscriber only reads](../../learnings/intra_process_communication_details.md#why-the-subscriber-only-reads) shows the proof.
+one more full copy of each message.
 
 ### Limits to know
 
@@ -107,8 +106,7 @@ publisher_->publish(std::move(msg));
 
 ### 3. Ask only to read in the subscriber
 
-Take the message as a `ConstSharedPtr`. Do not take it as a `UniquePtr`. See
-[Why the subscriber only reads](../../learnings/intra_process_communication_details.md#why-the-subscriber-only-reads).
+Take the message as a `ConstSharedPtr`. Do not take it as a `UniquePtr`.
 
 ```cpp
 subscription_ = node.create_subscription<MyMessage>(
@@ -116,48 +114,12 @@ subscription_ = node.create_subscription<MyMessage>(
     [this](const MyMessage::ConstSharedPtr& msg) { use_message(*msg); });
 ```
 
-### What the official demo does that we do not need
-
-Many people read the [official demo][2] as a recipe. Most of the demo is support
-code for a small example. It is not part of the mechanism.
-
-| Part of the demo | Do you need it |
-| --- | --- |
-| `struct Producer : public rclcpp::Node` | No. Our components hold a node. See [composable_nodes.md](composable_nodes.md). |
-| A `main()` with an executor and two `add_node` calls | No. The container does this. |
-| The `weak_ptr` capture in the timer callback | No. It prevents a reference cycle between the node, the timer and the publisher. The intra-process code does not use it. |
-| A `UniquePtr` subscription callback | No, and it would hurt. See [Why the subscriber only reads](../../learnings/intra_process_communication_details.md#why-the-subscriber-only-reads). |
-| Publication of a `unique_ptr` | **Yes.** This is the only necessary part. |
-
-## How it works
-
-Every statement above has a proof: the matching lines of the `rclcpp` headers on
-the development image, plus a debug log of a real run.
-
-[../../learnings/intra_process_communication_details.md](../../learnings/intra_process_communication_details.md)
-holds that proof. It shows, with the source text of each file:
-
-- why the manager belongs to the process, so two processes can never share one
-- where `rclcpp` reads the setting, and when
-- what the container does with the launch file argument
-- why a plain `publish(msg)` copies and `publish(std::move(msg))` does not
-- why the subscriber must only read, and what a `UniquePtr` callback would cost
-- which three QoS checks run at start-up, and what they throw
-- why the single-node executables cannot turn the setting on
-
-[../../learnings/evidence/intra_process_communications/debug_print.md](../../learnings/evidence/intra_process_communications/debug_print.md)
-holds the debug log of one run of the composed launch file. The address the
-publisher prints and the address the subscriber prints are the same, and the
-source is `intra process`.
 
 ## Sources
 
 - [Concept: Composition][1]
 - [How-to guide: Launch composable nodes][14]
 - [Demo: Intra-process communication][2]
-
-The `rclcpp` source files, with line numbers, are listed at the end of
-[../../learnings/intra_process_communication_details.md](../../learnings/intra_process_communication_details.md).
 
 [1]: https://docs.ros.org/en/humble/Concepts/Intermediate/About-Composition.html
 [2]: https://docs.ros.org/en/humble/Tutorials/Demos/Intra-Process-Communication.html

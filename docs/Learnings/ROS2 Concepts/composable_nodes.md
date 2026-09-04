@@ -1,4 +1,4 @@
-# Composable Nodes — Summary
+# Composable Nodes
 
 ## What a composable node is
 
@@ -17,7 +17,7 @@ In this repo, `telegraf_resource_monitor_cpp` and
 ## Why use them
 
 - **Faster communication.** Nodes in the same process can pass messages as
-  pointers (intra-process communication). When publishing with
+  pointers ([intra-process communication](intra_process_communication.md)). When publishing with
   `std::unique_ptr` this gives zero-copy transport: the subscriber receives
   the same message instance that was published, no serialization, no copy
   through DDS
@@ -61,14 +61,7 @@ from `rclcpp::Node` is the common way to satisfy that, not the contract itself.
 
 Each package builds three targets: the existing logic library with `-fPIC`, a
 shared library holding the component source, and an executable that
-`rclcpp_components_register_node(... EXECUTABLE ...)` generates. The generated
-executable carries the name the handwritten `main()` used to have, which is why
-`ros2 run` keeps working.
-
-[../../learnings/composable_nodes_details.md](../../learnings/composable_nodes_details.md)
-shows the code for both: the class sketch, the two lines of
-`node_factory_template.hpp` that are the whole contract, the three build
-targets, and the precompiled header side effect the `-fPIC` change caused.
+`rclcpp_components_register_node(... EXECUTABLE ...)` generates.
 
 ## How to run
 
@@ -100,21 +93,6 @@ ros2 component load /ComponentManager resource_diagnostics_updater_cpp ResourceD
 `ros2 component types` lists the components a sourced workspace provides
 [[3]](https://docs.ros.org/en/humble/Tutorials/Intermediate/Composition.html).
 
-## Notes
-
-- Loading a component into a container goes through a service call, so
-  startup is slower than a plain node start. The composed launch file
-  therefore starts telegraf after a delay (the single-node launch file uses
-  0.1 seconds; the composed one needs more). If telegraf still starts too
-  early it logs "connection refused" and retries after 15 seconds, so it
-  self-heals either way.
-- The zero-copy intra-process path is not on by default. To enable it, pass
-  `extra_arguments=[{"use_intra_process_comms": True}]` on each
-  `ComposableNode` in the launch file — this is how the official launch
-  examples do it
-  [[4]](https://docs.ros.org/en/humble/How-To-Guides/Launching-composable-nodes.html).
-  Without it you still save the process overhead, but messages between the
-  two nodes go through DDS as before.
 
 ## Sources
 

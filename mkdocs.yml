@@ -7,10 +7,6 @@ edit_uri: edit/main/
 
 docs_dir: docs
 
-# See the module docstring: keeps the README links working on GitHub and here.
-hooks:
-  - mkdocs_hooks.py
-
 theme:
   name: material
   logo: images/resource-monitor-lizard-logo.png
@@ -57,11 +53,11 @@ markdown_extensions:
 plugins:
   - search
 
-nav:
-  - Home: index.md
-  - Build and tooling:
-      - Vendor packages: vendor_packages.md
-      - Clang compiler setup: clang_compiler.md
-  - ROS 2 concepts:
-      - Composable nodes: composable_nodes.md
-      - Intra-process communication: intra_process_communication.md
+# nav:
+#   - Home: index.md
+#   - Build and tooling:
+#       - Vendor packages: vendor_packages.md
+#       - Clang compiler setup: clang_compiler.md
+#   - ROS 2 concepts:
+#       - Composable nodes: composable_nodes.md
+#       - Intra-process communication: intra_process_communication.md
