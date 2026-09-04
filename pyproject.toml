@@ -1,3 +1,21 @@
+[project]
+name = "telegraf-resource-monitor"
+version = "0.0.0"
+description = "Tooling and documentation for the telegraf_resource_monitor ROS 2 workspace."
+requires-python = ">=3.10"
+
+# Not a Python package, this pyproject only carries tooling config and dev
+# dependency groups.
+[tool.uv]
+package = false
+
+# Install with: uv sync --group docs
+[dependency-groups]
+docs = [
+    "mkdocs==1.6.1",
+    "mkdocs-material==9.6.9",
+]
+
 [tool.ruff]
 line-length = 99
 

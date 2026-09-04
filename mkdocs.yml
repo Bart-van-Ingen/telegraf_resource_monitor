@@ -1,0 +1,63 @@
+site_name: Telegraf Resource Monitor
+site_description: ROS 2 resource monitoring built on Telegraf.
+site_url: https://bart-van-ingen.github.io/telegraf_resource_monitor/
+repo_url: https://github.com/Bart-van-Ingen/telegraf_resource_monitor
+repo_name: Bart-van-Ingen/telegraf_resource_monitor
+edit_uri: edit/main/
+
+docs_dir: docs
+
+theme:
+  name: material
+  logo: images/resource-monitor-lizard-logo.png
+  favicon: images/resource-monitor-lizard-logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - content.code.copy
+    - content.action.edit
+    - search.highlight
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+
+plugins:
+  - search
+
+# nav:
+#   - Home: index.md
+#   - Build and tooling:
+#       - Vendor packages: vendor_packages.md
+#       - Clang compiler setup: clang_compiler.md
+#   - ROS 2 concepts:
+#       - Composable nodes: composable_nodes.md
+#       - Intra-process communication: intra_process_communication.md

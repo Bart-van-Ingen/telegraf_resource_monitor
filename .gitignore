@@ -2,3 +2,9 @@
 .bash-history
 .vscode/browse.*
 **/test_detail.xml
+
+# MkDocs build output
+site/
+
+# uv virtual environment
+.venv/

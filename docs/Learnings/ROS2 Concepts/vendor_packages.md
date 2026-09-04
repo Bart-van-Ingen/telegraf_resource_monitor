@@ -42,31 +42,14 @@ database doesn't cause an error.
 ## Where the convention is written down
 
 There is **no single REP or spec** for vendor packages. It is a de-facto
-convention you learn by reading existing ones. The closest things to
-documentation:
-
-- **The official tooling**: `ament_cmake_vendor_package`, which provides the
-  `ament_vendor()` CMake helper —
-  [ROS index](https://index.ros.org/p/ament_cmake_vendor_package/),
-  [source](https://github.com/ament/ament_cmake/blob/rolling/ament_cmake_vendor_package/cmake/ament_vendor.cmake).
-  Its existence is the strongest sign the pattern is blessed. (Note:
-  `ament_vendor()` assumes the fetched thing has its own CMake build, so it fits
-  libraries better than a single prebuilt binary — see below.)
-- **REP 2005** lists vendor packages (`gtest_vendor`, `spdlog_vendor`,
-  `yaml_cpp_vendor`, ...) as part of the ROS 2 core set —
-  [REP 2005](https://github.com/ros-infrastructure/rep/blob/master/rep-2005.rst).
-  It shows the pattern is accepted but does not define it.
-- **Real packages** — the actual reference. Good ones to read:
-  [`uncrustify_vendor`](https://github.com/ament/uncrustify_vendor/blob/master/CMakeLists.txt)
-  (wraps a standalone tool, closest to telegraf),
-  [`libyaml_vendor`](https://github.com/ros2/libyaml_vendor), and
-  [`onnxruntime_vendor`](https://github.com/ros-controls/onnxruntime_vendor/blob/main/CMakeLists.txt)
-  (downloads a prebuilt binary).
+convention you learn by reading existing ones. The official tooling
+(`ament_cmake_vendor_package`, which provides the `ament_vendor()` CMake
+helper), REP 2005, and the existing `*_vendor` packages in the ROS 2 core set
+together show the pattern is accepted, but none of them defines it.
 
 ## Best practices
 
-Drawn from the packages above and the ament docs
-([ament_cmake documentation](https://docs.ros.org/en/rolling/How-To-Guides/Ament-CMake-Documentation.html)):
+Drawn from the reference packages and the ament docs:
 
 1. **Naming.** Call it `<thing>_vendor`, lowercase with underscores. The
    `_vendor` suffix signals to everyone that it fetches third-party software.
@@ -108,25 +91,10 @@ Drawn from the packages above and the ament docs
 
 `ament_cmake_vendor_package` (the `ament_vendor()` helper) is the official tool,
 and it *is* available for Humble. We still hand-write plain CMake in
-`telegraf_vendor` for three reasons specific to telegraf:
-
-1. **It expects a CMake project to build.** Internally `ament_vendor()` calls
-   `ExternalProject_Add` and passes `CMAKE_ARGS`; it gives you no way to override
-   the configure/build step. So whatever it fetches must have its own
-   `CMakeLists.txt`. Telegraf ships as a **prebuilt Go binary** in a tarball —
-   there is nothing to configure or compile, so the helper's whole build machinery
-   has no purpose here.
-
-2. **It installs to the wrong place for an executable.** `ament_vendor()`
-   installs its result under `opt/<pkg>/`, not `bin/`. A library found via
-   `find_package` is fine there, but the ament PATH hook only adds `bin/` to
-   `PATH`. Our launch files run telegraf as a command, so it must land in `bin/`.
-   Using the helper would mean adding a custom environment hook to undo its own
-   install layout.
-
-3. **We only need download + unpack + install.** That is a handful of plain
-   CMake commands (`find_program`, `FetchContent`, `install`). The helper adds no
-   value for that and only adds constraints.
+`telegraf_vendor`, for three reasons specific to telegraf: it expects a CMake
+project to build, telegraf ships as a prebuilt Go binary; it installs under
+`opt/<pkg>/`, but the ament PATH hook only adds `bin/` to `PATH`; and we only
+need download, unpack and install, which is a handful of plain CMake commands.
 
 Rule of thumb: `ament_vendor()` shines when you are vendoring a **library built
 from source with CMake**. For a **standalone prebuilt executable** like telegraf,
@@ -143,10 +111,4 @@ install it by hand, and don't touch the system."
 ## Sources
 
 - [Gazebo — ROS 2 Vendor Packages (definition)](https://gazebosim.org/docs/latest/ros2_gz_vendor_pkgs/)
-- [ament_cmake_vendor_package — ROS index](https://index.ros.org/p/ament_cmake_vendor_package/)
-- [ament_vendor.cmake source](https://github.com/ament/ament_cmake/blob/rolling/ament_cmake_vendor_package/cmake/ament_vendor.cmake)
 - [ament_cmake documentation](https://docs.ros.org/en/rolling/How-To-Guides/Ament-CMake-Documentation.html)
-- [REP 2005 — ROS 2 Common Packages](https://github.com/ros-infrastructure/rep/blob/master/rep-2005.rst)
-- [uncrustify_vendor](https://github.com/ament/uncrustify_vendor/blob/master/CMakeLists.txt)
-- [libyaml_vendor](https://github.com/ros2/libyaml_vendor)
-- [onnxruntime_vendor](https://github.com/ros-controls/onnxruntime_vendor/blob/main/CMakeLists.txt)

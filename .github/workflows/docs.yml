@@ -1,0 +1,53 @@
+name: Documentation
+
+# Builds the MkDocs site and publishes it to GitHub Pages on every push to main.
+# Pull requests only build the site, to catch breakage before it is merged.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      # --locked fails the build if uv.lock is out of date with pyproject.toml.
+      - name: Build the site
+        run: uv run --group docs mkdocs build
+
+      - name: Upload the site as a Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # Let a running deployment finish, so a queued one never overwrites a newer
+    # site. Scoped to this job so pull request builds do not queue behind it.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

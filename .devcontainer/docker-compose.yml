@@ -24,6 +24,10 @@ services:
       - ../.vscode:/ros_ws/.vscode:cached
       - ~/.claude:/home/dev/.claude
 
+      # Personal ROS 2 learnings notes, kept in their own host repo, mounted at the
+      # workspace top level so they sit next to src/ in the VS Code explorer.
+      - ~/Code/my_ros2_learnings:/ros_ws/learnings:cached
+
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     cap_add:
       - SYS_PTRACE
