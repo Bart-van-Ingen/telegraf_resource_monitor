@@ -20,7 +20,7 @@ The motivation, architecture and more can be found on the accompanying pages:
   - [Basic Launch](#basic-launch)
   - [Launch with Custom Parameters and Logging Level](#launch-with-custom-parameters-and-logging-level)
   - [Configuration](#configuration)
-- [resource_diagnostics_updater usage](#resource_diagnostics_updater-usage)
+- [resource_diagnostics_updater_py/cpp usage](#resource_diagnostics_updater_pycpp-usage)
   - [Basic Launch](#basic-launch-1)
   - [Launch with Custom Parameters and Logging Level](#launch-with-custom-parameters-and-logging-level-1)
   - [Configuration](#configuration-1)
@@ -135,31 +135,76 @@ effect after a rebuild. Build with `colcon build --symlink-install` if you want 
 Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other plugins that can monitor relevant resources for you.
 
 
-## resource_diagnostics_updater usage
+## resource_diagnostics_updater_py/cpp usage
+
+There are two implementations, one in Python (`resource_diagnostics_updater_py`) and one in C++
+(`resource_diagnostics_updater_cpp`). Both run a `resource_diagnostics_updater_node`, read the same
+`diagnosed_resources` config format, and publish aggregated diagnostics to `/diagnostics`.
 
 ### Basic Launch
+
+<details>
+<summary><b>Python version</b></summary>
 
 Run the following command in terminal to launch the diagnostics resource updater with the default configuration file:
 
 ```bash
-ros2 launch resource_diagnostics_updater resource_diagnostics_updater_launch.py
+ros2 launch resource_diagnostics_updater_py resource_diagnostics_updater_launch.py
 ```
 
-The default config path is relative (`src/resource_diagnostics_updater/config/resource_diagnostics.yaml`), so run this from the workspace root or pass an absolute path with `config_file_path`.
+The default config path is relative (`src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml`), so run this from the workspace root or pass an absolute path with `config_file_path`.
+
+</details>
+
+<details>
+<summary><b>C++ version</b></summary>
+
+The C++ package ships no standalone launch file. Run the node directly with a params file:
+
+```bash
+ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node \
+    --ros-args --params-file src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml
+```
+
+To run it in one process together with the C++ Telegraf monitor, use the composed launch file
+(see [Composable Nodes](docs/learnings/composable_nodes.md)):
+
+```bash
+ros2 launch resource_diagnostics_updater_cpp resource_monitor_composed_launch.py \
+    config_file_path:=/path/to/resource_diagnostics.yaml
+```
+
+</details>
 
 ### Launch with Custom Parameters and Logging Level
+
+<details>
+<summary><b>Python version</b></summary>
 
 You can specify a custom configuration file and set the logging level using the following command:
 
 ```bash
-ros2 launch resource_diagnostics_updater resource_diagnostics_updater_launch.py \
+ros2 launch resource_diagnostics_updater_py resource_diagnostics_updater_launch.py \
 config_file_path:=custom_path/resource_diagnostics.yaml \
 log_level:=DEBUG
 ```
 
+</details>
+
+<details>
+<summary><b>C++ version</b></summary>
+
+```bash
+ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node \
+    --ros-args --params-file custom_path/resource_diagnostics.yaml \
+    --log-level resource_diagnostics_updater_node:=DEBUG
+```
+
+</details>
+
 ### Configuration
 
-There is a sample configuration file at `src/resource_diagnostics_updater/config/resource_diagnostics.yaml` that specifies which resources to monitor and their corresponding diagnostic parameters. You can modify this file to suit your monitoring needs or create your own that you then specify during launch.
+There is a sample configuration file at `src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml` that specifies which resources to monitor and their corresponding diagnostic parameters. Both implementations use this same file and format. You can modify this file to suit your monitoring needs or create your own that you then specify during launch.
 
 The configuration file uses the following format:
 

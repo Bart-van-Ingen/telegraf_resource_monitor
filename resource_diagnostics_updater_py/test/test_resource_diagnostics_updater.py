@@ -5,10 +5,10 @@ import pytest
 import rclpy
 from diagnostic_msgs.msg import DiagnosticStatus
 from rclpy.node import Node
-from resource_diagnostics_updater.diagnosed_resource import DiagnosedResource
-from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublisher
+from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
+from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
 
-from resource_diagnostics_updater.resource_diagnostics_updater import ResourceDiagnosticsUpdater
+from resource_diagnostics_updater_py.resource_diagnostics_updater import ResourceDiagnosticsUpdater
 from resource_monitoring_interfaces.msg import Field, Resource
 
 

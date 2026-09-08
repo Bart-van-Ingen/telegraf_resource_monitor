@@ -11,7 +11,7 @@ def generate_launch_description():
                 name="config_file_path",
                 # since default value is not a path, launching only this launch file will output a
                 # warning specifying this fact.
-                default_value="src/resource_diagnostics_updater/config/resource_diagnostics.yaml",
+                default_value="src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml",
                 description="Path to client specific yaml config file.",
             ),
             DeclareLaunchArgument(
@@ -22,7 +22,7 @@ def generate_launch_description():
                 description="log level of node.",
             ),
             Node(
-                package="resource_diagnostics_updater",
+                package="resource_diagnostics_updater_py",
                 executable="resource_diagnostics_updater_node",
                 name="resource_diagnostics_updater_node",
                 output={"both": {"screen", "log", "own_log"}},

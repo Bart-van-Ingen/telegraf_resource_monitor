@@ -2,7 +2,7 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-package_name = "resource_diagnostics_updater"
+package_name = "resource_diagnostics_updater_py"
 
 setup(
     name=package_name,
@@ -27,7 +27,7 @@ setup(
     entry_points={
         "console_scripts": [
             "resource_diagnostics_updater_node ="
-            " resource_diagnostics_updater.resource_diagnostics_updater_node:main"
+            " resource_diagnostics_updater_py.resource_diagnostics_updater_node:main"
         ],
     },
 )
