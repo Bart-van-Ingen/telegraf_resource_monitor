@@ -3,6 +3,9 @@ name = "telegraf-resource-monitor"
 version = "0.0.0"
 description = "Tooling and documentation for the telegraf_resource_monitor ROS 2 workspace."
 requires-python = ">=3.10"
+dependencies = [
+    "pytest>=9.1.1",
+]
 
 # Not a Python package, this pyproject only carries tooling config and dev
 # dependency groups.

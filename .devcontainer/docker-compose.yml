@@ -22,6 +22,7 @@ services:
       # settings, tasks and the task scripts' own ./.vscode/tasks/*.sh paths resolve from the
       # workspace root too.
       - ../.vscode:/ros_ws/.vscode:cached
+      - ../.claude:/ros_ws/.claude:cached
       - ~/.claude:/home/dev/.claude
 
       # Personal ROS 2 learnings notes, kept in their own host repo, mounted at the
