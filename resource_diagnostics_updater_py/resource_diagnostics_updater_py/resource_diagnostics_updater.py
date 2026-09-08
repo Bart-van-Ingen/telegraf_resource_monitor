@@ -2,8 +2,8 @@ from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.qos import qos_profile_sensor_data
 
-from resource_diagnostics_updater.diagnosed_resource import DiagnosedResource
-from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublisher
+from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
+from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
 from resource_monitoring_interfaces.msg import Field, Resource
 
 

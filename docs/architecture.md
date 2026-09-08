@@ -1,10 +1,10 @@
 # Architecture
 
-The repository contains four ROS 2 packages:
+The repository contains five ROS 2 packages:
 
 - `telegraf_resource_monitor_py` and `telegraf_resource_monitor_cpp`  
   Both Python and CPP implementation integrates Telegraf with ROS 2 to monitor system resources and publish them as ROS messages. Their architecture is the same, but there are some differences in the details, which are called out below.
-- `resource_diagnostics_updater`  
+- `resource_diagnostics_updater_py` and `resource_diagnostics_updater_cpp`  
   Subscribes to resource topics and updates the ROS 2 diagnostics system with the latest metrics, based on target resources stipulated in a configuration file.
 - `resource_monitoring_interfaces`  
   Custom message definitions for resource monitoring.
@@ -91,13 +91,18 @@ No topic configuration is needed on the node side, since it will parse the avail
 | `socket_path`     | `/tmp/telegraf.sock` | py and cpp | Path of the Unix socket the node creates and Telegraf writes to. Must match `outputs.socket_writer` in `telegraf.conf`. |
 | `max_buffer_size` | `100`                | cpp only   | Maximum number of queued lines before the oldest is dropped.                                                            |
 
-### resource_diagnostics_updater
+### resource_diagnostics_updater_py/cpp
 
-The package consists of:
+Both the Python and C++ implementation share the same architecture. The package consists of:
 
 - **Diagnostics Resource Updater**: Subscribes to specific resource topics and updates the ROS 2 diagnostics system based on specified DiagnosedResource defined during initialization.
 - **Diagnostics Resource Updater Node**: Parses a configuration file to determine which resources to monitor and initializes the Diagnostics Resource Updaters accordingly.
 - **Diagnostics Publisher**: Publishes aggregated diagnostics information to the `/diagnostics` topic at 1 Hz and is an interface to the diagnostics topic for the updaters. An updater that goes to warning or error level publishes straight away instead of waiting for the next timer tick.
+
+Both implementations use the same `diagnosed_resources` config format. The C++ node also builds as
+a composable node, so it can share one process with the C++ Telegraf monitor (see
+[Composable Nodes](learnings/composable_nodes.md)). The Python package ships a standalone launch
+file and the shared sample config; the C++ package ships neither.
 
 ### resource_monitoring_interfaces
 

@@ -4,9 +4,9 @@ import pytest
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-from resource_diagnostics_updater.diagnosed_resource import DiagnosedResource
-from resource_diagnostics_updater.diagnostics_publisher import DiagnosticsPublisher
-from resource_diagnostics_updater.resource_diagnostics_updater_node import (
+from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
+from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
+from resource_diagnostics_updater_py.resource_diagnostics_updater_node import (
     configure_diagnostics_updaters,
     get_diagnosed_resources_from_config,
 )
