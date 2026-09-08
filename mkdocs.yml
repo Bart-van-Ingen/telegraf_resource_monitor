@@ -28,12 +28,14 @@ theme:
         name: Switch to light mode
   features:
     - navigation.instant
-    - navigation.tracking
+    - navigation.indexes
     - navigation.top
-    - content.code.copy
-    - content.action.edit
+    - search.suggest
     - search.highlight
-    - toc.follow
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - content.tooltips
 
 markdown_extensions:
   - admonition
@@ -58,7 +60,8 @@ nav:
   - Motivation: motivation.md
   - Architecture: architecture.md
   - Telegraf Installation: installation.md
-  - Learnings:
+  - Learnings: 
+      - learnings/index.md
       - Build Command & Clang: learnings/clang_compiler.md
       - Composable Nodes: learnings/composable_nodes.md
       - Intra-Process Communication: learnings/intra_process_communication.md

@@ -1,21 +1,18 @@
 # Installing Telegraf
 
-Telegraf can be fetched automatically into the workspace by the `telegraf_vendor` package
-(recommended), or be installed system-wide (apt or binary, below).
-
-If you install the system using rosdep and colcon there is nothing to do here: `telegraf_vendor` downloads telegraf during `colcon build`
-and installs it into the workspace, so no system-wide install is needed. If
-telegraf is already on your system, it is reused instead of downloaded. See
-[vendor_packages](../learnings/vendor_packages) for what a vendor package is
-and how this one works. Amazing.
+If you install the system using `rosdep` and `colcon` as specified in the `readme.md`, there is
+nothing to do here: `telegraf_vendor` downloads telegraf during `colcon build` and installs it into
+the workspace. If telegraf is already on your system, it is reused instead of downloaded. See
+[vendor_packages](../learnings/vendor_packages) for what a vendor package is and how this one
+works. Amazing.
 
 ## Alternative approaches
 
 If you **really** want to use a different way of installation, you can use the following:
-<details>
-<summary><b>Through apt</b></summary>
 
-As per https://www.influxdata.com/get-telegraf/
+### Through apt
+
+As per [https://www.influxdata.com/get-telegraf/](https://www.influxdata.com/get-telegraf/)
 
 ```bash
 # Add InfluxDB repository
@@ -29,14 +26,12 @@ echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repo
 sudo apt-get update && sudo apt-get install telegraf
 ```
 
-</details>
+### Through linux binary
 
-<details>
-<summary><b>As linux binary</b></summary>
+find the specific version number from the
+[telegraf release page](https://github.com/influxdata/telegraf/releases) in the format x.xx.x.
 
-find the specific version number from the [telegraf release page](https://github.com/influxdata/telegraf/releases) in the format x.xx.x.
-
-Then fill this value accordingly with the following commands in terminal
+Then fill this value accordingly with the following commands in terminal:
 
 ```bash
 wget https://dl.influxdata.com/telegraf/releases/telegraf-x.xx.x_linux_amd64.tar.gz \
@@ -45,6 +40,3 @@ wget https://dl.influxdata.com/telegraf/releases/telegraf-x.xx.x_linux_amd64.tar
     && mv telegraf-x.xx.x/usr/bin/telegraf /usr/local/bin/telegraf \
     && chmod +x /usr/local/bin/telegraf
 ```
-
-</details>
-
