@@ -22,10 +22,8 @@ fi
 export PYTHONPATH="/ros_ws/.venv/lib/python3.10/site-packages:${PYTHONPATH}"
 echo "Added venv site-packages to PYTHONPATH"
 
-# Flush shell history after every command instead of at shell exit. A devcontainer rebuild
-# (or `docker compose down`) SIGKILLs the container, so an exit-time write never happens and
-# the session's history is lost. `history -a` appends new lines immediately; `history -n`
-# reads back lines other shells have appended, so Ctrl-R sees them without a restart.
+# `history -a` appends new lines immediately; `history -n` reads back lines other shells have
+# appended, so Ctrl-R sees them without a restart.
 # Only meaningful in the interactive shells that source this file via .bashrc; harmless
 # when this script runs as the container ENTRYPOINT.
 PROMPT_COMMAND='history -a; history -n'
