@@ -36,6 +36,11 @@
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "python.analysis.extraPaths": [
+        // Resolve workspace packages to src/ (not the symlinked copies under install/).
+        // extraPaths are searched before site-packages / PYTHONPATH.
+        "${workspaceFolder}/src/resource_diagnostics_updater_py",
+        "${workspaceFolder}/src/resource_diagnostics_utils",
+        "${workspaceFolder}/src/telegraf_resource_monitor_py",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
@@ -66,7 +71,6 @@
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
-    "prettier.printWidth": 100,
     // GIT GRAPH SETTINGS
     "git-graph.maxDepthOfRepoSearch": 1,
     "ROS2.distro": "humble",

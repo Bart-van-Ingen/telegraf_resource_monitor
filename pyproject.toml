@@ -3,9 +3,7 @@ name = "telegraf-resource-monitor"
 version = "0.0.0"
 description = "Tooling and documentation for the telegraf_resource_monitor ROS 2 workspace."
 requires-python = ">=3.10"
-dependencies = [
-    "pytest>=9.1.1",
-]
+dependencies = ["pytest>=9.1.1"]
 
 # Not a Python package, this pyproject only carries tooling config and dev
 # dependency groups.
@@ -14,10 +12,7 @@ package = false
 
 # Install with: uv sync --group docs
 [dependency-groups]
-docs = [
-    "mkdocs==1.6.1",
-    "mkdocs-material==9.6.9",
-]
+docs = ["mkdocs==1.6.1", "mkdocs-material==9.6.9"]
 
 [tool.ruff]
 line-length = 99
@@ -28,9 +23,24 @@ ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.lint.per-file-ignores]
-"scripts/*" = ["D"] # Ignore docstring errors
-"**/test/*" = ["D"] # Ignore docstring errors
-
 [tool.ruff.format]
 quote-style = "single"
+
+[tool.ruff.lint.isort]
+detect-same-package = false
+force-wrap-aliases = true
+combine-as-imports = true
+force-single-line = false
+lines-after-imports = 2
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "ros2",
+    "first-party",
+    "local-folder",
+]
+default-section = "local-folder"
+known-third-party = ["pytest"]
+known-first-party = ["resource_monitoring_interfaces"]
+sections.ros2 = ["rclpy", "diagnostic_msgs", "std_msgs", "launch", "launch_ros"]

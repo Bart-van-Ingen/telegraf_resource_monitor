@@ -2,7 +2,6 @@ import asyncio
 import time
 from pathlib import Path
 
-from ament_index_python.packages import get_package_prefix, get_package_share_directory
 from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
@@ -12,16 +11,12 @@ from launch.actions import (
 from launch.event_handlers import OnExecutionComplete
 from launch.substitutions import LaunchConfiguration
 
-# the single telegraf config for both implementations lives in the python package
-DEFAULT_TELEGRAF_CONFIG_PATH = str(
-    Path(get_package_share_directory('telegraf_resource_monitor_py')) / 'config' / 'telegraf.conf'
+from resource_diagnostics_utils.default_paths import (
+    DEFAULT_SOCKET_PATH,
+    DEFAULT_TELEGRAF_CONFIG_PATH,
+    TELEGRAF_BIN,
 )
 
-# resolved directly instead of through PATH, so this also works without a sourced setup.bash
-TELEGRAF_BIN = str(Path(get_package_prefix('telegraf_vendor')) / 'bin' / 'telegraf')
-
-# must match the socket_path node parameter and outputs.socket_writer in the telegraf config
-DEFAULT_SOCKET_PATH = '/tmp/telegraf.sock'
 
 SOCKET_WAIT_PERIOD = 0.05
 SOCKET_WAIT_TIMEOUT = 10.0

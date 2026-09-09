@@ -1,37 +1,24 @@
-import sys
-from pathlib import Path
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
-# ros2 launch loads this file as a module, so its own directory is not on the path yet
-sys.path.insert(0, str(Path(__file__).parent))
-
-from telegraf_launch_utils import telegraf_actions
+from resource_diagnostics_utils.default_paths import DEFAULT_TELEGRAF_CONFIG_PATH
+from resource_diagnostics_utils.launch_arguments import declare_config_file_path, declare_log_level
+from resource_diagnostics_utils.telegraf_launch import telegraf_actions
 
 
 def generate_launch_description():
-    """Run the telegraf monitor and the diagnostics updater together in one process.
 
-    Both nodes are loaded as components into a single container. The config file is
-    passed to both, each node picks up its own section by node name.
-    """
     return LaunchDescription(
         [
+            declare_log_level(),
+            declare_config_file_path(),
             DeclareLaunchArgument(
-                name='config_file_path',
-                # since default value is not a path, launching only this launch file will output a
-                # warning specifying this fact.
-                default_value='config file path not specified in launch file!',
-                description='Path to client specific yaml config file.',
-            ),
-            DeclareLaunchArgument(
-                name='log_level',
-                default_value='INFO',
-                description='log level of the nodes in the container.',
+                name='telegraf_config_path',
+                default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
+                description='Path to the telegraf config file telegraf is started with.',
             ),
             ComposableNodeContainer(
                 name='resource_monitor_container',
@@ -65,7 +52,6 @@ def generate_launch_description():
                     ),
                 ],
             ),
-            # telegraf arguments, and telegraf itself once the node created its socket
             *telegraf_actions(),
         ]
     )
