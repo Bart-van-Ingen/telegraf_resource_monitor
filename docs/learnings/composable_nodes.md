@@ -66,8 +66,8 @@ ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node
 Both nodes in one process, plus telegraf:
 
 ```bash
-ros2 launch telegraf_resource_monitor_bringup resource_monitor_composed_launch.py \
-    config_file_path:=/path/to/config.yaml
+ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_cpp_launch.py \
+    config_file_path:=/path/to/resource_diagnostics.yaml
 ```
 
 The config file is passed to both components. Each node picks up its own section by node name, same

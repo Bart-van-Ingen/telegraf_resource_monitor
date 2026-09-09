@@ -1,10 +1,13 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
-from resource_diagnostics_utils.default_paths import DEFAULT_TELEGRAF_CONFIG_PATH
-from resource_diagnostics_utils.launch_arguments import declare_config_file_path, declare_log_level
+from resource_diagnostics_utils.launch_arguments import (
+    declare_config_file_path,
+    declare_log_level,
+    declare_telegraf_config_path,
+)
 
 
 def generate_launch_description():
@@ -20,11 +23,7 @@ def generate_launch_description():
         [
             declare_log_level(),
             declare_config_file_path(),
-            DeclareLaunchArgument(
-                name='telegraf_config_path',
-                default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
-                description='Path to the telegraf config file telegraf is started with.',
-            ),
+            declare_telegraf_config_path(),
             IncludeLaunchDescription(
                 PathJoinSubstitution(
                     [

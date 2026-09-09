@@ -5,12 +5,12 @@ from launch_ros.substitutions import FindPackagePrefix, FindPackageShare
 # must match the socket_path node parameter and outputs.socket_writer in the telegraf config
 DEFAULT_SOCKET_PATH = '/tmp/telegraf.sock'
 
-# the single telegraf config for both implementations lives in the python package
+# the single telegraf config for both implementations lives in this package
 DEFAULT_TELEGRAF_CONFIG_PATH = PathJoinSubstitution(
     [FindPackageShare('resource_diagnostics_utils'), 'config', 'telegraf.conf']
 )
 
-# the single telegraf config for both implementations lives in the python package
+# the single diagnostics config for both implementations lives in this package
 DEFAULT_DIAGNOSTIC_CONFIG_PATH = PathJoinSubstitution(
     [FindPackageShare('resource_diagnostics_utils'), 'config', 'resource_diagnostics.yaml']
 )

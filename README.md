@@ -21,15 +21,16 @@ The motivation, architecture and more can be found on the accompanying pages:
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
   - [Installing the Package](#installing-the-package)
-- [telegraf_resource_monitor_py/cpp usage](#telegraf_resource_monitor_pycpp-usage)
-  - [Basic Launch](#basic-launch)
-  - [Launch with Custom Parameters and Logging Level](#launch-with-custom-parameters-and-logging-level)
-  - [Configuration](#configuration)
-- [resource_diagnostics_updater_py/cpp usage](#resource_diagnostics_updater_pycpp-usage)
-  - [Basic Launch](#basic-launch-1)
-  - [Launch with Custom Parameters and Logging Level](#launch-with-custom-parameters-and-logging-level-1)
-  - [Configuration](#configuration-1)
-- [Documentation](#the-documentation)
+- [Overview](#overview)
+- [Launching the whole system](#launching-the-whole-system)
+- [Launch arguments](#launch-arguments)
+- [Launching a single node](#launching-a-single-node)
+  - [telegraf_resource_monitor_py/cpp](#telegraf_resource_monitor_pycpp)
+  - [resource_diagnostics_updater_py/cpp](#resource_diagnostics_updater_pycpp)
+- [Configuration](#configuration)
+  - [Telegraf config](#telegraf-config)
+  - [Diagnostics config](#diagnostics-config)
+- [The documentation](#the-documentation)
 
 ## Installation
 
@@ -69,20 +70,79 @@ The motivation, architecture and more can be found on the accompanying pages:
 
 The architecture of these package is summarized in the following diagram and further explained in
 the accompanying documentation
-[architecture](http://127.0.0.1:8002/telegraf_resource_monitor/architecture/) page.
+[architecture](https://bart-van-ingen.github.io/telegraf_resource_monitor/architecture/) page.
 
 <p align="center">
    <img src="docs/images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" />
 </p>
 
-## telegraf_resource_monitor_py/cpp usage
+## Launching the whole system
 
-Starts and interfaces with telegraf over a unix socket and publishes the resources over ROS2
-topics.
+`telegraf_diagnostic_monitor_bringup` starts the resource monitor node, the diagnostics updater node
+and telegraf together. Pick the launch file for the implementation you want:
 
-### Basic Launch
+<details>
+<summary><b>Python version</b></summary>
 
-Run the following command to launch the Telegraf resource monitor with default settings:
+```bash
+ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_py_launch.py
+```
+
+This includes the launch file of `telegraf_resource_monitor_py` and the launch file of
+`resource_diagnostics_updater_py`. Each node runs in its own process.
+
+</details>
+
+<details>
+<summary><b>C++ version</b></summary>
+
+```bash
+ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_cpp_launch.py
+```
+
+This loads both C++ nodes as components into one `component_container` process, with
+intra-process communication turned on. See
+[Composable Nodes](https://bart-van-ingen.github.io/telegraf_resource_monitor/learnings/composable_nodes/)
+and
+[Intra-Process Communication](https://bart-van-ingen.github.io/telegraf_resource_monitor/learnings/intra_process_communication/).
+
+</details>  
+
+Telegraf is not started right away. The launch file waits until the node created its unix socket,
+then starts telegraf. Telegraf exits if it cannot connect to the socket.
+
+## Launch arguments
+
+All launch files share the same arguments. Defaults point at the files installed by
+`resource_diagnostics_utils`, so no argument is needed for a default run.
+
+| Argument               | Default                                                       | Available in                                       |
+| ---------------------- | ------------------------------------------------------------- | -------------------------------------------------- |
+| `log_level`            | `INFO`                                                        | all launch files                                   |
+| `config_file_path`     | `resource_diagnostics_utils/config/resource_diagnostics.yaml` | all launch files                                   |
+| `telegraf_config_path` | `resource_diagnostics_utils/config/telegraf.conf`             | all launch files that start telegraf               |
+| `socket_path`          | `/tmp/telegraf.sock`                                          | the two `telegraf_resource_monitor_*` launch files |
+
+`socket_path` is only used to wait for the socket before telegraf starts. It must match the
+`socket_path` node parameter and the `outputs.socket_writer` address in the telegraf config.
+
+Example with your own files and debug logging:
+
+```bash
+ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_cpp_launch.py \
+    config_file_path:=/path/to/your/resource_diagnostics.yaml \
+    telegraf_config_path:=/path/to/your/telegraf.conf \
+    log_level:=DEBUG
+```
+
+Use `ros2 launch <package> <launch file> -s` to list the arguments of a launch file.
+
+## Launching a single node
+
+### telegraf_resource_monitor_py/cpp
+
+Starts and interfaces with telegraf over a unix socket and publishes the resources over ROS 2
+topics. Both launch files also start telegraf.
 
 <details>
 <summary><b>Python version</b></summary>
@@ -102,132 +162,61 @@ ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py
 
 </details>
 
-### Launch with Custom Parameters and Logging Level
+### resource_diagnostics_updater_py/cpp
 
-the following command allows you to specify a custom ROS2 configuration file and set the logging
-level:
-
-<details>
-<summary><b>Python version</b></summary>
-
-```bash
-ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py \
-    config_file_path:=/path/to/your/config.yaml \
-    log_level:=DEBUG
-```
-
-</details>
-
-<details>
-<summary><b>C++ version</b></summary>
-
-```bash
-ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py \
-    config_file_path:=/path/to/your/config.yaml \
-    log_level:=DEBUG
-```
-
-</details>
-
-### Configuration
-
-There is a pre-configured Telegraf configuration file at
-`src/telegraf_resource_monitor_py/config/telegraf.conf` that:
-
-- Collects metrics every 100 millisecond (configurable per input)
-- Outputs data to Unix socket `/tmp/telegraf.sock`
-- Includes processors for data cleanup and tagging
-- Monitors CPU, memory, disk, sensors, and ROS processes
-
-This single file is shared by both implementations. It is installed into the share directory of
-`telegraf_resource_monitor_py`, and both launch files look it up there. The C++ package ships no
-config of its own. To point Telegraf at a different file, pass `telegraf_config_path` to either
-launch file:
-
-```bash
-ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py \
-    telegraf_config_path:=/path/to/your/telegraf.conf
-```
-
-Note that colcon copies the config into the install space, so edits to the source file only take
-effect after a rebuild. Build with `colcon build --symlink-install` if you want to edit it in
-place.
-
-Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other
-plugins that can monitor relevant resources for you.
-
-## resource_diagnostics_updater_py/cpp usage
-
-There are two implementations, one in Python (`resource_diagnostics_updater_py`) and one in C++
-(`resource_diagnostics_updater_cpp`). Both run a `resource_diagnostics_updater_node`, read the same
-`diagnosed_resources` config format, and publish aggregated diagnostics to `/diagnostics`.
-
-Subscribes to predetermined resource topics and emits diagnostic messages accordingly.
-
-### Basic Launch
+Subscribes to the resource topics and publishes diagnostics to `/diagnostics`. Both
+implementations run a `resource_diagnostics_updater_node` and read the same `diagnosed_resources`
+config format.
 
 <details>
 <summary><b>Python version</b></summary>
-
-Run the following command in terminal to launch the diagnostics resource updater with the default configuration file:
 
 ```bash
 ros2 launch resource_diagnostics_updater_py resource_diagnostics_updater_launch.py
 ```
 
-The default config path is relative (`src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml`), so run this from the workspace root or pass an absolute path with `config_file_path`.
-
 </details>
 
 <details>
 <summary><b>C++ version</b></summary>
 
-The C++ package ships no standalone launch file. Run the node directly with a params file:
+The C++ package ships no launch file of its own. Run the node directly with a params file:
 
 ```bash
 ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node \
-    --ros-args --params-file src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml
+    --ros-args --params-file /path/to/resource_diagnostics.yaml
 ```
 
-To run it in one process together with the C++ Telegraf monitor, use the composed launch file
-(see [Composable Nodes](docs/learnings/composable_nodes.md)):
-
-```bash
-ros2 launch telegraf_resource_monitor_bringup resource_monitor_composed_launch.py \
-    config_file_path:=/path/to/resource_diagnostics.yaml
-```
+To run it together with the C++ telegraf monitor, use
+`telegraf_diagnostic_monitor_cpp_launch.py` from the bringup package.
 
 </details>
 
-### Launch with Custom Parameters and Logging Level
+## Configuration
 
-<details>
-<summary><b>Python version</b></summary>
+Both config files live in `resource_diagnostics_utils/config/` and are shared by the Python and the
+C++ implementation. Colcon copies them into the install space, so edits to the source files only
+take effect after a rebuild. Build with `colcon build --symlink-install` if you want to edit them
+in place.
 
-You can specify a custom configuration file and set the logging level using the following command:
+### Telegraf config
 
-```bash
-ros2 launch resource_diagnostics_updater_py resource_diagnostics_updater_launch.py \
-config_file_path:=custom_path/resource_diagnostics.yaml \
-log_level:=DEBUG
-```
+`resource_diagnostics_utils/config/telegraf.conf`:
 
-</details>
+- Collects metrics every 100 millisecond (configurable per input)
+- Outputs data to unix socket `/tmp/telegraf.sock`
+- Includes processors for data cleanup and tagging
+- Monitors CPU, memory, disk, sensors, and ROS processes
 
-<details>
-<summary><b>C++ version</b></summary>
+Pass `telegraf_config_path` to use a different file.
 
-```bash
-ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node \
-    --ros-args --params-file custom_path/resource_diagnostics.yaml \
-    --log-level resource_diagnostics_updater_node:=DEBUG
-```
+Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other
+plugins that can monitor relevant resources for you.
 
-</details>
+### Diagnostics config
 
-### Configuration
-
-There is a sample configuration file at `src/resource_diagnostics_updater_py/config/resource_diagnostics.yaml` that specifies which resources to monitor and their corresponding diagnostic parameters. Both implementations use this same file and format. You can modify this file to suit your monitoring needs or create your own that you then specify during launch.
+`resource_diagnostics_utils/config/resource_diagnostics.yaml` specifies which resources to monitor
+and their diagnostic thresholds. Pass `config_file_path` to use a different file.
 
 The configuration file uses the following format:
 
@@ -238,11 +227,14 @@ The configuration file uses the following format:
       - topic: <topic name of resource to monitor>
         name: <name to show in diagnostics>
         field: <field to monitor>
-        warning_threshold: <value for warning threshold> 
+        warning_threshold: <value for warning threshold>
         error_threshold: <value for error threshold>
 ```
 
-## The documentation
+The same file is given to both nodes in the bringup launch files. Each node picks up its own
+section by node name.
+
+## Documentation
 
 The more detailed documentation is deployed using mkdocs. To run it on your local device, run the
 following terminal command:

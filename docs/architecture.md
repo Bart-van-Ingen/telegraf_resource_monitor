@@ -1,6 +1,6 @@
 # Architecture
 
-The repository contains five ROS 2 packages:
+The repository contains these ROS 2 packages:
 
 - `telegraf_resource_monitor_py` and `telegraf_resource_monitor_cpp`  
   Both Python and CPP implementation integrates Telegraf with ROS 2 to monitor system resources and
@@ -11,6 +11,12 @@ The repository contains five ROS 2 packages:
   based on target resources stipulated in a configuration file.
 - `resource_monitoring_interfaces`  
   Custom message definitions for resource monitoring.
+- `resource_diagnostics_utils`  
+  Holds what the other packages share: the two config files and the launch helpers.
+- `telegraf_diagnostic_monitor_bringup`  
+  Launch files that start a monitor node, an updater node and Telegraf together.
+- `telegraf_vendor`  
+  Provides the Telegraf binary. See [vendor_packages](learnings/vendor_packages.md).
 
 The architecture between the packages is illustrated below:
 
@@ -64,7 +70,7 @@ The queues also behave differently under overload:
 #### Topics Published
 
 The package dynamically creates topics based on the metrics collected by Telegraf. This is set by
-the config in `src/telegraf_resource_monitor_py/config/telegraf.conf`.
+the config in `resource_diagnostics_utils/config/telegraf.conf`.
 
 **Examples** include:
 
@@ -115,7 +121,7 @@ Both the Python and C++ implementation share the same architecture. The package 
 Both implementations use the same `diagnosed_resources` config format. The C++ node also builds as
 a composable node, so it can share one process with the C++ Telegraf monitor (see
 [Composable Nodes](learnings/composable_nodes.md)). The Python package ships a standalone launch
-file and the shared sample config; the C++ package ships neither.
+file; the C++ package ships none, because it is started from the composed bringup launch file.
 
 ### resource_monitoring_interfaces
 
@@ -124,3 +130,24 @@ Defines custom ROS 2 message types for messages sent by the
 
 - `Field.msg`: Represents a single metric field with name and value
 - `Resource.msg`: Represents a resource with a header and an array of `Field` messages
+
+### Launch and config layout
+
+`resource_diagnostics_utils` holds both config files and the launch helpers, so the Python and the
+C++ side use one copy of each:
+
+- `config/telegraf.conf` and `config/resource_diagnostics.yaml`.
+- `launch_arguments.py`, which declares the `log_level` and `config_file_path` arguments.
+- `telegraf_launch.py`, which declares `telegraf_config_path` and `socket_path`, waits for the node
+  to create its unix socket, and only then starts Telegraf. Telegraf exits if it starts before the
+  socket exists.
+- `default_paths.py`, which resolves the config files and the Telegraf binary in the install space.
+
+`telegraf_diagnostic_monitor_bringup` builds on that with one launch file per implementation:
+
+| Launch file                                 | What it starts                                                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `telegraf_diagnostic_monitor_py_launch.py`  | Includes the two Python launch files. One process per node.                                    |
+| `telegraf_diagnostic_monitor_cpp_launch.py` | Loads both C++ components into one `component_container`, with intra-process communication on. |
+
+Both also start Telegraf.

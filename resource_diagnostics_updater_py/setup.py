@@ -21,7 +21,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='dev',
-    maintainer_email='bart@adinnovations.nl',
+    maintainer_email='van.ingen.bart@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],

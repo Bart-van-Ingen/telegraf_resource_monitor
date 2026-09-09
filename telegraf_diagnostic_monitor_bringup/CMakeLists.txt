@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(telegraf_resource_monitor_bringup)
+project(telegraf_diagnostic_monitor_bringup)
 
 find_package(ament_cmake REQUIRED)
 

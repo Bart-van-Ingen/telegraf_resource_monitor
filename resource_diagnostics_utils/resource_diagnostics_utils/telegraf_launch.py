@@ -11,11 +11,8 @@ from launch.actions import (
 from launch.event_handlers import OnExecutionComplete
 from launch.substitutions import LaunchConfiguration
 
-from resource_diagnostics_utils.default_paths import (
-    DEFAULT_SOCKET_PATH,
-    DEFAULT_TELEGRAF_CONFIG_PATH,
-    TELEGRAF_BIN,
-)
+from resource_diagnostics_utils.default_paths import DEFAULT_SOCKET_PATH, TELEGRAF_BIN
+from resource_diagnostics_utils.launch_arguments import declare_telegraf_config_path
 
 
 SOCKET_WAIT_PERIOD = 0.05
@@ -40,7 +37,7 @@ async def wait_for_socket(context):
         await asyncio.sleep(SOCKET_WAIT_PERIOD)
 
 
-# launch completes a coroutine whether it succeeded or not, hence the second check
+# event handler callback, so it takes the event and context launch passes to it
 def start_telegraf(event, context):
     return ExecuteProcess(
         cmd=[TELEGRAF_BIN, '--config', LaunchConfiguration('telegraf_config_path')],
@@ -53,11 +50,7 @@ def telegraf_actions():
     wait_for_socket_action = OpaqueCoroutine(coroutine=wait_for_socket)
 
     return [
-        DeclareLaunchArgument(
-            name='telegraf_config_path',
-            default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
-            description='Path to the telegraf config file telegraf is started with.',
-        ),
+        declare_telegraf_config_path(),
         DeclareLaunchArgument(
             name='socket_path',
             default_value=DEFAULT_SOCKET_PATH,

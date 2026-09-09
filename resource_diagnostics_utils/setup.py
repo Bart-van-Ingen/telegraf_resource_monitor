@@ -21,7 +21,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='bart',
-    maintainer_email='bart@adinnovations.nl',
+    maintainer_email='van.ingen.bart@gmail.com',
     description='Python libraries used by other Data-Collection packages',
     license='TODO: License declaration',
     tests_require=['pytest'],
