@@ -2,6 +2,7 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
+
 package_name = 'telegraf_resource_monitor_py'
 
 setup(
@@ -32,8 +33,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            ('telegraf_resource_monitor_node ='
-             'telegraf_resource_monitor_py.telegraf_resource_monitor_node:main')
+            (
+                'telegraf_resource_monitor_node ='
+                'telegraf_resource_monitor_py.telegraf_resource_monitor_node:main'
+            )
         ],
     },
 )

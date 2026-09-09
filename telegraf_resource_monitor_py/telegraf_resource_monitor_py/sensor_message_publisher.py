@@ -1,9 +1,10 @@
-from builtin_interfaces.msg import Time
 from rclpy._rclpy_pybind11 import RCLError
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 
 from resource_monitoring_interfaces.msg import Field, Resource
+
+from builtin_interfaces.msg import Time
 from telegraf_resource_monitor_py.sensor_message import SensorMessage
 
 
@@ -16,18 +17,18 @@ class SensorMessagePublisher:
         sensor_tags = message.tags
 
         # Convert tags dict to a pathed string
-        tags_str = "/".join(f"{value}" for value in sensor_tags.values()) if sensor_tags else ""
+        tags_str = '/'.join(f'{value}' for value in sensor_tags.values()) if sensor_tags else ''
 
-        topic_name = f"{sensor_type}/{tags_str}"
+        topic_name = f'{sensor_type}/{tags_str}'
 
         # sanitize topic name to avoid issues with special characters
-        topic_name = topic_name.replace(" ", "_").replace("-", "_")
+        topic_name = topic_name.replace(' ', '_').replace('-', '_')
 
         # remove trailing slashes
-        topic_name = topic_name.rstrip("/")
+        topic_name = topic_name.rstrip('/')
         topic_name = topic_name.lower()
 
-        self.logger.info(f"creating publisher for resource {topic_name}")
+        self.logger.info(f'creating publisher for resource {topic_name}')
 
         self.publisher = node.create_publisher(
             msg_type=Resource,

@@ -76,12 +76,14 @@ Do this in the launch file, once per node in the container. This is what
 does.
 
 ```python
-ComposableNode(
-    package="my_package",
-    plugin="MyNode",
-    name="my_node",
-    extra_arguments=[{"use_intra_process_comms": True}],
-),
+(
+    ComposableNode(
+        package='my_package',
+        plugin='MyNode',
+        name='my_node',
+        extra_arguments=[{'use_intra_process_comms': True}],
+    ),
+)
 ```
 
 You can also set it in the node itself. Do this only if the node must always use

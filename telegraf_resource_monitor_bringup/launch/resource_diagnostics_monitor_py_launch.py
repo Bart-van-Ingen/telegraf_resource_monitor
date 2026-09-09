@@ -18,8 +18,8 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            declare_config_file_path(),
             declare_log_level(),
+            declare_config_file_path(),
             DeclareLaunchArgument(
                 name='telegraf_config_path',
                 default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
@@ -35,7 +35,7 @@ def generate_launch_description():
                 launch_arguments={
                     'config_file_path': LaunchConfiguration('config_file_path'),
                     'log_level': LaunchConfiguration('log_level'),
-                },
+                }.items(),
             ),
             IncludeLaunchDescription(
                 PathJoinSubstitution(
@@ -48,7 +48,7 @@ def generate_launch_description():
                     'config_file_path': LaunchConfiguration('config_file_path'),
                     'log_level': LaunchConfiguration('log_level'),
                     'telegraf_config_path': LaunchConfiguration('telegraf_config_path'),
-                },
+                }.items(),
             ),
         ]
     )

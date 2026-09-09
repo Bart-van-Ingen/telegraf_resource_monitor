@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 
 import pytest
+
 import rclpy
 from rclpy.node import Node
+
 from telegraf_resource_monitor_py.unix_socket_manager import (
     SensorMessageBuffer,
     UnixSocketManager,
@@ -12,7 +14,7 @@ from telegraf_resource_monitor_py.unix_socket_manager import (
 @pytest.fixture
 def test_sensor_message_buffer():
     rclpy.init()
-    test_node = Node("test_sensor_message_node")
+    test_node = Node('test_sensor_message_node')
     logger = test_node.get_logger()
     sensor_message_buffer = SensorMessageBuffer(logger)
 
@@ -25,12 +27,12 @@ def test_sensor_message_buffer():
 class UnixSocketManagerTestParams:
     decoded_message: str
     expected_number_of_messages: int
-    initial_message_buffer: str = ""
-    processed_message_buffer: str = ""
+    initial_message_buffer: str = ''
+    processed_message_buffer: str = ''
 
 
 @pytest.mark.parametrize(
-    "test_parameters",
+    'test_parameters',
     [
         pytest.param(
             UnixSocketManagerTestParams(
@@ -44,7 +46,7 @@ class UnixSocketManagerTestParams:
                     '"used_percent":69.21337618804728},"name":"disk","tags":'
                 ),
             ),
-            id="incomplete_message",
+            id='incomplete_message',
         ),
         pytest.param(
             UnixSocketManagerTestParams(
@@ -57,7 +59,7 @@ class UnixSocketManagerTestParams:
                 ),
                 expected_number_of_messages=2,
             ),
-            id="2_complete_messages",
+            id='2_complete_messages',
         ),
         pytest.param(
             UnixSocketManagerTestParams(
@@ -73,7 +75,7 @@ class UnixSocketManagerTestParams:
                 processed_message_buffer='{"fields":{"power_average":0.001},"name":"sensors"',
                 expected_number_of_messages=3,
             ),
-            id="3_complete_messages_with_initial_buffer",
+            id='3_complete_messages_with_initial_buffer',
         ),
     ],
 )
@@ -87,8 +89,5 @@ def test_buffer_complete_messages(
         test_sensor_message_buffer,
     )
 
-    assert (
-        test_sensor_message_buffer.buffer.qsize()
-        == test_parameters.expected_number_of_messages
-    )
+    assert test_sensor_message_buffer.buffer.qsize() == test_parameters.expected_number_of_messages
     assert processed_message_buffer == test_parameters.processed_message_buffer

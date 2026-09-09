@@ -3,12 +3,12 @@ import sys
 import traceback
 
 import rclpy
-import yaml
 from rclpy._rclpy_pybind11 import RCLError
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
+import yaml
 from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
 from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
 from resource_diagnostics_updater_py.resource_diagnostics_updater import ResourceDiagnosticsUpdater
@@ -18,7 +18,7 @@ def main(args=None):
 
     rclpy.init(args=args)
 
-    node = Node("resource_diagnostics_updater_node")
+    node = Node('resource_diagnostics_updater_node')
     logger = node.get_logger()
 
     diagnosed_resources = get_diagnosed_resources_from_config(node)
@@ -35,14 +35,13 @@ def main(args=None):
         executor.spin()
 
     except KeyboardInterrupt:
-        logger.info("system_monitor_node received valid kill signal")
+        logger.info('system_monitor_node received valid kill signal')
 
-    except Exception as error:
+    except Exception:
         logger.error(traceback.format_exc())
-        raise error
+        raise
 
     finally:
-
         node.destroy_node()
 
     with contextlib.suppress(RCLError):
@@ -60,18 +59,18 @@ def get_diagnosed_resources_from_config(node: Node) -> list[DiagnosedResource]:
     diagnosed_resources_dicts = yaml.safe_load(diagnosed_resources_yaml)
 
     if not diagnosed_resources_dicts:
-        node.get_logger().error("No diagnosed resources configured. Exiting.")
+        node.get_logger().error('No diagnosed resources configured. Exiting.')
         sys.exit(1)
 
     diagnosed_resources: list[DiagnosedResource] = []
 
     for resource_dict in diagnosed_resources_dicts:
-        node.get_logger().debug(f"Loaded diagnosed resource: {resource_dict}")
+        node.get_logger().debug(f'Loaded diagnosed resource: {resource_dict}')
         diagnosed_resources.append(DiagnosedResource(**resource_dict))
 
     node.get_logger().info(
-        "configuring diagnostics publisher for resources:"
-        f" {[resource.topic for resource in diagnosed_resources]}"
+        'configuring diagnostics publisher for resources:'
+        f' {[resource.topic for resource in diagnosed_resources]}'
     )
 
     return diagnosed_resources
@@ -99,5 +98,5 @@ def configure_diagnostics_updaters(
     return resource_diagnostics_updaters
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

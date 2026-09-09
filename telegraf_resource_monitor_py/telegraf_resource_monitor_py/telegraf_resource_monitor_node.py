@@ -12,13 +12,13 @@ from telegraf_resource_monitor_py.unix_socket_manager import UnixSocketManager
 
 def main(args=None):
     rclpy.init(args=args)
-    node = Node("telegraf_resource_monitor_node")
+    node = Node('telegraf_resource_monitor_node')
     logger = node.get_logger()
 
     sensor_message_buffer = SensorMessageBuffer(logger)
 
-    node.declare_parameter("socket_path", "/tmp/telegraf.sock")
-    socket_path = node.get_parameter("socket_path").get_parameter_value().string_value
+    node.declare_parameter('socket_path', '/tmp/telegraf.sock')
+    socket_path = node.get_parameter('socket_path').get_parameter_value().string_value
     unix_socket_manager = UnixSocketManager(logger, sensor_message_buffer, socket_path)
     sensor_message_processor = SensorMessageProcessor(node, sensor_message_buffer)
 
@@ -26,7 +26,7 @@ def main(args=None):
         rclpy.spin(node)
 
     except KeyboardInterrupt:
-        logger.info("system_monitor_node received valid kill signal")
+        logger.info('system_monitor_node received valid kill signal')
 
     except Exception:
         logger.error(traceback.format_exc())
@@ -40,5 +40,5 @@ def main(args=None):
             rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
