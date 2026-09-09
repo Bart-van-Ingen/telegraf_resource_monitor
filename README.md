@@ -4,7 +4,12 @@
 
 # Telegraf Resource Monitor
 
-This repository provides a ROS 2-based resource monitoring solution that leverages [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is designed to be easily configurable and extensible, allowing users to monitor various system resources such as CPU, memory, disk usage, and more. There are two implementations, one in Python and one in CPP.
+This repository provides a ROS 2-based resource monitoring solution that leverages
+[Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and
+publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is
+designed to be easily configurable and extensible, allowing users to monitor various system
+resources such as CPU, memory, disk usage, and more. There are two implementations, one in Python
+and one in CPP.
 
 ## Documentation
 
@@ -60,7 +65,20 @@ The motivation, architecture and more can be found on the accompanying pages:
    source install/setup.bash
    ```
 
-## telegraf_resource_monitor_py/cpp usage 
+## Overview
+
+The architecture of these package is summarized in the following diagram and further explained in
+the accompanying documentation
+[architecture](http://127.0.0.1:8002/telegraf_resource_monitor/architecture/) page.
+
+<p align="center">
+   <img src="docs/images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" />
+</p>
+
+## telegraf_resource_monitor_py/cpp usage
+
+Starts and interfaces with telegraf over a unix socket and publishes the resources over ROS2
+topics.
 
 ### Basic Launch
 
@@ -86,7 +104,8 @@ ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py
 
 ### Launch with Custom Parameters and Logging Level
 
-the following command allows you to specify a custom ROS2 configuration file and set the logging level:
+the following command allows you to specify a custom ROS2 configuration file and set the logging
+level:
 
 <details>
 <summary><b>Python version</b></summary>
@@ -112,7 +131,8 @@ ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py \
 
 ### Configuration
 
-There is a pre-configured Telegraf configuration file at `src/telegraf_resource_monitor_py/config/telegraf.conf` that:
+There is a pre-configured Telegraf configuration file at
+`src/telegraf_resource_monitor_py/config/telegraf.conf` that:
 
 - Collects metrics every 100 millisecond (configurable per input)
 - Outputs data to Unix socket `/tmp/telegraf.sock`
@@ -130,16 +150,19 @@ ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py \
 ```
 
 Note that colcon copies the config into the install space, so edits to the source file only take
-effect after a rebuild. Build with `colcon build --symlink-install` if you want to edit it in place.
+effect after a rebuild. Build with `colcon build --symlink-install` if you want to edit it in
+place.
 
-Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other plugins that can monitor relevant resources for you.
-
+Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other
+plugins that can monitor relevant resources for you.
 
 ## resource_diagnostics_updater_py/cpp usage
 
 There are two implementations, one in Python (`resource_diagnostics_updater_py`) and one in C++
 (`resource_diagnostics_updater_cpp`). Both run a `resource_diagnostics_updater_node`, read the same
 `diagnosed_resources` config format, and publish aggregated diagnostics to `/diagnostics`.
+
+Subscribes to predetermined resource topics and emits diagnostic messages accordingly.
 
 ### Basic Launch
 
@@ -170,7 +193,7 @@ To run it in one process together with the C++ Telegraf monitor, use the compose
 (see [Composable Nodes](docs/learnings/composable_nodes.md)):
 
 ```bash
-ros2 launch resource_diagnostics_updater_cpp resource_monitor_composed_launch.py \
+ros2 launch telegraf_resource_monitor_bringup resource_monitor_composed_launch.py \
     config_file_path:=/path/to/resource_diagnostics.yaml
 ```
 
@@ -219,12 +242,11 @@ The configuration file uses the following format:
         error_threshold: <value for error threshold>
 ```
 
-
 ## The documentation
 
-The more detailed documentation is deployed using mkdocs. To run it on your local device, run the following terminal command:
+The more detailed documentation is deployed using mkdocs. To run it on your local device, run the
+following terminal command:
 
 ```bash
 uv run --directory src --group docs mkdocs serve -a 127.0.0.1:8001
 ```
-
