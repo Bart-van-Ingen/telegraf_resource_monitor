@@ -66,7 +66,7 @@ ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node
 Both nodes in one process, plus telegraf:
 
 ```bash
-ros2 launch telegraf_resource_monitor_cpp resource_monitor_composed_launch.py \
+ros2 launch telegraf_resource_monitor_bringup resource_monitor_composed_launch.py \
     config_file_path:=/path/to/config.yaml
 ```
 

@@ -193,7 +193,7 @@ To run it in one process together with the C++ Telegraf monitor, use the compose
 (see [Composable Nodes](docs/learnings/composable_nodes.md)):
 
 ```bash
-ros2 launch resource_diagnostics_updater_cpp resource_monitor_composed_launch.py \
+ros2 launch telegraf_resource_monitor_bringup resource_monitor_composed_launch.py \
     config_file_path:=/path/to/resource_diagnostics.yaml
 ```
 

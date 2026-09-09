@@ -61,7 +61,7 @@ This is all the code you need to get intra process communication working.
 ### 1. Turn the setting on for both nodes
 
 Do this in the launch file, once per node in the container. This is what
-[resource_monitor_composed_launch.py](../telegraf_resource_monitor_cpp/launch/resource_monitor_composed_launch.py)
+[resource_monitor_composed_launch.py](../telegraf_resource_monitor_bringup/launch/resource_monitor_composed_launch.py)
 does.
 
 ```python
