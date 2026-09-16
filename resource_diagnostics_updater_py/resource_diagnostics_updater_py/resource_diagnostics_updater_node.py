@@ -2,10 +2,12 @@ import contextlib
 import sys
 import traceback
 
+import yaml
+
 import rclpy
-from rclpy._rclpy_pybind11 import RCLError
+from rclpy._rclpy_pybind11 import RCLError  # ty: ignore[unresolved-import]
 from rclpy.callback_groups import ReentrantCallbackGroup
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from rclpy.node import Node
 
 import yaml
@@ -34,7 +36,7 @@ def main(args=None):
         executor.add_node(node)
         executor.spin()
 
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         logger.info('system_monitor_node received valid kill signal')
 
     except Exception:
