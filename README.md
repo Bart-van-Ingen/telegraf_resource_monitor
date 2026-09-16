@@ -52,6 +52,7 @@ The motivation, architecture and more can be found on the accompanying pages:
 
    ```bash
    cd ~/ros2_ws
+   rosdep update
    rosdep install --from-paths src --ignore-src -r -y
    ```
 

@@ -2,7 +2,8 @@ import contextlib
 import traceback
 
 import rclpy
-from rclpy._rclpy_pybind11 import RCLError
+from rclpy._rclpy_pybind11 import RCLError  # ty: ignore[unresolved-import]
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
 from telegraf_resource_monitor_py.sensor_message import SensorMessageBuffer
@@ -25,7 +26,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
 
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         logger.info('system_monitor_node received valid kill signal')
 
     except Exception:

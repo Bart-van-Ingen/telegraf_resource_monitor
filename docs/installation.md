@@ -3,7 +3,7 @@
 If you install the system using `rosdep` and `colcon` as specified in the `readme.md`, there is
 nothing to do here: `telegraf_vendor` downloads telegraf during `colcon build` and installs it into
 the workspace. If telegraf is already on your system, it is reused instead of downloaded. See
-[vendor_packages](../learnings/vendor_packages) for what a vendor package is and how this one
+[vendor_packages](learnings/vendor_packages.md) for what a vendor package is and how this one
 works. Amazing.
 
 ## Alternative approaches

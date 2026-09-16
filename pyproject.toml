@@ -41,6 +41,6 @@ section-order = [
     "local-folder",
 ]
 default-section = "local-folder"
-known-third-party = ["pytest"]
+known-third-party = ["pytest", "yaml"]
 known-first-party = ["resource_monitoring_interfaces"]
 sections.ros2 = ["rclpy", "diagnostic_msgs", "std_msgs", "launch", "launch_ros"]

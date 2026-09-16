@@ -1,4 +1,4 @@
-from rclpy._rclpy_pybind11 import RCLError
+from rclpy._rclpy_pybind11 import RCLError  # ty: ignore[unresolved-import]
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 

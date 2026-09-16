@@ -21,6 +21,7 @@ class ResourceDiagnosticsUpdater:
 
         # Create diagnostic status for this resource whose values will be updated in the callback
         self.diagnostic_status = DiagnosticStatus()
+        self.diagnostic_status.level = DiagnosticStatus.STALE
         self.diagnostic_status.name = diagnosed_resource.name
         self.diagnostic_status.message = 'unknown'
         self.diagnostic_status.hardware_id = 'telegraf_resource_monitor'
@@ -67,7 +68,7 @@ class ResourceDiagnosticsUpdater:
         elif diagnosed_resource_field.value >= self.diagnosed_resource.warning_threshold:
             self.diagnostic_status.level = DiagnosticStatus.WARN
             self.diagnostic_status.message = (
-                f'warning for {self.diagnosed_resource.name} {self.diagnosed_resource.field}:'
+                f'warning for {self.diagnosed_resource.name} ({self.diagnosed_resource.field}):'
                 f' {diagnosed_resource_field.value} over warning threshold'
                 f' {self.diagnosed_resource.warning_threshold}'
             )
