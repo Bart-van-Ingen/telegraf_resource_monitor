@@ -70,6 +70,10 @@
     // MARKDOWN SETTINGS
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.wordWrap": "bounded",
+        "editor.wordWrapColumn": 99,
+        "editor.renderWhitespace": "trailing"
     },
     // GIT GRAPH SETTINGS
     "git-graph.maxDepthOfRepoSearch": 1,

@@ -66,3 +66,4 @@ nav:
       - Composable Nodes: learnings/composable_nodes.md
       - Intra-Process Communication: learnings/intra_process_communication.md
       - Vendor Packages: learnings/vendor_packages.md
+      - collectd Vendor Package: learnings/collectd_vendor.md
