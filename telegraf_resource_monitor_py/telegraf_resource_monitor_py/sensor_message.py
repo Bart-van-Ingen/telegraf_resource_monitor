@@ -13,7 +13,7 @@ class SensorMessage:
     timestamp: int
 
     @staticmethod
-    def from_json_str(json_str: str) -> "SensorMessage":
+    def from_json_str(json_str: str) -> 'SensorMessage':
         sensor_dict = json.loads(json_str)
         return SensorMessage(**sensor_dict)
 
@@ -24,12 +24,12 @@ class SensorMessageBuffer:
         self.buffer: Queue[SensorMessage] = Queue()
 
     def add_message(self, message: str) -> None:
-        self.logger.debug(f"adding message to buffer: {message}")
+        self.logger.debug(f'adding message to buffer: {message}')
         sensor_message = SensorMessage.from_json_str(message)
         self.buffer.put(sensor_message)
 
     def get_message(self, timeout: float = 0.1) -> SensorMessage | None:
-        self.logger.debug("getting message from buffer...")
+        self.logger.debug('getting message from buffer...')
         try:
             return self.buffer.get(block=True, timeout=timeout)
         except Empty:

@@ -73,6 +73,7 @@ void SensorMessagePublisher::sanitize_topic_name(std::string& topic_str)
     {
       c = '_';
     }
+    c = static_cast<char>(std::tolower(c));
   }
 }
 

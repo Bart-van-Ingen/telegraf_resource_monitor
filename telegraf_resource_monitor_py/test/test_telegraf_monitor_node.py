@@ -1,6 +1,8 @@
 import pytest
+
 import rclpy
 from rclpy.node import Node
+
 from telegraf_resource_monitor_py.sensor_message import SensorMessageBuffer
 from telegraf_resource_monitor_py.sensor_message_processor import SensorMessageProcessor
 from telegraf_resource_monitor_py.unix_socket_manager import UnixSocketManager
@@ -9,7 +11,7 @@ from telegraf_resource_monitor_py.unix_socket_manager import UnixSocketManager
 @pytest.fixture
 def test_node():
     rclpy.init()
-    test_node = Node("test_telegraf_resource_monitor_node")
+    test_node = Node('test_telegraf_resource_monitor_node')
 
     yield test_node
 

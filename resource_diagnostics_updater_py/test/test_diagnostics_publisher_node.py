@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
 import pytest
+
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
+
 from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
 from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
 from resource_diagnostics_updater_py.resource_diagnostics_updater_node import (
@@ -15,7 +17,7 @@ from resource_diagnostics_updater_py.resource_diagnostics_updater_node import (
 @pytest.fixture
 def test_node():
     rclpy.init()
-    test_node = Node("test_node")
+    test_node = Node('test_node')
 
     yield test_node
 
@@ -30,7 +32,7 @@ class UpdaterNodeConfigTestParams:
 
 
 @pytest.mark.parametrize(
-    "test_parameters",
+    'test_parameters',
     [
         pytest.param(
             UpdaterNodeConfigTestParams(
@@ -49,22 +51,22 @@ class UpdaterNodeConfigTestParams:
         """,
                 expected_diagnosed_resources=[
                     DiagnosedResource(
-                        topic="cpu/cpu_total",
-                        name="CPU Usage Active",
-                        field="usage_active",
+                        topic='cpu/cpu_total',
+                        name='CPU Usage Active',
+                        field='usage_active',
                         warning_threshold=60.0,
                         error_threshold=90.0,
                     ),
                     DiagnosedResource(
-                        topic="/disk/root",
-                        name="Root Disk Percent Used",
-                        field="used_percent",
+                        topic='/disk/root',
+                        name='Root Disk Percent Used',
+                        field='used_percent',
                         warning_threshold=70.0,
                         error_threshold=90.0,
                     ),
                 ],
             ),
-            id="cpu and disk resources",
+            id='cpu and disk resources',
         ),
         pytest.param(
             UpdaterNodeConfigTestParams(
@@ -77,15 +79,15 @@ class UpdaterNodeConfigTestParams:
         """,
                 expected_diagnosed_resources=[
                     DiagnosedResource(
-                        topic="/mem",
-                        name="Memory Usage",
-                        field="used_percentage",
+                        topic='/mem',
+                        name='Memory Usage',
+                        field='used_percentage',
                         warning_threshold=50.0,
                         error_threshold=70.0,
                     ),
                 ],
             ),
-            id="mem resource",
+            id='mem resource',
         ),
     ],
 )

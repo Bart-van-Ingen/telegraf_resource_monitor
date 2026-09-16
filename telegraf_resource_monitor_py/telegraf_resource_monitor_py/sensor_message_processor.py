@@ -19,7 +19,7 @@ class SensorMessageProcessor:
         self.shutdown_event = threading.Event()
 
         self.publisher_thread = Thread(target=self.process_buffered_messages)
-        self.logger.debug("starting sensor publisher thread")
+        self.logger.debug('starting sensor publisher thread')
         self.publisher_thread.start()
 
     def shutdown(self):
@@ -38,7 +38,7 @@ class SensorMessageProcessor:
 
     def publish_sensor_message(self, message: SensorMessage) -> None:
 
-        self.logger.debug(f"publishing sensor message: {message.name} with tags: {message.tags}")
+        self.logger.debug(f'publishing sensor message: {message.name} with tags: {message.tags}')
         sensor_message_publisher = self.get_publisher(message)
         sensor_message_publisher.publish(message)
 

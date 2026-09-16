@@ -12,6 +12,6 @@ class DiagnosedResource:
     def __post_init__(self):
         if self.warning_threshold >= self.error_threshold:
             raise ValueError(
-                f"warning threshold {self.warning_threshold} must be less than"
-                f" error threshold {self.error_threshold}"
+                f'warning threshold {self.warning_threshold} must be less than'
+                f' error threshold {self.error_threshold}'
             )

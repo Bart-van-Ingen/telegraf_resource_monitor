@@ -1,5 +1,6 @@
 import socket
 import threading
+from json import JSONDecodeError
 from pathlib import Path
 from threading import Thread
 
@@ -13,8 +14,9 @@ class UnixSocketManager:
         self,
         logger: RcutilsLogger,
         sensor_message_buffer: SensorMessageBuffer,
-        socket_path: str = "/tmp/telegraf.sock",
+        socket_path: str = '/tmp/telegraf.sock',
     ) -> None:
+
         self.logger = logger
         self.sensor_message_buffer = sensor_message_buffer
 
@@ -23,7 +25,7 @@ class UnixSocketManager:
 
         self.server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.socket_path = Path(socket_path)
-        logger.info(f"server listening on {self.socket_path}")
+        logger.info(f'server listening on {self.socket_path}')
 
         # Remove existing socket file if it exists
         if self.socket_path.exists():
@@ -31,7 +33,7 @@ class UnixSocketManager:
 
         # Bind and listen in a separate thread
         self.listener_thread = Thread(target=self.start_socket_listener)
-        logger.info("starting unix socket listener thread...")
+        logger.info('starting unix socket listener thread...')
         self.listener_thread.start()
 
     def shutdown(self) -> None:
@@ -40,9 +42,9 @@ class UnixSocketManager:
         # Close the socket to unblock any waiting operations
         try:
             self.server_socket.close()
-            self.logger.info("unix socket closed.")
-        except Exception as e:
-            self.logger.warning(f"Error closing socket: {e}")
+            self.logger.info('unix socket closed.')
+        except OSError as e:
+            self.logger.warning(f'Error closing socket: {e}')
 
         # Remove existing socket file if it exists
         if self.socket_path.exists():
@@ -72,15 +74,15 @@ class UnixSocketManager:
 
                 conn, addr = received_data
 
-                self.logger.debug(f"connected by {addr}")
+                self.logger.debug(f'connected by {addr}')
 
                 self.handle_connection(conn)
 
-        except Exception as e:
-            self.logger.error(f"Error in socket listener: {e}")
+        except OSError as e:
+            self.logger.error(f'Error in socket listener: {e}')
 
         finally:
-            self.logger.debug("Socket listener thread exiting")
+            self.logger.debug('Socket listener thread exiting')
 
     def should_continue_loop(self) -> bool:
         """Check if the main loop should continue running."""
@@ -100,7 +102,7 @@ class UnixSocketManager:
 
     def handle_connection(self, conn: socket.socket) -> None:
         """Handle a single client connection."""
-        message_buffer = ""
+        message_buffer = ''
 
         try:
             with conn:
@@ -117,7 +119,7 @@ class UnixSocketManager:
 
                     received_data: bytes = result
 
-                    decoded_message = received_data.decode("utf-8")
+                    decoded_message = received_data.decode('utf-8')
 
                     message_buffer = self.buffer_complete_messages(
                         decoded_message,
@@ -125,8 +127,8 @@ class UnixSocketManager:
                         self.sensor_message_buffer,
                     )
 
-        except Exception as e:
-            self.logger.error(f"Error handling connection: {e}")
+        except (OSError, UnicodeDecodeError, JSONDecodeError, TypeError) as e:
+            self.logger.error(f'Error handling connection: {e}')
 
     @staticmethod
     def buffer_complete_messages(
@@ -135,14 +137,14 @@ class UnixSocketManager:
         sensor_message_buffer: SensorMessageBuffer,
     ) -> str:
 
-        message_lines = decoded_message.split("\n")
+        message_lines = decoded_message.split('\n')
 
         # Process all complete entries (all but the last split part)
         if len(message_lines) > 1:
             # Add the first part to our current entry and process it
             message_buffer += message_lines[0]
             sensor_message_buffer.add_message(message_buffer)
-            message_buffer = ""
+            message_buffer = ''
 
             # Process any additional complete entries
             for complete_line in message_lines[1:-1]:

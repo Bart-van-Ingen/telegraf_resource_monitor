@@ -27,7 +27,8 @@ ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
 {
   diagnostic_status_.level = DiagnosticStatusType::STALE;
   diagnostic_status_.name = diagnosed_resource_.name;
-  diagnostic_status_.hardware_id = "telegraph_resource_monitor";
+  diagnostic_status_.message = "unknown";
+  diagnostic_status_.hardware_id = "telegraf_resource_monitor";
 
   diagnostic_publisher_.add_diagnostic_status(diagnostic_status_);
 
@@ -79,7 +80,7 @@ void ResourceDiagnosticsUpdater::resource_callback(const ResourceType& resource)
   else if (find->value >= diagnosed_resource_.warning_threshold)
   {
     diagnostic_status_.level = DiagnosticStatusType::WARN;
-    diagnostic_status_.message = fmt::format("error for {} ({}): {} over warn threshold {}",
+    diagnostic_status_.message = fmt::format("warning for {} ({}): {} over warning threshold {}",
                                              diagnosed_resource_.name, diagnosed_resource_.field,
                                              find->value, diagnosed_resource_.warning_threshold);
   }

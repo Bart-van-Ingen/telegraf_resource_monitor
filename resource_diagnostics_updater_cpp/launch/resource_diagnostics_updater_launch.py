@@ -11,7 +11,7 @@ def generate_launch_description():
             declare_log_level(),
             declare_config_file_path(),
             Node(
-                package='resource_diagnostics_updater_py',
+                package='resource_diagnostics_updater_cpp',
                 executable='resource_diagnostics_updater_node',
                 name='resource_diagnostics_updater_node',
                 output={'both': {'screen', 'log', 'own_log'}},

@@ -21,6 +21,7 @@
   <!-- the composed launch file loads the diagnostics updater component into the same container -->
   <exec_depend>resource_diagnostics_updater_cpp</exec_depend>
   <exec_depend>telegraf_vendor</exec_depend>
+  <exec_depend>resource_diagnostics_utils</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
