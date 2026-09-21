@@ -19,7 +19,7 @@ services:
     image: telegraf_resource_monitor:base
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: .docker/Dockerfile
       args:
         ROS_DISTRO: humble
       target: base
@@ -53,7 +53,7 @@ services:
       context: ..
       ssh:
         - default
-      dockerfile: docker/Dockerfile
+      dockerfile: .docker/Dockerfile
       target: overlay
 
   dev:
@@ -62,7 +62,7 @@ services:
     hostname: ros_dev_container
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: .docker/Dockerfile
       target: dev
     volumes:
       - ../.bash-history:/home/dev/.bash_history

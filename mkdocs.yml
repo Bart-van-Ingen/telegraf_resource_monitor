@@ -5,7 +5,7 @@ repo_url: https://github.com/Bart-van-Ingen/telegraf_resource_monitor
 repo_name: Bart-van-Ingen/telegraf_resource_monitor
 edit_uri: edit/main/
 
-docs_dir: docs
+docs_dir: .docs
 
 theme:
   name: material

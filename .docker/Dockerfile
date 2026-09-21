@@ -74,7 +74,7 @@ RUN chmod -R 0700 /tmp/runtime-root
 ENV NO_AT_BRIDGE=1
 
 # Set up the entrypoint
-COPY ./docker/entrypoint.sh /
+COPY ./.docker/entrypoint.sh /
 ENTRYPOINT [ "/entrypoint.sh" ]
 
 #####################
