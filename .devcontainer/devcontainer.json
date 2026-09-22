@@ -42,6 +42,8 @@
 				"ms-vscode.cmake-tools",
 				"tdennis4496.cmantic",
 				"llvm-vs-code-extensions.vscode-clangd",
+				// Provides the cppdbg debug type used by .vscode/launch.json.
+				"ms-vscode.cpptools",
 				"ranch-hand-robotics.rde-ros-2",
 				"aaron-bond.better-comments",
 				"mhutchie.git-graph",
