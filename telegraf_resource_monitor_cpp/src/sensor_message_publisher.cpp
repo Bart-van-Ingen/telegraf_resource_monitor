@@ -9,6 +9,7 @@
 
 #include "rclcpp/node.hpp"
 #include <builtin_interfaces/msg/time.hpp>
+#include <rclcpp/time.hpp>
 
 #include <fmt/format.h>
 
@@ -18,7 +19,7 @@
 #include "telegraf_resource_monitor_cpp/sensor_message_publisher.hpp"
 
 using Field = resource_monitoring_interfaces::msg::Field;
-using Time = builtin_interfaces::msg::Time;
+using TimeMsg = builtin_interfaces::msg::Time;
 using TagsKey = std::map<std::string, std::string>;
 
 SensorMessagePublisher::SensorMessagePublisher(const rclcpp::Node::SharedPtr& node,
@@ -79,8 +80,8 @@ void SensorMessagePublisher::sanitize_topic_name(std::string& topic_str)
 
 void SensorMessagePublisher::publish(SensorMessage& message) const
 {
-  Time current_time{};
-  current_time.set__sec(message.timestamp);
+  // use conversion operator to go from rclcpp::time to Time msg
+  TimeMsg current_time{rclcpp::Time{message.timestamp_ns}};
 
   // The message is built in a unique_ptr so it can be published by moving it. With
   // intra process communication enabled, publishing a unique_ptr hands ownership to the

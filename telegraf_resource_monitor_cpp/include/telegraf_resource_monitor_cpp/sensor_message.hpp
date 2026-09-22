@@ -3,6 +3,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstddef>
+#include <cstdint>
 #include <mutex>
 #include <optional>
 #include <queue>
@@ -16,17 +17,15 @@
 #include <nlohmann/json_fwd.hpp>
 #include <ros2_fmt_logger/logger.hpp>
 
-using json = nlohmann::json;
-
 struct SensorMessage
 {
   std::string name;
   std::unordered_map<std::string, std::string> tags;
   std::unordered_map<std::string, double> fields;
-  int timestamp;
+  int64_t timestamp_ns;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorMessage, name, tags, fields, timestamp)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorMessage, name, tags, fields, timestamp_ns)
 
 class SensorMessageBuffer
 {

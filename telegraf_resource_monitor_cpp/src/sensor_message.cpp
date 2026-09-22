@@ -7,7 +7,11 @@
 
 #include "rclcpp/logger.hpp"
 
+#include <nlohmann/json_fwd.hpp>
+
 #include "telegraf_resource_monitor_cpp/sensor_message.hpp"
+
+using json = nlohmann::json;
 
 SensorMessageBuffer::SensorMessageBuffer(const rclcpp::Logger& logger,
                                          const std::size_t max_buffer_size)
