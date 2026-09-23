@@ -10,6 +10,10 @@ DEFAULT_TELEGRAF_CONFIG_PATH = PathJoinSubstitution(
     [FindPackageShare('resource_diagnostics_utils'), 'config', 'telegraf.conf']
 )
 
+DEFAULT_COLLECTD_CONFIG_PATH = PathJoinSubstitution(
+    [FindPackageShare('resource_diagnostics_utils'), 'config', 'collectd.conf']
+)
+
 # the single diagnostics config for both implementations lives in this package
 DEFAULT_DIAGNOSTIC_CONFIG_PATH = PathJoinSubstitution(
     [FindPackageShare('resource_diagnostics_utils'), 'config', 'resource_diagnostics.yaml']
@@ -17,3 +21,5 @@ DEFAULT_DIAGNOSTIC_CONFIG_PATH = PathJoinSubstitution(
 
 # resolved directly instead of through PATH, so this also works without a sourced setup.bash
 TELEGRAF_BIN = PathJoinSubstitution([FindPackagePrefix('telegraf_vendor'), 'bin', 'telegraf'])
+
+COLLECTD_BIN = PathJoinSubstitution([FindPackagePrefix('collectd_vendor'), 'bin', 'collectd'])

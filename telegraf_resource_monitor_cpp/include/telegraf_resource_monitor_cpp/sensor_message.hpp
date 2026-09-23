@@ -22,10 +22,10 @@ struct SensorMessage
   std::string name;
   std::unordered_map<std::string, std::string> tags;
   std::unordered_map<std::string, double> fields;
-  int64_t timestamp_ns;
+  int64_t timestamp;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorMessage, name, tags, fields, timestamp_ns)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorMessage, name, tags, fields, timestamp)
 
 class SensorMessageBuffer
 {

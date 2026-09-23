@@ -81,7 +81,7 @@ void SensorMessagePublisher::sanitize_topic_name(std::string& topic_str)
 void SensorMessagePublisher::publish(SensorMessage& message) const
 {
   // use conversion operator to go from rclcpp::time to Time msg
-  TimeMsg current_time{rclcpp::Time{message.timestamp_ns}};
+  TimeMsg current_time{rclcpp::Time{message.timestamp}};
 
   // The message is built in a unique_ptr so it can be published by moving it. With
   // intra process communication enabled, publishing a unique_ptr hands ownership to the

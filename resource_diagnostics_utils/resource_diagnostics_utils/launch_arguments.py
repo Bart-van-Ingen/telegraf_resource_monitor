@@ -1,7 +1,9 @@
 from launch.actions import DeclareLaunchArgument
 
 from resource_diagnostics_utils.default_paths import (
+    DEFAULT_COLLECTD_CONFIG_PATH,
     DEFAULT_DIAGNOSTIC_CONFIG_PATH,
+    DEFAULT_SOCKET_PATH,
     DEFAULT_TELEGRAF_CONFIG_PATH,
 )
 
@@ -27,4 +29,24 @@ def declare_telegraf_config_path():
         name='telegraf_config_path',
         default_value=DEFAULT_TELEGRAF_CONFIG_PATH,
         description='Path to the telegraf config file telegraf is started with.',
+    )
+
+
+def declare_collectd_config_path():
+    return DeclareLaunchArgument(
+        name='collectd_config_path',
+        default_value=DEFAULT_COLLECTD_CONFIG_PATH,
+        description='Path to the telegraf config file telegraf is started with.',
+    )
+
+
+def declare_socket_path():
+    return DeclareLaunchArgument(
+        name='socket_path',
+        default_value=DEFAULT_SOCKET_PATH,
+        description=(
+            'Path of the unix socket the node creates. Only used to wait for that socket '
+            'before telegraf starts, so it must match the socket_path node parameter and '
+            'the outputs.socket_writer address in the telegraf config.'
+        ),
     )

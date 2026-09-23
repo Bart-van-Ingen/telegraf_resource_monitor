@@ -1,10 +1,12 @@
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, GroupAction
+from launch.conditions import IfCondition
+from launch.substitutions import EqualsSubstitution, LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 from resource_diagnostics_utils.launch_arguments import declare_config_file_path, declare_log_level
-from resource_diagnostics_utils.telegraf_launch import telegraf_actions
+from resource_diagnostics_utils.monitor_launch_actions import collectd_actions, telegraf_actions
 
 
 def generate_launch_description():
@@ -13,6 +15,12 @@ def generate_launch_description():
         [
             declare_log_level(),
             declare_config_file_path(),
+            DeclareLaunchArgument(
+                name='monitor_type',
+                default_value='telegraf',
+                choices=['telegraf', 'collectd'],
+                description='the type of monitor to launch, options: telegraf, collectd',
+            ),
             ComposableNodeContainer(
                 name='resource_monitor_container',
                 namespace='',
@@ -45,6 +53,19 @@ def generate_launch_description():
                     ),
                 ],
             ),
-            *telegraf_actions(),
+            GroupAction(
+                actions=telegraf_actions(),
+                scoped=False,
+                condition=IfCondition(
+                    EqualsSubstitution(LaunchConfiguration('monitor_type'), 'telegraf')
+                ),
+            ),
+            GroupAction(
+                actions=collectd_actions(),
+                scoped=False,
+                condition=IfCondition(
+                    EqualsSubstitution(LaunchConfiguration('monitor_type'), 'collectd')
+                ),
+            ),
         ]
     )
