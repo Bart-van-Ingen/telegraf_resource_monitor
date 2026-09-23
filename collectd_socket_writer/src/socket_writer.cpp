@@ -11,8 +11,6 @@
 #include <unordered_map>
 
 #include <fmt/core.h>
-#include <fmt/format.h>
-#include <fmt/ranges.h>
 #include <nlohmann/detail/macro_scope.hpp>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
@@ -48,7 +46,7 @@ int SocketWriter::write(const data_set_t* data_set_ptr, const value_list_t* valu
   const data_set_t& data_set{*data_set_ptr}
 
   DEBUG("collectd_socket_writer: write %s/%s-%s/%s (%zu values)", value_list.host,
-        value_list.plugin, value_list.plugin_instance, value_list.type, data_set->ds_num);
+        value_list.plugin, value_list.plugin_instance, value_list.type, data_set.ds_num);
 
   MeasurementFields measurement_fields{create_measurement_fields(data_set, value_list)};
 

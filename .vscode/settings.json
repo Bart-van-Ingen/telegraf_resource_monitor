@@ -57,7 +57,7 @@
     ],
     // CPP SETTINGS
     "cmake.ignoreCMakeListsMissing": true,
-    "C_Cpp.intelliSenseEngine": "disabled", // need t
+    "C_Cpp.intelliSenseEngine": "disabled", // needed for cppdbg, but want clangd for intellisense
     "clangd.enable": true,
     "[cpp]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",

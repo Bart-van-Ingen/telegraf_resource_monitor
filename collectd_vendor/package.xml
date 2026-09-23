@@ -8,8 +8,8 @@
     cpu, csv, df, disk, logfile, memory, processes, thermal and unixsock plugins.
   </description>
   <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
+  <!-- license information https://github.com/collectd/collectd/blob/main/COPYING -->
   <license>Apache-2.0</license>  <!-- the contents of this package are Apache 2.0 -->
-  <!-- https://github.com/collectd/collectd/blob/main/COPYING -->
   <license>MIT</license>  <!-- the collectd daemon, and the logfile and unixsock plugins -->
   <license>GPL-2.0</license>  <!-- the cpu, csv, df, disk, memory, processes and thermal plugins -->
   <url type="website">https://github.com/collectd/collectd</url>
