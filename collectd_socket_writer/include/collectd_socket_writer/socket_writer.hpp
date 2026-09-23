@@ -12,8 +12,8 @@ extern "C" {
 #include <unordered_map>
 #include <utility>
 
-using PluginKey = std::tuple<std::string, std::string>;
-using MeasurementFieldType = std::unordered_map<std::string, double>;
+using PluginKey = std::tuple<const std::string, const std::string>;
+using MeasurementFields = std::unordered_map<std::string, double>;
 
 struct PluginDataSet
 {
@@ -35,7 +35,7 @@ public:
   };
 
 private:
-  int fd_{};
+  int server_fd_{}; // file descriptor for the accepted server connection
   sockaddr_un addr_{};
 
   std::mutex mutex_{};
@@ -46,12 +46,12 @@ private:
   // one entry per series, holding the values gathered so far for the current cycle
   std::map<PluginKey, PluginDataSet> pending_plugin_datasets_{};
 
-  void set_dataset_plugin_instance(const value_list_t*& value_list, PluginDataSet& data_set_struct);
-  PluginDataSet create_plugin_dataset(const value_list_t* value_list);
-  std::unordered_map<std::string, double> create_measurement_fields(const data_set_t* data_set,
-                                                                    const value_list_t* value_list);
+  void set_dataset_plugin_instance(const value_list_t& value_list, PluginDataSet& data_set_struct);
+  PluginDataSet create_plugin_dataset(const value_list_t& value_list);
+  MeasurementFields create_measurement_fields(const data_set_t& data_set,
+                                              const value_list_t& value_list);
   void send(const PluginDataSet& data_set_struct);
 
-  void send_data_on_cycle_end(const MeasurementFieldType& measurement_fields,
+  void send_data_on_cycle_end(const MeasurementFields& measurement_fields,
                               PluginDataSet& pending_plugin_dataset);
 };

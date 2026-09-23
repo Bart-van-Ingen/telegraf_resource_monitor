@@ -17,9 +17,9 @@ uint64_t cdtime_to_ns(cdtime_t t)
 // collectd splits one logical measurement over several dispatches, one per type and
 // type_instance (the cpu states, the disk counters, ...). Those dispatches share a series
 // key, so both have to go into the field name to keep the values apart inside one message.
-std::string create_field_name(const value_list_t* value_list, const data_source_t& data_source)
+std::string create_field_name(const value_list_t& value_list, const data_source_t& data_source)
 {
-  std::string name{value_list->type_instance};
+  std::string name{value_list.type_instance};
 
   // single valued types call their only data source "value", which adds nothing next to
   // the type that follows it
@@ -37,7 +37,7 @@ std::string create_field_name(const value_list_t* value_list, const data_source_
   {
     name += "_";
   }
-  name += value_list->type;
+  name += value_list.type;
 
   return name;
 }

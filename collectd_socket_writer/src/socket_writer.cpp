@@ -22,34 +22,37 @@
 #include "plugin.h"
 
 using json = nlohmann::json;
-using MeasurementFieldType = std::unordered_map<std::string, double>;
+using MeasurementFields = std::unordered_map<std::string, double>;
 
 // we add the following to generate the to_json functions for the struct automagically
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PluginDataSet, name, timestamp, tags, fields);
 
 int SocketWriter::init()
 {
-  INFO("collectd_socket_writer: init, socket path %s", socket_path_.c_str());
-  fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
+  INFO("collectd_socket_writer: socket path set to %s", socket_path_.c_str());
+  server_fd_ = socket(AF_UNIX, SOCK_STREAM, 0);
   addr_.sun_family = AF_UNIX;
   std::strncpy(addr_.sun_path, socket_path_.c_str(), sizeof(addr_.sun_path) - 1);
 
   return 0;
 }
 
-int SocketWriter::write(const data_set_t* data_set, const value_list_t* value_list)
+int SocketWriter::write(const data_set_t* data_set_ptr, const value_list_t* value_list_ptr)
 {
   if (!connect_socket())
   {
     return 1;
   }
 
-  DEBUG("collectd_socket_writer: write %s/%s-%s/%s (%zu values)", value_list->host,
-        value_list->plugin, value_list->plugin_instance, value_list->type, data_set->ds_num);
+  const value_list_t& value_list{*value_list_ptr};
+  const data_set_t& data_set{*data_set_ptr}
 
-  MeasurementFieldType measurement_fields{create_measurement_fields(data_set, value_list)};
+  DEBUG("collectd_socket_writer: write %s/%s-%s/%s (%zu values)", value_list.host,
+        value_list.plugin, value_list.plugin_instance, value_list.type, data_set->ds_num);
 
-  const PluginKey plugin_key{value_list->plugin, value_list->plugin_instance};
+  MeasurementFields measurement_fields{create_measurement_fields(data_set, value_list)};
+
+  const PluginKey plugin_key{value_list.plugin, value_list.plugin_instance};
 
   std::lock_guard<std::mutex> lock(mutex_);
 
@@ -79,7 +82,7 @@ bool SocketWriter::connect_socket()
 
   std::lock_guard<std::mutex> lock(mutex_);
 
-  if (connect(fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) == -1)
+  if (connect(server_fd_, reinterpret_cast<sockaddr*>(&addr_), sizeof(addr_)) == -1)
   {
     WARNING("collectd_socket_writer: connect not possible: %s", std::strerror(errno));
     return false;
@@ -89,36 +92,36 @@ bool SocketWriter::connect_socket()
   return true;
 }
 
-MeasurementFieldType SocketWriter::create_measurement_fields(const data_set_t* data_set,
-                                                             const value_list_t* value_list)
+MeasurementFields SocketWriter::create_measurement_fields(const data_set_t& data_set,
+                                                          const value_list_t& value_list)
 {
-  MeasurementFieldType fields{};
+  MeasurementFields fields{};
 
-  for (size_t i = 0; i < data_set->ds_num; ++i)
+  for (size_t i = 0; i < data_set.ds_num; ++i)
   {
-    value_u value{value_list->values[i]};
-    std::string name{utils::create_field_name(value_list, data_set->ds[i])};
+    value_u value{value_list.values[i]};
+    std::string name{utils::create_field_name(value_list, data_set.ds[i])};
 
-    switch (data_set->ds[i].type)
+    switch (data_set.ds[i].type)
     {
       case DS_TYPE_GAUGE:
-        fields.emplace(utils::suffixed(name, value_list->type, "gauge"), value.gauge);
+        fields.emplace(utils::suffixed(name, value_list.type, "gauge"), value.gauge);
         break;
       case DS_TYPE_COUNTER:
-        fields.emplace(utils::suffixed(name, value_list->type, "counter"), value.counter);
+        fields.emplace(utils::suffixed(name, value_list.type, "counter"), value.counter);
         break;
       case DS_TYPE_DERIVE:
-        fields.emplace(utils::suffixed(name, value_list->type, "derive"), value.derive);
+        fields.emplace(utils::suffixed(name, value_list.type, "derive"), value.derive);
         break;
       case DS_TYPE_ABSOLUTE:
-        fields.emplace(utils::suffixed(name, value_list->type, "absolute"), value.absolute);
+        fields.emplace(utils::suffixed(name, value_list.type, "absolute"), value.absolute);
         break;
     }
   }
   return fields;
 }
 
-void SocketWriter::send_data_on_cycle_end(const MeasurementFieldType& measurement_fields,
+void SocketWriter::send_data_on_cycle_end(const MeasurementFields& measurement_fields,
                                           PluginDataSet& pending_plugin_dataset)
 {
   // A data set never reports the same measurement field twice in one read cycle, so a field we
@@ -142,33 +145,37 @@ void SocketWriter::send(const PluginDataSet& data_set_struct)
   json data_set_json = data_set_struct;
   const std::string json_dump{data_set_json.dump() + "\n"};
   DEBUG("collectd_socket_writer: %s ", json_dump.c_str());
-  ::write(fd_, json_dump.c_str(), json_dump.size());
+
+  if (::write(server_fd_, json_dump.c_str(), json_dump.size()) == -1)
+  {
+    connected_ = false;
+  }
 }
 
-PluginDataSet SocketWriter::create_plugin_dataset(const value_list_t* value_list)
+PluginDataSet SocketWriter::create_plugin_dataset(const value_list_t& value_list)
 {
   // we take the time of the earliest measurement and use that to stamp the set
-  PluginDataSet data_set_struct{value_list->plugin, utils::cdtime_to_ns(value_list->time)};
+  PluginDataSet data_set_struct{value_list.plugin, utils::cdtime_to_ns(value_list.time)};
 
   set_dataset_plugin_instance(value_list, data_set_struct);
   return data_set_struct;
 }
 
-void SocketWriter::set_dataset_plugin_instance(const value_list_t*& value_list,
+void SocketWriter::set_dataset_plugin_instance(const value_list_t& value_list,
                                                PluginDataSet& data_set_struct)
 {
-  if (value_list->plugin_instance[0] != '\0')
+  if (value_list.plugin_instance[0] != '\0')
   {
     // if small than 3 characters it is likely a number, which cannot be used in a topic name
     // directly so we prefix it with the plugin name.
-    if (strlen(value_list->plugin_instance) < 3)
+    if (strlen(value_list.plugin_instance) < 3)
     {
       data_set_struct.tags.emplace(
-          "instance", fmt::format("{}_{}", value_list->plugin, value_list->plugin_instance));
+          "instance", fmt::format("{}_{}", value_list.plugin, value_list.plugin_instance));
     }
     else
     {
-      data_set_struct.tags.emplace("instance", value_list->plugin_instance);
+      data_set_struct.tags.emplace("instance", value_list.plugin_instance);
     }
   }
 }
@@ -191,6 +198,6 @@ int SocketWriter::shutdown()
     pending_plugin_datasets_.clear();
   }
 
-  INFO("collectd_socket_writer: shutdown, fd %d", fd_);
+  INFO("collectd_socket_writer: shutdown, fd %d", server_fd_);
   return 0;
 }
