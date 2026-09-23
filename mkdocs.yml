@@ -1,11 +1,11 @@
-site_name: Telegraf Resource Monitor
+site_name: Resource Diagnostics Monitor
 site_description: ROS 2 resource monitoring built on Telegraf.
-site_url: https://bart-van-ingen.github.io/telegraf_resource_monitor/
-repo_url: https://github.com/Bart-van-Ingen/telegraf_resource_monitor
-repo_name: Bart-van-Ingen/telegraf_resource_monitor
+site_url: https://bart-van-ingen.github.io/resource_diagnostics_monitor/
+repo_url: https://github.com/Bart-van-Ingen/resource_diagnostics_monitor
+repo_name: Bart-van-Ingen/resource_diagnostics_monitor
 edit_uri: edit/main/
 
-docs_dir: docs
+docs_dir: .docs
 
 theme:
   name: material
@@ -66,3 +66,4 @@ nav:
       - Composable Nodes: learnings/composable_nodes.md
       - Intra-Process Communication: learnings/intra_process_communication.md
       - Vendor Packages: learnings/vendor_packages.md
+      - collectd Vendor Package: learnings/collectd_vendor.md
