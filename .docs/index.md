@@ -1,11 +1,11 @@
-# Telegraf Resource Monitor
+# Resource Diagnostics Monitor
 
 <p align="center">
    <img src="images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="50%" />
 </p>
 
 This site contains the detailed documentation of the
-[Telegraf Resource Monitor](https://github.com/Bart-van-Ingen/telegraf_resource_monitor). This
+[Resource Diagnostics Monitor](https://github.com/Bart-van-Ingen/resource_diagnostics_monitor). This
 repository provides a ROS 2-based resource monitoring solution that leverages Telegraf to collect
 system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2
 diagnostics.  

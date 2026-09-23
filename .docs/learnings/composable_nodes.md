@@ -7,7 +7,7 @@ executable with its own `main()`. A container process loads one or more of these
 runtime. This lets you decide at launch time whether nodes run as separate processes or share one
 process [[1]](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Composition.html).
 
-In this repo, `telegraf_resource_monitor_cpp` and `resource_diagnostics_updater_cpp` both build a
+In this repo, `resource_monitor_cpp` and `resource_diagnostics_updater_cpp` both build a
 component. They can run:
 
 - As separate processes, with `ros2 run`, exactly as before, or
@@ -40,7 +40,8 @@ Trade-offs to keep in mind:
 
 - One crashing component takes down the whole container, including the other nodes in it.
 - Components share the container's executor. A component that blocks a callback for a long time can
-  starve the others. (Our telegraf node avoids this by doing its socket work in its own threads.)
+  starve the others. (Our resource monitor node avoids this by doing its socket work in its own
+  threads.)
 - Logs from all components end up mixed in one process output.
 
 ## How our components are implemented and built
@@ -59,14 +60,14 @@ holding the component source, and an executable that
 Separate processes, as before:
 
 ```bash
-ros2 run telegraf_resource_monitor_cpp telegraf_resource_monitor_node
+ros2 run resource_monitor_cpp resource_monitor_node
 ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node
 ```
 
 Both nodes in one process, plus telegraf:
 
 ```bash
-ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_cpp_launch.py \
+ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_cpp_launch.py \
     config_file_path:=/path/to/resource_diagnostics.yaml
 ```
 
@@ -77,7 +78,7 @@ Manual composition, without a launch file:
 
 ```bash
 ros2 run rclcpp_components component_container
-ros2 component load /ComponentManager telegraf_resource_monitor_cpp TelegrafResourceMonitorNode
+ros2 component load /ComponentManager resource_monitor_cpp ResourceMonitorNode
 ros2 component load /ComponentManager resource_diagnostics_updater_cpp ResourceDiagnosticsUpdaterNode
 ```
 

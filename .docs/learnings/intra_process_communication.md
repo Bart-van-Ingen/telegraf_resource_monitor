@@ -16,11 +16,11 @@ made.
 
 Three conditions must be true. All three are true in this repo.
 
-1. **Both nodes run in one process.** The composed launch file loads the telegraf monitor and the
+1. **Both nodes run in one process.** The composed launch file loads the resource monitor and the
    diagnostics updater into one container. This is the only way the two nodes can share memory.
 2. **Both nodes have the setting turned on.** The composed launch file turns the setting on for
    each of the two nodes.
-3. **The publisher hands over the message.** The telegraf monitor makes the message and gives it
+3. **The publisher hands over the message.** The resource monitor makes the message and gives it
    away. It keeps no copy of its own. Because of this, the framework does not have to make a copy
    for the reader.
 
@@ -61,7 +61,7 @@ This is all the code you need to get intra process communication working.
 ### 1. Turn the setting on for both nodes
 
 Do this in the launch file, once per node in the container. This is what
-[telegraf_diagnostic_monitor_cpp_launch.py](https://github.com/Bart-van-Ingen/telegraf_resource_monitor/blob/main/telegraf_diagnostic_monitor_bringup/launch/telegraf_diagnostic_monitor_cpp_launch.py)
+[resource_diagnostics_monitor_cpp_launch.py](https://github.com/Bart-van-Ingen/resource_diagnostics_monitor/blob/main/resource_diagnostics_monitor_bringup/launch/resource_diagnostics_monitor_cpp_launch.py)
 does.
 
 ```python

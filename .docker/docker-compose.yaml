@@ -1,4 +1,4 @@
-# Docker Compose file for telegraf_resource_monitor repo
+# Docker Compose file for resource_diagnostics_monitor repo
 #
 # Usage:
 #
@@ -11,12 +11,12 @@
 # To open an interactive shell to a running container:
 #   docker exec -it <container_name> bash
 
-name: telegraf-resource-monitor
+name: resource-diagnostics-monitor
 
 services:
   # Base image containing dependencies.
   base:
-    image: telegraf_resource_monitor:base
+    image: resource_diagnostics_monitor:base
     build:
       context: ..
       dockerfile: .docker/Dockerfile
@@ -48,7 +48,7 @@ services:
   # Overlay image containing the example source code.
   overlay:
     extends: base
-    image: telegraf_resource_monitor:overlay
+    image: resource_diagnostics_monitor:overlay
     build:
       context: ..
       ssh:
@@ -58,7 +58,7 @@ services:
 
   dev:
     extends: overlay
-    image: telegraf_resource_monitor:dev
+    image: resource_diagnostics_monitor:dev
     hostname: ros_dev_container
     build:
       context: ..

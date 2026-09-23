@@ -265,9 +265,9 @@
             "options": [
                 "resource_diagnostics_updater_py",
                 "resource_diagnostics_updater_cpp",
-                "resource_monitoring_interfaces",
+                "resource_monitor_interfaces",
                 "telegraf_resource_monitor",
-                "telegraf_resource_monitor_cpp",
+                "resource_monitor_cpp",
                 "collectd_socket_writer"
             ]
         },

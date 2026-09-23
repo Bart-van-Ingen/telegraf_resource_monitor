@@ -639,7 +639,7 @@ wheels = [
 ]
 
 [[package]]
-name = "telegraf-resource-monitor"
+name = "resource-diagnostics-monitor"
 version = "0.0.0"
 source = { virtual = "." }
 dependencies = [

@@ -10,7 +10,6 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from rclpy.node import Node
 
-import yaml
 from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
 from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
 from resource_diagnostics_updater_py.resource_diagnostics_updater import ResourceDiagnosticsUpdater

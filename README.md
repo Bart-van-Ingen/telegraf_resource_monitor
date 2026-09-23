@@ -2,7 +2,7 @@
    <img src="docs/images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
 </p>
 
-# Telegraf Resource Monitor
+# Resource Diagnostics Monitor
 
 This repository provides a ROS 2-based resource monitoring solution that leverages
 [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and
@@ -14,7 +14,7 @@ and one in CPP.
 ## Documentation
 
 The motivation, architecture and more can be found on the accompanying pages:
-<https://bart-van-ingen.github.io/telegraf_resource_monitor/>
+<https://bart-van-ingen.github.io/resource_diagnostics_monitor/>
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@ The motivation, architecture and more can be found on the accompanying pages:
 - [Launching the whole system](#launching-the-whole-system)
 - [Launch arguments](#launch-arguments)
 - [Launching a single node](#launching-a-single-node)
-  - [telegraf_resource_monitor_py/cpp](#telegraf_resource_monitor_pycpp)
+  - [resource_monitor_py/cpp](#resource_monitor_pycpp)
   - [resource_diagnostics_updater_py/cpp](#resource_diagnostics_updater_pycpp)
 - [Configuration](#configuration)
   - [Telegraf config](#telegraf-config)
@@ -45,7 +45,7 @@ The motivation, architecture and more can be found on the accompanying pages:
 
    ```bash
    cd ~/ros2_ws/src
-   git clone https://github.com/Bart-van-Ingen/telegraf_resource_monitor.git
+   git clone https://github.com/Bart-van-Ingen/resource_diagnostics_monitor.git
    ```
 
 1. **Install dependencies**:
@@ -71,7 +71,7 @@ The motivation, architecture and more can be found on the accompanying pages:
 
 The architecture of these package is summarized in the following diagram and further explained in
 the accompanying documentation
-[architecture](https://bart-van-ingen.github.io/telegraf_resource_monitor/architecture/) page.
+[architecture](https://bart-van-ingen.github.io/resource_diagnostics_monitor/architecture/) page.
 
 <p align="center">
    <img src="docs/images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" />
@@ -79,17 +79,17 @@ the accompanying documentation
 
 ## Launching the whole system
 
-`telegraf_diagnostic_monitor_bringup` starts the resource monitor node, the diagnostics updater node
-and telegraf together. Pick the launch file for the implementation you want:
+`resource_diagnostics_monitor_bringup` starts the resource monitor node, the diagnostics updater
+node and telegraf together. Pick the launch file for the implementation you want:
 
 <details>
 <summary><b>Python version</b></summary>
 
 ```bash
-ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_py_launch.py
+ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_py_launch.py
 ```
 
-This includes the launch file of `telegraf_resource_monitor_py` and the launch file of
+This includes the launch file of `resource_monitor_py` and the launch file of
 `resource_diagnostics_updater_py`. Each node runs in its own process.
 
 </details>
@@ -98,14 +98,14 @@ This includes the launch file of `telegraf_resource_monitor_py` and the launch f
 <summary><b>C++ version</b></summary>
 
 ```bash
-ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_cpp_launch.py
+ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_cpp_launch.py
 ```
 
 This loads both C++ nodes as components into one `component_container` process, with
 intra-process communication turned on. See
-[Composable Nodes](https://bart-van-ingen.github.io/telegraf_resource_monitor/learnings/composable_nodes/)
+[Composable Nodes](https://bart-van-ingen.github.io/resource_diagnostics_monitor/learnings/composable_nodes/)
 and
-[Intra-Process Communication](https://bart-van-ingen.github.io/telegraf_resource_monitor/learnings/intra_process_communication/).
+[Intra-Process Communication](https://bart-van-ingen.github.io/resource_diagnostics_monitor/learnings/intra_process_communication/).
 
 </details>  
 
@@ -117,12 +117,12 @@ then starts telegraf. Telegraf exits if it cannot connect to the socket.
 All launch files share the same arguments. Defaults point at the files installed by
 `resource_diagnostics_utils`, so no argument is needed for a default run.
 
-| Argument               | Default                                                       | Available in                                       |
-| ---------------------- | ------------------------------------------------------------- | -------------------------------------------------- |
-| `log_level`            | `INFO`                                                        | all launch files                                   |
-| `config_file_path`     | `resource_diagnostics_utils/config/resource_diagnostics.yaml` | all launch files                                   |
-| `telegraf_config_path` | `resource_diagnostics_utils/config/telegraf.conf`             | all launch files that start telegraf               |
-| `socket_path`          | `/tmp/telegraf.sock`                                          | the two `telegraf_resource_monitor_*` launch files |
+| Argument               | Default                                                       | Available in                              |
+| ---------------------- | ------------------------------------------------------------- | ----------------------------------------- |
+| `log_level`            | `INFO`                                                        | all launch files                          |
+| `config_file_path`     | `resource_diagnostics_utils/config/resource_diagnostics.yaml` | all launch files                          |
+| `telegraf_config_path` | `resource_diagnostics_utils/config/telegraf.conf`             | all launch files that start telegraf      |
+| `socket_path`          | `/tmp/telegraf.sock`                                          | the two `resource_monitor_*` launch files |
 
 `socket_path` is only used to wait for the socket before telegraf starts. It must match the
 `socket_path` node parameter and the `outputs.socket_writer` address in the telegraf config.
@@ -130,7 +130,7 @@ All launch files share the same arguments. Defaults point at the files installed
 Example with your own files and debug logging:
 
 ```bash
-ros2 launch telegraf_diagnostic_monitor_bringup telegraf_diagnostic_monitor_cpp_launch.py \
+ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_cpp_launch.py \
     config_file_path:=/path/to/your/resource_diagnostics.yaml \
     telegraf_config_path:=/path/to/your/telegraf.conf \
     log_level:=DEBUG
@@ -140,7 +140,7 @@ Use `ros2 launch <package> <launch file> -s` to list the arguments of a launch f
 
 ## Launching a single node
 
-### telegraf_resource_monitor_py/cpp
+### resource_monitor_py/cpp
 
 Starts and interfaces with telegraf over a unix socket and publishes the resources over ROS 2
 topics. Both launch files also start telegraf.
@@ -149,7 +149,7 @@ topics. Both launch files also start telegraf.
 <summary><b>Python version</b></summary>
 
 ```bash
-ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py
+ros2 launch resource_monitor_py resource_monitor_launch.py
 ```
 
 </details>
@@ -158,7 +158,7 @@ ros2 launch telegraf_resource_monitor_py telegraf_resource_monitor_launch.py
 <summary><b>C++ version</b></summary>
 
 ```bash
-ros2 launch telegraf_resource_monitor_cpp telegraf_resource_monitor_launch.py
+ros2 launch resource_monitor_cpp resource_monitor_launch.py
 ```
 
 </details>
@@ -188,8 +188,8 @@ ros2 run resource_diagnostics_updater_cpp resource_diagnostics_updater_node \
     --ros-args --params-file /path/to/resource_diagnostics.yaml
 ```
 
-To run it together with the C++ telegraf monitor, use
-`telegraf_diagnostic_monitor_cpp_launch.py` from the bringup package.
+To run it together with the C++ resource monitor, use
+`resource_diagnostics_monitor_cpp_launch.py` from the bringup package.
 
 </details>
 
